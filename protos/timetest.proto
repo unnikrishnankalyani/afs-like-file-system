@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+option java_package = "ex.grpc";
+
+package timetest;
+
+// Defines the service
+service NumTest {
+    // Function invoked to send the request
+    rpc sendRequest (NumRequest) returns (NumReply) {}
+}
+service StrTest {
+    // Function invoked to send the request
+    rpc sendRequest (StrRequest) returns (StrReply) {}
+}
+service DoubleTest {
+    // Function invoked to send the request
+    rpc sendRequest (DoubleRequest) returns (DoubleReply) {}
+}
+service StructTest {
+    // Function invoked to send the request
+    rpc sendRequest (StructRequest) returns (StructReply) {}
+}
+
+// The request message containing requested int
+message NumRequest {
+    int32 a = 1;
+}
+
+// The response message containing response
+message NumReply {
+    int32 ack = 1;
+}
+
+// The request message containing requested string
+message StrRequest {
+    string a = 1;
+}
+
+// The response message containing response
+message StrReply {
+    int32 ack = 1;
+}
+
+// The request message containing requested double 
+message DoubleRequest {
+    double a = 1;
+}
+
+// The response message containing response
+message DoubleReply {
+    int32 ack = 1;
+}
+
+// The request message containing requested structure 
+message StructRequest {
+    string username = 1;
+    string address = 2;
+    double rating = 3;
+    int32 phone = 4;
+}
+
+// The response message containing response
+message StructReply {
+    int32 ack = 1;
+}
