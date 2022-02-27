@@ -17,14 +17,15 @@ class AfsClient {
     int afs_CREATE(grpc::string path) {
         CreateReq request;
 
-        request.set_hi(path);
+        request.set_path(path);
 
         CreateRes reply;
 
         ClientContext context;
 
         Status status = stub_->afs_CREATE(&context, request, &reply);
-
+        
+        //add Retry
         if(status.ok()){
             return reply.ack();
         } else {
