@@ -3,6 +3,7 @@
 #include <sys/time.h>
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
+#include "AfsClient.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -84,7 +85,7 @@ int main(int argc, char* argv[]){
 
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 
-	options.nfsclient = new AfsClient(grpc::CreateChannel(
+	options.afsclient = new AfsClient(grpc::CreateChannel(
   "0.0.0.0:50051", grpc::InsecureChannelCredentials()));
 
 

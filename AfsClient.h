@@ -14,10 +14,10 @@ class AfsClient {
     public:
         AfsClient(std::shared_ptr<Channel> channel) : stub_(AFS::NewStub(channel)) {}
 
-    int afs_CREATE(grpc::string a) {
+    int afs_CREATE(grpc::string path) {
         CreateReq request;
 
-        request.set_hi(a);
+        request.set_hi(path);
 
         CreateRes reply;
 
