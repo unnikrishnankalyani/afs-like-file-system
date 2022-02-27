@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+option java_package = "ex.grpc";
+
+package afs;
+
+service AFS {
+  rpc afs_MKDIR(MkdirReq) returns (MkdirRes) {}
+  rpc afs_RMDIR(RmdirReq) returns (RmdirRes) {}
+  rpc afs_READ(ReadReq) returns (ReadRes) {}
+  rpc afs_WRITE(WriteReq) returns (WriteRes) {}
+  rpc afs_CREATE(CreateReq) returns (CreateRes) {}
+  rpc afs_REMOVE (RemoveReq) returns (RemoveRes) {}
+  rpc afs_LOOKUP(LookupReq) returns (LookupRes) {}
+  rpc afs_SETATTR(SetattrReq) returns (SetattrRes) {}
+  rpc afs_GETATTR(GetattrReq) returns (GetattrRes) {}
+  rpc afs_COMMIT(CommitReq) returns (CommitRes) {}
+}
+
+message file_handle {
+  string data = 1;
+}
+
+message file_attr {
+  enum ftype {
+    afsREG = 0;
+    afsDIR = 1;
+  }
+  ftype   type = 1;   // file type
+  uint64  size = 2;   // file size in bytes.
+}
+
+message ReadReq {
+  file_handle file = 1;
+  uint64 offset = 2;
+  uint64 count = 3;
+}
+
+message ReadResult_OK {
+}
+
+message ReadResult_FAIL {
+}
+
+message ReadRes {
+
+}
+
+message MkdirReq {
+
+}
+
+message MkdirRes {
+  
+}
+
+message RmdirReq {
+
+}
+
+message RmdirRes {
+
+}
+
+message WriteReq {
+  
+}
+
+message WriteRes {
+  
+}
+
+message GetattrReq {
+  file_handle object = 1;
+}
+message GetattrRes {
+  file_handle object = 1;
+}
+
+
+
+message SetattrReq {
+  file_handle object = 1;
+
+}
+
+
+message SetattrRes {
+
+}
+
+message CommitReq {
+  file_handle file = 1;
+}
+
+message CommitRes {
+ 
+}
+
+message RemoveReq {
+  
+}
+
+
+message RemoveRes {
+  
+}
+
+message CreateReq {
+  string hi = 1;
+  
+}
+
+message CreateRes {
+  int32 ack = 1;
+}
+
+message LookupReq {
+	
+}
+
+
+message LookupRes {
+  
+}

@@ -14,10 +14,10 @@ vpath %.proto $(PROTOS_PATH)
 
 all: client server
 
-client: timetest.pb.o timetest.grpc.pb.o client.o
+client: afs.pb.o afs.grpc.pb.o client.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
-server: timetest.pb.o timetest.grpc.pb.o server.o
+server: afs.pb.o afs.grpc.pb.o server.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 %.grpc.pb.cc: %.proto

@@ -1,22 +1,22 @@
 #include <string>
 
 #include <grpcpp/grpcpp.h>
-#include "timetest.grpc.pb.h"
+#include "afs.grpc.pb.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
 
-using timetest::StrTest;
-using timetest::StrRequest;
-using timetest::StrReply;
+using afs::AFS;
+using afs::CreateReq;
+using afs::CreateRes;
 
-class StrServiceImplementation final : public StrTest:: Service{
-    Status sendRequest(
+class AfsServiceImplementation final : public AFS:: Service{
+    Status afs_CREATE(
         ServerContext* context,
-        const StrRequest* request,
-        StrReply* reply
+        const CreateReq* request,
+        CreateRes* reply
     ) override { //returns a status by default
 
         reply->set_ack(1);
@@ -25,17 +25,17 @@ class StrServiceImplementation final : public StrTest:: Service{
     }
 };
 
-void RunStrTestServer(std::string ipadd) {
+void RunAfsServer(std::string ipadd) {
     //create port on localhost 5000
     std::string address(ipadd+":5000");
-    StrServiceImplementation service;
+    AfsServiceImplementation service;
 
-    ServerBuilder strServer; //server name
+    ServerBuilder afsServer; //server name
 
-    strServer.AddListeningPort(address, grpc::InsecureServerCredentials());
-    strServer.RegisterService(&service);
+    afsServer.AddListeningPort(address, grpc::InsecureServerCredentials());
+    afsServer.RegisterService(&service);
 
-    std::unique_ptr<Server> server(strServer.BuildAndStart());
+    std::unique_ptr<Server> server(afsServer.BuildAndStart());
     std::cout << "Server listening on port: " << address << std::endl;
 
     server->Wait();
@@ -45,10 +45,7 @@ void RunStrTestServer(std::string ipadd) {
 int main(int argc, char** argv) {
     std::string ipadd = "0.0.0.0";
 
-    if (argc >2){
-        ipadd = argv[2];
-    }
-    RunStrTestServer(ipadd);
+    RunAfsServer(ipadd);
     
     return 0;
 }

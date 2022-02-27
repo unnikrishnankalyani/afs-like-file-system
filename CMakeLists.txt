@@ -12,46 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# cmake build file for C++ timetest example.
+# cmake build file for C++ afs example.
 # Assumes protobuf and gRPC have been installed using cmake.
 # See cmake_externalproject/CMakeLists.txt for all-in-one cmake build
-# that automatically builds all the dependencies before building timetest.
+# that automatically builds all the dependencies before building afs.
 
 cmake_minimum_required(VERSION 3.5.1)
 
-project(timetest C CXX)
+project(afs C CXX)
 
 include(../wi-AFS/common.cmake)
 
 # Proto file
-get_filename_component(timetest_proto "protos/timetest.proto" ABSOLUTE)
-get_filename_component(timetest_proto_path "${timetest_proto}" PATH)
+get_filename_component(afs_proto "protos/afs.proto" ABSOLUTE)
+get_filename_component(afs_proto_path "${afs_proto}" PATH)
 
 # Generated sources
-set(timetest_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/timetest.pb.cc")
-set(timetest_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/timetest.pb.h")
-set(timetest_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/timetest.grpc.pb.cc")
-set(timetest_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/timetest.grpc.pb.h")
+set(afs_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/afs.pb.cc")
+set(afs_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/afs.pb.h")
+set(afs_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/afs.grpc.pb.cc")
+set(afs_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/afs.grpc.pb.h")
 add_custom_command(
-      OUTPUT "${timetest_proto_srcs}" "${timetest_proto_hdrs}" "${timetest_grpc_srcs}" "${timetest_grpc_hdrs}"
+      OUTPUT "${afs_proto_srcs}" "${afs_proto_hdrs}" "${afs_grpc_srcs}" "${afs_grpc_hdrs}"
       COMMAND ${_PROTOBUF_PROTOC}
       ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
         --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
-        -I "${timetest_proto_path}"
+        -I "${afs_proto_path}"
         --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-        "${timetest_proto}"
-      DEPENDS "${timetest_proto}")
+        "${afs_proto}"
+      DEPENDS "${afs_proto}")
 
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-# timetest_grpc_proto
-add_library(timetest_grpc_proto
-  ${timetest_grpc_srcs}
-  ${timetest_grpc_hdrs}
-  ${timetest_proto_srcs}
-  ${timetest_proto_hdrs})
-target_link_libraries(timetest_grpc_proto
+# afs_grpc_proto
+add_library(afs_grpc_proto
+  ${afs_grpc_srcs}
+  ${afs_grpc_hdrs}
+  ${afs_proto_srcs}
+  ${afs_proto_hdrs})
+target_link_libraries(afs_grpc_proto
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
@@ -59,7 +59,7 @@ target_link_libraries(timetest_grpc_proto
 # client
 add_executable(client "client.cc")
 target_link_libraries(client
-  timetest_grpc_proto
+  afs_grpc_proto
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
@@ -67,7 +67,7 @@ target_link_libraries(client
 # server
 add_executable(server "server.cc")
 target_link_libraries(server
-  timetest_grpc_proto
+  afs_grpc_proto
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
