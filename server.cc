@@ -2,6 +2,15 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <errno.h>
+#include <iostream>
+#include <fuse.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
