@@ -1,5 +1,5 @@
 #include <grpc++/grpc++.h>
-#include "nfsfuse.grpc.pb.h"
+#include "afs.grpc.pb.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
