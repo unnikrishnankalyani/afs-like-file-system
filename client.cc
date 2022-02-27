@@ -18,7 +18,8 @@ static struct options {
 	int show_help;
 } options;
 
-char fs_path[PATH_MAX];
+#define MAX_PATH_LENGTH 1000
+char fs_path[MAX_PATH_LENGTH];
 
 #define OPTION(t, p)                           \
     { t, offsetof(struct options, p), 1 }
@@ -102,8 +103,8 @@ int main(int argc, char* argv[]){
     // return fuse_main(argc, argv, &client_oper, &options);
 
     //cache path and actual path
-    strncpy(fs_path, realpath(argv[argc-1], NULL), PATH_MAX);
-    strncat(fs_path, "/", PATH_MAX);
+    strncpy(fs_path, realpath(argv[argc-1], NULL), MAX_PATH_LENGTH);
+    strncat(fs_path, "/", MAX_PATH_LENGTH);
     argv[argc-1] = NULL;
     argc--;
     printf("FS PATH: %s\n", fs_path);
