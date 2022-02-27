@@ -23,7 +23,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         const CreateReq* request,
         CreateRes* reply
     ) override { //returns a status by default
-        std::string path;
+        const char* path;
         strcat(path, request->path());
         path[strlen(path)] = '\0';
         int fd = open(path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create
