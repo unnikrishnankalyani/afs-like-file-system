@@ -51,23 +51,23 @@ struct client_fuse_operations:fuse_operations
 } client_oper;
 
 
-void RunAfsClient(std::string ipadd) {
-    std::string address(ipadd+":5000");
-    AfsClient client(
-        grpc::CreateChannel(
-            address,
-            grpc::InsecureChannelCredentials()
-        )
-    );
+// void RunAfsClient(std::string ipadd) {
+//     std::string address(ipadd+":5000");
+//     AfsClient client(
+//         grpc::CreateChannel(
+//             address,
+//             grpc::InsecureChannelCredentials()
+//         )
+//     );
 
-    int response;
+//     int response;
 
-    std::string msg = "testmsg: hi!";
-    response = client.afs_CREATE(msg);
+//     std::string msg = "testmsg: hi!";
+//     response = client.afs_CREATE(msg);
             
     
-    std::cout << "Success: " << response << std::endl;
-}
+//     std::cout << "Success: " << response << std::endl;
+// }
 
 // int main(int argc, char* argv[]){
 
