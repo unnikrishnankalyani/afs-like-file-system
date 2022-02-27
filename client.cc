@@ -14,6 +14,8 @@
 
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
+#include "AfsClient.h"
+#include "commonheaders.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -28,7 +30,6 @@ static struct options {
 	int show_help;
 } options;
 
-#define MAX_PATH_LENGTH 1000
 char fs_path[MAX_PATH_LENGTH];
 
 #define OPTION(t, p)                           \

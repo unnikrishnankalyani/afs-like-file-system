@@ -5,6 +5,7 @@
 
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
+#include "commonheaders.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -23,7 +24,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         CreateRes* reply
     ) override { //returns a status by default
         std::string server_path;
-        translatePath(request->path(),server_path)
+        strncpy(server_path, request->path())
         int fd = open(server_path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create
         if(fd == -1){
             reply->set_ack(-1);
