@@ -108,7 +108,6 @@ message RemoveRes {
 
 message CreateReq {
   string path = 1;
-  
 }
 
 message CreateRes {
