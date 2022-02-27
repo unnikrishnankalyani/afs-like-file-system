@@ -12,32 +12,43 @@ using afs::AFS;
 using afs::CreateReq;
 using afs::CreateRes;
 
-class AfsClient {
-    public:
-        AfsClient(std::shared_ptr<Channel> channel) : stub_(AFS::NewStub(channel)) {}
+static struct options {	
+	AfsClient* afsclient;
+	int show_help;
+} options;
 
-    int afs_CREATE(grpc::string a) {
-        CreateReq request;
+char fs_path[PATH_MAX];
 
-        request.set_hi(a);
-
-        CreateRes reply;
-
-        ClientContext context;
-
-        Status status = stub_->afs_CREATE(&context, request, &reply);
-
-        if(status.ok()){
-            return reply.ack();
-        } else {
-            std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            return -1;
-        }
-    }
-
-    private:
-        std::unique_ptr<AFS::Stub> stub_;
+#define OPTION(t, p)                           \
+    { t, offsetof(struct options, p), 1 }
+static const struct fuse_opt option_spec[] = {
+	OPTION("-h", show_help),
+	OPTION("--help", show_help),
+	FUSE_OPT_END
 };
+
+static int client_create(std::string path)
+{
+    return options.afsclient->afs_CREATE(path);
+}
+
+struct client_fuse_operations:fuse_operations
+{
+    client_fuse_operations ()
+    {
+        create     = client_create;
+
+        //uncomment the below as and when the corresponding implementation is done.
+        
+        // getattr    = client_getattr;
+        // readdir    = client_readdir;
+        // open       = client_open;
+        // read       = client_read;
+        // write      = client_write;
+        // release    = client_release;
+    }
+} client_oper;
+
 
 void RunAfsClient(std::string ipadd) {
     std::string address(ipadd+":5000");
@@ -57,14 +68,45 @@ void RunAfsClient(std::string ipadd) {
     std::cout << "Success: " << response << std::endl;
 }
 
+// int main(int argc, char* argv[]){
+
+//     std::string ipadd = "0.0.0.0";
+//     if (argc >1){
+//             ipadd = argv[1];
+//         }
+
+//     RunAfsClient(ipadd);
+
+//     return 0;
+// }
+
 int main(int argc, char* argv[]){
 
-    std::string ipadd = "0.0.0.0";
-    if (argc >1){
-            ipadd = argv[1];
-        }
+	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 
-    RunAfsClient(ipadd);
+	options.nfsclient = new AfsClient(grpc::CreateChannel(
+  "0.0.0.0:50051", grpc::InsecureChannelCredentials()));
 
-    return 0;
+
+    // if (fuse_opt_parse(&args, &options, option_spec, NULL) == -1)
+	// return 1;
+
+    // if (options.show_help) {
+    //     show_help(argv[0]);
+    //     assert(fuse_opt_add_arg(&args, "--help") == 0);
+    //     args.argv[0] = (char*) "";
+    // }
+
+
+    // return fuse_main(argc, argv, &client_oper, &options);
+
+    strncpy(fs_path, realpath(argv[argc-2], NULL), PATH_MAX);
+    strncat(fs_path, "/", PATH_MAX);
+    argv[argc-2] = argv[argc-1];
+    argv[argc-1] = NULL;
+    argc--;
+    printf("FS PATH: %s\n", fs_path);
+
+
+    return fuse_main(argc, argv, &client_oper, NULL);
 }
