@@ -1,4 +1,7 @@
 #include <string>
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <errno.h>
 
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
@@ -12,6 +15,7 @@ using afs::AFS;
 using afs::CreateReq;
 using afs::CreateRes;
 
+
 class AfsServiceImplementation final : public AFS:: Service{
     Status afs_CREATE(
         ServerContext* context,
@@ -19,7 +23,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         CreateRes* reply
     ) override { //returns a status by default
         std::string server_path;
-        // translatePath(request->path(),server_path)
+        translatePath(request->path(),server_path)
         int fd = open(server_path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create
         if(fd == -1){
             reply->set_ack(-1);
