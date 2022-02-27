@@ -37,6 +37,7 @@ message ReadReq {
 }
 
 message ReadResult_OK {
+
 }
 
 message ReadResult_FAIL {
@@ -67,7 +68,7 @@ message WriteReq {
 }
 
 message WriteRes {
-  
+
 }
 
 message GetattrReq {

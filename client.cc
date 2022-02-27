@@ -1,9 +1,19 @@
 #include <string>
 #include <time.h>
 #include <sys/time.h>
+#include <sys/stat.h>
+
+#include <iostream>
+#include <fuse.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <limits.h>
+
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
-#include "AfsClient.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -33,41 +43,55 @@ static int client_create(std::string path)
     return options.afsclient->afs_CREATE(path);
 }
 
+static int client_write(const char *path, const char *buffer, size_t size, off_t offset,
+                      struct fuse_file_info *file_info)
+{
+    return options.afsclient->afs_WRITE(path, buffer, size, offset, file_info);
+}
+
+
+static int client_read(const char *path, char *buffer, size_t size, off_t offset,
+		      struct fuse_file_info *file_info)
+{
+    return options.afsclient->afs_READ(path, buffer, size, offset, file_info);
+}
+
 struct client_fuse_operations:fuse_operations
 {
     client_fuse_operations ()
     {
         create     = client_create;
+        write      = client_write;
+        read       = client_read;
 
         //uncomment the below as and when the corresponding implementation is done.
         
         // getattr    = client_getattr;
         // readdir    = client_readdir;
         // open       = client_open;
-        // read       = client_read;
-        // write      = client_write;
+        
         // release    = client_release;
     }
 } client_oper;
 
 
-// void RunAfsClient(std::string ipadd) {
-//     std::string address(ipadd+":5000");
-//     AfsClient client(
-//         grpc::CreateChannel(
-//             address,
-//             grpc::InsecureChannelCredentials()
-//         )
-//     );
+void RunAfsClient(std::string ipadd) {
+    std::string address(ipadd+":5000");
+    AfsClient client(
+        grpc::CreateChannel(
+            address,
+            grpc::InsecureChannelCredentials()
+        )
+    );
 
-//     int response;
+    int response;
 
-//     std::string msg = "testmsg: hi!";
-//     response = client.afs_CREATE(msg);
+    std::string msg = "testmsg: hi!";
+    response = client.afs_CREATE(msg);
             
     
-//     std::cout << "Success: " << response << std::endl;
-// }
+    std::cout << "Success: " << response << std::endl;
+}
 
 // int main(int argc, char* argv[]){
 
@@ -85,7 +109,7 @@ int main(int argc, char* argv[]){
 
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 
-	options.afsclient = new AfsClient(grpc::CreateChannel(
+	options.nfsclient = new AfsClient(grpc::CreateChannel(
   "0.0.0.0:50051", grpc::InsecureChannelCredentials()));
 
 
@@ -101,9 +125,9 @@ int main(int argc, char* argv[]){
 
     // return fuse_main(argc, argv, &client_oper, &options);
 
-    //cache path and actual path
-    strncpy(fs_path, realpath(argv[argc-1], NULL), PATH_MAX);
+    strncpy(fs_path, realpath(argv[argc-2], NULL), PATH_MAX);
     strncat(fs_path, "/", PATH_MAX);
+    argv[argc-2] = argv[argc-1];
     argv[argc-1] = NULL;
     argc--;
     printf("FS PATH: %s\n", fs_path);
