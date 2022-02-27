@@ -101,9 +101,9 @@ int main(int argc, char* argv[]){
 
     // return fuse_main(argc, argv, &client_oper, &options);
 
-    strncpy(fs_path, realpath(argv[argc-2], NULL), PATH_MAX);
+    //cache path and actual path
+    strncpy(fs_path, realpath(argv[argc-1], NULL), PATH_MAX);
     strncat(fs_path, "/", PATH_MAX);
-    argv[argc-2] = argv[argc-1];
     argv[argc-1] = NULL;
     argc--;
     printf("FS PATH: %s\n", fs_path);
