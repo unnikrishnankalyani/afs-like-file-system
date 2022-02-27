@@ -18,9 +18,16 @@ class AfsServiceImplementation final : public AFS:: Service{
         const CreateReq* request,
         CreateRes* reply
     ) override { //returns a status by default
-
-        reply->set_ack(1);
-
+        std::string server_path;
+        // translatePath(request->path(),server_path)
+        int fd = open(server_path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create
+        if(fd == -1){
+            reply->set_ack(-1);
+        }
+        else{
+            reply->set_ack(1);
+            close(fd);
+        }
         return Status::OK;
     }
 };
