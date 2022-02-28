@@ -1,10 +1,9 @@
 LDFLAGS = -L/usr/local/lib `pkg-config --libs protobuf grpc++`\
            -Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed\
-           -ldl \
-		   -D_FILE_OFFSET_BITS=64 
+           -ldl
 
 CXX = g++
-CPPFLAGS += `pkg-config --cflags protobuf grpc -D_FILE_OFFSET_BITS=64`
+CPPFLAGS += `pkg-config --cflags protobuf grpc`
 CXXFLAGS += -std=c++11
 
 GRPC_CPP_PLUGIN = grpc_cpp_plugin
