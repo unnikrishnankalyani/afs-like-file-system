@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 
 #include <iostream>
-#define FUSE_USE_VERSION 26
+#define FUSE_USE_VERSION 31
 #include <fuse.h>
 #include <stdio.h>
 #include <string.h>
