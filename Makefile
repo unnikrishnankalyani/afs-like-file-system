@@ -1,9 +1,9 @@
-LDFLAGS = -L/usr/local/lib `pkg-config --libs protobuf grpc++`\
+LDFLAGS = -L/usr/local/lib -L../fuse-3.10.5/lib `pkg-config --libs protobuf grpc++`\
            -Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed\
-           -ldl `pkg-config /usr/include/fuse --cflags --libs`
+           -ldl -lfuse
 
 CXX = g++
-CPPFLAGS += `pkg-config /usr/include/fuse --cflags protobuf grpc --libs`
+CPPFLAGS += -I/usr/local/include -I../fuse-3.10.5/include -pthread 
 CXXFLAGS += -std=c++11 -D_FILE_OFFSET_BITS=64
 
 GRPC_CPP_PLUGIN = grpc_cpp_plugin
