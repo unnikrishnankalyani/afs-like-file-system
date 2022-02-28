@@ -25,7 +25,7 @@ class AfsClient {
     public:
         AfsClient(std::shared_ptr<Channel> channel) : stub_(AFS::NewStub(channel)) {}
 
-    int afs_CREATE(grpc::string path) {
+    int afs_CREATE(const char* path) {
         CreateReq request;
 
         request.set_path(path);
