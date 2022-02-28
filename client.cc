@@ -103,7 +103,7 @@ int main(int argc, char* argv[]){
 
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 
-	options.nfsclient = new AfsClient(grpc::CreateChannel(
+	options.afsclient = new AfsClient(grpc::CreateChannel(
   "0.0.0.0:50051", grpc::InsecureChannelCredentials()));
 
 
