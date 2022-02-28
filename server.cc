@@ -49,7 +49,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 
 void RunAfsServer(std::string ipadd) {
     //create port on localhost 5000
-    std::string address(ipadd+":5000");
+    std::string address(ipadd+":50051");
     AfsServiceImplementation service;
 
     ServerBuilder afsServer; //server name
