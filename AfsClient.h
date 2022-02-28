@@ -90,9 +90,9 @@ class AfsClient {
             }
             ret_code = write(fd, buffer, size);
             close(fd);
-            if(rc<0) {
+            if(ret_code<0) {
                 printf("Error while re-writing file %d\n", errno);
-                printf("Return error: %d\n", rc);
+                printf("Return error: %d\n", ret_code);
                 return -errno;
             }
         }
