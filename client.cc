@@ -40,7 +40,7 @@ static int client_create(std::string path)
 static int client_write(const char *path, const char *buffer, size_t size, off_t offset,
                       struct fuse_file_info *file_info)
 {
-    return options.afsclient->afs_WRITE(path, buffer, size, offset, file_info);
+    return options.afsclient->afs_WRITE(path, buffer, size, offset, file_info, fs_path);
 }
 
 
@@ -54,7 +54,7 @@ struct client_fuse_operations:fuse_operations
 {
     client_fuse_operations ()
     {
-        create     = client_create;
+        creat     = client_create;
         write      = client_write;
         read       = client_read;
 
