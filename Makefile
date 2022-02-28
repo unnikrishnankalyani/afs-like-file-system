@@ -1,6 +1,6 @@
 LDFLAGS = -L/usr/local/lib `pkg-config --libs protobuf grpc++`\
            -Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed\
-           -ldl
+           -ldl `pkg-config fuse --cflags --libs`
 
 CXX = g++
 CPPFLAGS += `pkg-config --cflags protobuf grpc`
