@@ -33,7 +33,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         CreateRes* reply
     ) override { //returns a status by default
         char* path;
-        strcat(path, request->path());
+        strcat(path, request->path().c_str());
         path[strlen(path)] = '\0';
         int fd = open(path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create
         if(fd == -1){
