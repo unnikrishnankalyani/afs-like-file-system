@@ -70,7 +70,7 @@ class AfsClient {
         ret_code = write(file_info->fh, buffer, size);
         fstat(file_info->fh, &info);
         // printf("Write return: %d\n", info.st_mtime);
-        if(rc < 0) {
+        if(ret_code < 0) {
             printf("Error while writing into file: %d\n", errno);
             int fd;
             char cached_file[80];
