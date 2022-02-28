@@ -17,14 +17,6 @@
 #include "AfsClient.h"
 #include "commonheaders.h"
 
-using grpc::Channel;
-using grpc::ClientContext;
-using grpc::Status;
-
-using afs::AFS;
-using afs::CreateReq;
-using afs::CreateRes;
-
 static struct options {	
 	AfsClient* afsclient;
 	int show_help;

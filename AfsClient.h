@@ -17,6 +17,9 @@ using grpc::Status;
 using grpc::ClientContext;
 using grpc::ClientReader;
 
+using afs::AFS;
+using afs::CreateReq;
+using afs::CreateRes;
 
 class AfsClient {
     public:
