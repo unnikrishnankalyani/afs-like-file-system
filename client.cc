@@ -127,5 +127,5 @@ int main(int argc, char* argv[]){
     printf("FS PATH: %s\n", fs_path);
 
 
-    return fuse_main(argc, argv, &client_oper, NULL);
+    return fuse_main(argc, argv, &client_oper);
 }
