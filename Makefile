@@ -3,8 +3,8 @@ LDFLAGS = -L/usr/local/lib `pkg-config --libs protobuf grpc++`\
            -ldl `pkg-config fuse --cflags --libs`
 
 CXX = g++
-CPPFLAGS += `pkg-config --cflags protobuf grpc`
-CXXFLAGS += -std=c++11
+CPPFLAGS += `pkg-config /usr/include/fuse --cflags protobuf grpc --libs`
+CXXFLAGS += -std=c++11 -D_FILE_OFFSET_BITS=64
 
 GRPC_CPP_PLUGIN = grpc_cpp_plugin
 GRPC_CPP_PLUGIN_PATH ?= `which $(GRPC_CPP_PLUGIN)`
