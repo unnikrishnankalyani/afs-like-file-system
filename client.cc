@@ -80,7 +80,7 @@ static int client_write(const char *path, const char *buffer, size_t size, off_t
 }
 
 
-static int client_read(const char *path, char *buffer, size_t size, off_t offset)
+static int client_read(const char *path, char *buffer, size_t size, off_t offset, struct fuse_file_info *file_info)
 {
     // return options.afsclient->afs_READ(path, buffer, size, offset, file_info);
     int ret_code = 0;
