@@ -22,7 +22,8 @@ using afs::CreateReq;
 using afs::CreateRes;
 using afs::LsReq;
 using afs::LsRes;
-
+using afs::ListDirRequest;
+using afs::ListDirReply;
 
 class AfsClient {
     public:
