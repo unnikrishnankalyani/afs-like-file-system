@@ -75,7 +75,7 @@ class AfsClient {
 
         while (reader->Read(&reply)) {
             if(reply.error()==0) {
-                filler(buf, (reply.name()).c_str(), NULL, 0);
+                filler(buf, (reply.name()).c_str(), NULL, 0, static_cast<fuse_fill_dir_flags>(0));
             }
         }
 
