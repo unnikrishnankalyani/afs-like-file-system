@@ -61,7 +61,7 @@ class AfsClient {
 	    return ret_code;
     }
 
-    int AFS::ListDir(const std::string& path, void *buf, fuse_fill_dir_t filler) {
+    int ListDir(const std::string& path, void *buf, fuse_fill_dir_t filler) {
         ListDirRequest request;
         request.set_path(path);
 
