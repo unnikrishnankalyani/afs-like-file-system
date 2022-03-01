@@ -28,10 +28,6 @@ message LsRes {
     string name = 2;
 }
 
-message file_handle {
-  string data = 1;
-}
-
 message file_attr {
   enum ftype {
     afsREG = 0;
@@ -42,7 +38,7 @@ message file_attr {
 }
 
 message ReadReq {
-  file_handle file = 1;
+  string file = 1;
   uint64 offset = 2;
   uint64 count = 3;
 }
@@ -84,16 +80,15 @@ message WriteRes {
 }
 
 message GetattrReq {
-  file_handle object = 1;
+  string fh = 1;
 }
+
 message GetattrRes {
-  file_handle object = 1;
+  string fh = 1;
 }
-
-
 
 message SetattrReq {
-  file_handle object = 1;
+  string fh = 1;
 
 }
 
@@ -103,7 +98,7 @@ message SetattrRes {
 }
 
 message CommitReq {
-  file_handle file = 1;
+  string fh = 1;
 }
 
 message CommitRes {

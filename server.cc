@@ -28,7 +28,7 @@ using afs::CreateRes;
 using afs::LsReq;
 using afs::LsRes;
 
-char afs_path[MAX_PATH_LENGTH];
+char root_path[MAX_PATH_LENGTH];
 
 
 class AfsServiceImplementation final : public AFS:: Service{
@@ -37,9 +37,8 @@ class AfsServiceImplementation final : public AFS:: Service{
         const CreateReq* request,
         CreateRes* reply
     ) override { //returns a status by default
-        char* path;
-        strcat(path, request->path().c_str());
-        path[strlen(path)] = '\0';
+        char path[MAX_PATH_LENGTH];
+        getServerPath(request->path()).c_str(), root_path, path))
         int fd = open(path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create
         if(fd == -1){
             reply->set_ack(-1);
@@ -51,15 +50,46 @@ class AfsServiceImplementation final : public AFS:: Service{
         return Status::OK;
     }
 
+    // Status afs_GETATTR(ServerContext* context, const GetattrReq* request, 
+	// 				 GetattrRes* reply) override {
+	// 	//cout<<"[DEBUG] : lstat: "<<s->str().c_str()<<endl;
+    //     char path[MAX_PATH_LENGTH];
+    //     getServerPath(request->path()).c_str(), root_path, path))
+
+	// 	int res = lstat(path, &st);
+
+    //     if(res == -1){
+	// 	    perror(strerror(errno));
+    //         //cout<<"errno: "<<errno<<endl;
+	// 	    reply->set_err(errno);
+	// 	}
+	// 	else{
+    //         reply->set_ino(st.st_ino);
+    //         reply->set_mode(st.st_mode);
+    //         reply->set_nlink(st.st_nlink);
+    //         reply->set_uid(st.st_uid);
+    //         reply->set_gid(st.st_gid);
+
+    //         reply->set_size(st.st_size);
+    //         reply->set_blksize(st.st_blksize);
+    //         reply->set_blocks(st.st_blocks);
+    //         reply->set_atime(st.st_atime);
+    //         reply->set_mtime(st.st_mtime);
+    //         reply->set_ctime(st.st_ctime);
+			
+	// 	    reply->set_err(0);
+	// 	}
+		
+    //     return Status::OK;
+	
+	// }
+
     Status afs_LS(ServerContext* context,
                  const LsReq *request,
                  ServerWriter<LsRes>* writer) override {
 
       char path[MAX_PATH_LENGTH];
-      path[0] = '\0';
-
-      strncat(path, afs_path, MAX_PATH_LENGTH);
-      strncat(path, (request->path()).c_str(), MAX_PATH_LENGTH);
+      getServerPath(request->path()).c_str(), root_path, path))
 
       DIR *dp;
       struct dirent *de;
@@ -111,8 +141,8 @@ void RunAfsServer(std::string ipadd) {
 int main(int argc, char** argv) {
     std::string ipadd = "0.0.0.0";
 
-    strncpy(afs_path, argv[1], MAX_PATH_LENGTH);
-    std::cout << "afs path : " << afs_path << std::endl;
+    strncpy(root_path, argv[1], MAX_PATH_LENGTH);
+    std::cout << "afs path : " << root_path << std::endl;
     RunAfsServer(ipadd);
     
     return 0;
