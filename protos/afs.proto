@@ -15,6 +15,7 @@ service AFS {
   rpc afs_SETATTR(SetattrReq) returns (SetattrRes) {}
   rpc afs_GETATTR(GetattrReq) returns (GetattrRes) {}
   rpc afs_COMMIT(CommitReq) returns (CommitRes) {}
+  rpc afs_LS(LsReq) returns (LsRes){}
 }
 
 message file_handle {
@@ -35,6 +36,7 @@ message ReadReq {
   uint64 offset = 2;
   uint64 count = 3;
 }
+
 
 message ReadResult_OK {
 
@@ -113,6 +115,14 @@ message CreateReq {
 
 message CreateRes {
   int32 ack = 1;
+}
+
+message LsReq {
+    string path = 1;
+}
+
+message LsRes {
+    int32 ack = 1;
 }
 
 message LookupReq {
