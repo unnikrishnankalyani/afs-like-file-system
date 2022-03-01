@@ -16,15 +16,15 @@ service AFS {
   rpc afs_GETATTR(GetattrReq) returns (GetattrRes) {}
   rpc afs_COMMIT(CommitReq) returns (CommitRes) {}
   rpc afs_LS(LsReq) returns (LsRes){}
-  rpc ListDir (ListDirRequest) returns (stream ListDirReply) {}
+  rpc ListDir (LsReq) returns (stream LsRes) {}
 
 }
 
-message ListDirRequest {
+message LsReq {
     string path = 1;
 }
 
-message ListDirReply {
+message LsRes {
     int32 error = 1;
     string name = 2;
 }
@@ -126,15 +126,6 @@ message CreateReq {
 
 message CreateRes {
   int32 ack = 1;
-}
-
-message LsReq {
-    string path = 1;
-}
-
-message LsRes {
-    int32 ack = 1;
-    string filename = 2;
 }
 
 message LookupReq {
