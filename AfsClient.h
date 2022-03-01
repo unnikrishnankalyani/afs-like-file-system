@@ -70,7 +70,7 @@ class AfsClient {
         ClientContext context;
 
         std::unique_ptr<ClientReader<LsRes> > reader(
-            stub_->dummyFn(&context, request));
+            stub_->afs_LS(&context, request));
 
         while (reader->Read(&reply)) {
             if(reply.ack()==1) {
