@@ -58,7 +58,7 @@ class AfsServiceImplementation final : public AFS:: Service{
       char path[MAX_PATH_LENGTH];
       path[0] = '\0';
 
-      strncat(path, afs_path, MAX_PATH_LENGTH);
+    //   strncat(path, afs_path, MAX_PATH_LENGTH);
       strncat(path, (request->path()).c_str(), MAX_PATH_LENGTH);
 
       DIR *dp;
