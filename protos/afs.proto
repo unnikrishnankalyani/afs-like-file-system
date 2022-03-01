@@ -123,6 +123,7 @@ message LsReq {
 
 message LsRes {
     int32 ack = 1;
+    string filename = 2;
 }
 
 message LookupReq {
