@@ -48,7 +48,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         return Status::OK;
     }
 
-    Status afs_LS(ServerContext* context,
+    Status dummyFn(ServerContext* context,
                  const LsReq *request,
                  ServerWriter<LsRes>* writer) override {
 
