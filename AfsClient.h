@@ -74,7 +74,7 @@ class AfsClient {
 
         while (reader->Read(&reply)) {
             if(reply.ack()==1) {
-                filler(buf, (reply.name()).c_str(), NULL, 0);
+                filler(buf, (reply.filename()).c_str(), NULL, 0);
             }
         }
 

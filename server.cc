@@ -11,7 +11,7 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
+#include <dirent.h>
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
 #include "commonheaders.h"
