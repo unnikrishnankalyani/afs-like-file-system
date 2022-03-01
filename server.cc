@@ -111,7 +111,7 @@ void RunAfsServer(std::string ipadd) {
 int main(int argc, char** argv) {
     std::string ipadd = "0.0.0.0";
 
-    strncpy(afs_path, argv[1], PATH_MAX);
+    strncpy(afs_path, argv[1], MAX_PATH_LENGTH);
     std::cout << "afs path : " << afs_path << std::endl;
     RunAfsServer(ipadd);
     
