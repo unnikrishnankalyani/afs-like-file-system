@@ -57,7 +57,33 @@ class AfsClient {
 
 	    return ret_code;
     }
-              
+
+    int afs_LS(const std::string& path, void *buf, fuse_fill_dir_t filler) {
+        LsReq request;
+        request.set_path(path);
+
+        LsRes reply;
+
+        ClientContext context;
+
+        std::unique_ptr<ClientReader<ListDirReply> > reader(
+            stub_->ListDir(&context, request));
+
+        while (reader->Read(&reply)) {
+            if(reply.ack()==1) {
+                filler(buf, (reply.name()).c_str(), NULL, 0);
+            }
+        }
+
+        Status status = reader->Finish();
+
+        if (status.ok()) {
+            return 0;
+        } else {
+            return -1;
+        }
+}
+
 
     int afs_WRITE(const char *path, const char *buffer, size_t size, off_t offset,
                       struct fuse_file_info *file_info, char fs_path[]){

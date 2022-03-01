@@ -94,6 +94,15 @@ static int client_read(const char *path, char *buffer, size_t size, off_t offset
     return ret_code;
 }
 
+static int client_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+			 off_t offset, struct fuse_file_info *fi)
+{
+
+    return options.afsclient->afs_LS(path, buf, filler);
+    
+}
+
+
 struct client_fuse_operations:fuse_operations
 {
     client_fuse_operations ()
@@ -101,6 +110,7 @@ struct client_fuse_operations:fuse_operations
         create     = client_create;
         write      = client_write;
         read       = client_read;
+        readdir    = client_readdir;
 
         //uncomment the below as and when the corresponding implementation is done.
         
