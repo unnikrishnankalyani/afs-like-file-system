@@ -27,8 +27,6 @@ using afs::CreateReq;
 using afs::CreateRes;
 using afs::LsReq;
 using afs::LsRes;
-using afs::LsReq;
-using afs::LsRes;
 
 
 class AfsServiceImplementation final : public AFS:: Service{
@@ -51,7 +49,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         return Status::OK;
     }
 
-    Status ListDir(ServerContext* context,
+    Status Afs_LS(ServerContext* context,
                  const LsReq *request,
                  ServerWriter<LsRes>* writer) override {
 

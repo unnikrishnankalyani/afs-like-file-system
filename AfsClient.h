@@ -22,8 +22,6 @@ using afs::CreateReq;
 using afs::CreateRes;
 using afs::LsReq;
 using afs::LsRes;
-using afs::LsReq;
-using afs::LsRes;
 
 class AfsClient {
     public:
@@ -62,7 +60,7 @@ class AfsClient {
 	    return ret_code;
     }
 
-    int ListDir(const std::string& path, void *buf, fuse_fill_dir_t filler) {
+    int Afs_LS(const std::string& path, void *buf, fuse_fill_dir_t filler) {
         LsReq request;
         request.set_path(path);
 
@@ -71,7 +69,7 @@ class AfsClient {
         ClientContext context;
 
         std::unique_ptr<ClientReader<LsRes> > reader(
-            stub_->ListDir(&context, request));
+            stub_->Afs_LS(&context, request));
 
         while (reader->Read(&reply)) {
             if(reply.error()==0) {

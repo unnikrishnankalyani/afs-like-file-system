@@ -16,7 +16,6 @@ service AFS {
   rpc afs_GETATTR(GetattrReq) returns (GetattrRes) {}
   rpc afs_COMMIT(CommitReq) returns (CommitRes) {}
   rpc afs_LS(LsReq) returns (LsRes){}
-  rpc ListDir (LsReq) returns (stream LsRes) {}
 
 }
 
