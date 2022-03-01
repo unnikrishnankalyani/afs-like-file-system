@@ -28,6 +28,8 @@ using afs::CreateRes;
 using afs::LsReq;
 using afs::LsRes;
 
+char afs_path[MAX_PATH_LENGTH];
+
 
 class AfsServiceImplementation final : public AFS:: Service{
     Status afs_CREATE(
@@ -56,7 +58,7 @@ class AfsServiceImplementation final : public AFS:: Service{
       char path[MAX_PATH_LENGTH];
       path[0] = '\0';
 
-    //   strncat(path, afs_path, MAX_PATH_LENGTH);
+      strncat(path, afs_path, MAX_PATH_LENGTH);
       strncat(path, (request->path()).c_str(), MAX_PATH_LENGTH);
 
       DIR *dp;
@@ -108,6 +110,8 @@ void RunAfsServer(std::string ipadd) {
 int main(int argc, char** argv) {
     std::string ipadd = "0.0.0.0";
 
+    strncpy(afs_path, argv[1], PATH_MAX);
+    std::cout << afs_path << std::endl;
     RunAfsServer(ipadd);
     
     return 0;
