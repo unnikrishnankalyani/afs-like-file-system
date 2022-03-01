@@ -38,7 +38,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         CreateRes* reply
     ) override { //returns a status by default
         char path[MAX_PATH_LENGTH];
-        getServerPath(request->path()).c_str(), root_path, path))
+        getServerPath(request->path().c_str(), root_path, path);
         int fd = open(path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create
         if(fd == -1){
             reply->set_ack(-1);
@@ -54,7 +54,8 @@ class AfsServiceImplementation final : public AFS:: Service{
 	// 				 GetattrRes* reply) override {
 	// 	//cout<<"[DEBUG] : lstat: "<<s->str().c_str()<<endl;
     //     char path[MAX_PATH_LENGTH];
-    //     getServerPath(request->path()).c_str(), root_path, path))
+    //     getServerPath(request->path().c_str(), root_path, path);
+
 
 	// 	int res = lstat(path, &st);
 
@@ -89,7 +90,7 @@ class AfsServiceImplementation final : public AFS:: Service{
                  ServerWriter<LsRes>* writer) override {
 
       char path[MAX_PATH_LENGTH];
-      getServerPath(request->path()).c_str(), root_path, path))
+      getServerPath(request->path().c_str(), root_path, path);
 
       DIR *dp;
       struct dirent *de;
