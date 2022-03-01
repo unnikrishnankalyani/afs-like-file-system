@@ -49,8 +49,8 @@ class AfsServiceImplementation final : public AFS:: Service{
     }
 
     Status ListDir(ServerContext* context,
-                 const ListDirRequest *request,
-                 ServerWriter<ListDirReply>* writer) override {
+                 const LsReq *request,
+                 ServerWriter<LsRes>* writer) override {
 
       char path[PATH_MAX];
       path[0] = '\0';
@@ -60,7 +60,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 
       DIR *dp;
       struct dirent *de;
-      ListDirReply reply;
+      LsRes reply;
 
       dp = opendir(path);
       if (dp == NULL) {
