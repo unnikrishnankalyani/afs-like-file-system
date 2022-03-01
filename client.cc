@@ -168,7 +168,7 @@ int main(int argc, char* argv[]){
     strncat(fs_path, "/", MAX_PATH_LENGTH);
     argv[argc-1] = NULL;
     argc--;
-    printf("FS PATH: %s\n", fs_path);
+    printf("File System Real Path on Client: %s\n", fs_path);
 
 
     return fuse_main(argc, argv, &client_oper, NULL);
