@@ -20,6 +20,9 @@ using grpc::ClientReader;
 using afs::AFS;
 using afs::CreateReq;
 using afs::CreateRes;
+using afs::LsReq;
+using afs::LsRes;
+
 
 class AfsClient {
     public:

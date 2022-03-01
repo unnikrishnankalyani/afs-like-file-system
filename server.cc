@@ -24,6 +24,8 @@ using grpc::Status;
 using afs::AFS;
 using afs::CreateReq;
 using afs::CreateRes;
+using afs::LsReq;
+using afs::LsRes;
 
 
 class AfsServiceImplementation final : public AFS:: Service{
