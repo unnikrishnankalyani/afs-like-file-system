@@ -16,6 +16,17 @@ service AFS {
   rpc afs_GETATTR(GetattrReq) returns (GetattrRes) {}
   rpc afs_COMMIT(CommitReq) returns (CommitRes) {}
   rpc afs_LS(LsReq) returns (LsRes){}
+  rpc ListDir (ListDirRequest) returns (stream ListDirReply) {}
+
+}
+
+message ListDirRequest {
+    string path = 1;
+}
+
+message ListDirReply {
+    int32 error = 1;
+    string name = 2;
 }
 
 message file_handle {

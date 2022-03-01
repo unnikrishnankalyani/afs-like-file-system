@@ -49,44 +49,43 @@ class AfsServiceImplementation final : public AFS:: Service{
         return Status::OK;
     }
 
-    Status afs_LS(ServerContext* context,
-                 const LsReq *request,
-                 ServerWriter<LsRes>* writer) override {
+    Status ListDir(ServerContext* context,
+                 const ListDirRequest *request,
+                 ServerWriter<ListDirReply>* writer) override {
 
-      char path[PATH_MAX];
+      char path[MAX_PATH_LENGTH];
       path[0] = '\0';
 
-      strncat(path, afs_path, PATH_MAX);
-      strncat(path, (request->path()).c_str(), PATH_MAX);
+      strncat(path, afs_path, MAX_PATH_LENGTH);
+      strncat(path, (request->path()).c_str(), MAX_PATH_LENGTH);
 
       DIR *dp;
       struct dirent *de;
-      LsRes reply;
+      ListDirReply reply;
 
       dp = opendir(path);
       if (dp == NULL) {
-          reply.set_ack(-1);
+          reply.set_error(-1);
           writer->Write(reply);
           return Status::OK;
       }
 
       de = readdir(dp);
       if (de == 0) {
-          reply.set_ack(-1);
+          reply.set_error(-1);
           writer->Write(reply);
           return Status::OK;
       }
 
 
       do {
-          reply.set_ack(1);
-          reply.set_filename(std::string(de->d_name));
+          reply.set_error(0);
+          reply.set_name(std::string(de->d_name));
           writer->Write(reply);
       } while ((de = readdir(dp)) != NULL);
 
       return Status::OK;
   }
-
 };
 
 void RunAfsServer(std::string ipadd) {

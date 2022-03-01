@@ -61,20 +61,20 @@ class AfsClient {
 	    return ret_code;
     }
 
-    int afs_LS(const std::string& path, void *buf, fuse_fill_dir_t filler) {
-        LsReq request;
+    int AFS::ListDir(const std::string& path, void *buf, fuse_fill_dir_t filler) {
+        ListDirRequest request;
         request.set_path(path);
 
-        LsRes reply;
+        ListDirReply reply;
 
         ClientContext context;
 
-        std::unique_ptr<ClientReader<LsRes> > reader(
-            stub_->afs_LS(&context, request));
+        std::unique_ptr<ClientReader<ListDirReply> > reader(
+            stub_->ListDir(&context, request));
 
         while (reader->Read(&reply)) {
-            if(reply.ack()==1) {
-                filler(buf, reply.filename().c_str(), NULL, 0, static_cast<fuse_fill_dir_flags>(0));
+            if(reply.error()==0) {
+                filler(buf, (reply.name()).c_str(), NULL, 0);
             }
         }
 
