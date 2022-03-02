@@ -119,7 +119,7 @@ struct client_fuse_operations:fuse_operations
 
         //uncomment the below as and when the corresponding implementation is done.
         
-        // getattr    = client_getattr;
+        getattr    = client_getattr;
         // readdir    = client_readdir;
         // open       = client_open;
         
