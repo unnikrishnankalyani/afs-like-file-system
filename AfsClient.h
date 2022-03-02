@@ -65,7 +65,7 @@ class AfsClient {
     int afs_GETATTR(const char *path){
         ClientContext context;
         GetattrRes reply;
-        CreateReq request;
+        GetattrReq request;
 
         request.set_path(path);
 
