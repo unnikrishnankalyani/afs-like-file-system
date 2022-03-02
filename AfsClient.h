@@ -63,10 +63,10 @@ class AfsClient {
         Status status = stub_->afs_FETCH(&context, request, &reply);
 
         if (status.ok()) {
-                    std::cout << &reply->buf() <<std::endl;
-            *buf = (char *)(&reply->buf()).data();
+                    std::cout << *reply->buf() <<std::endl;
+            *buf = (char *)(*reply->buf()).data();
                     printf("%s\n", *buf);
-            *size = &reply->size();
+            *size = *reply->size();
             return 0;
         } else {
             return -1;
