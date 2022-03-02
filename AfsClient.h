@@ -26,6 +26,8 @@ using afs::FetchRequest;
 using afs::FetchReply;
 using afs::GetattrReq;
 using afs::GetattrRes;
+using afs::StoreReq;
+using afs::StoreRes;
 
 class AfsClient {
     public:
@@ -83,6 +85,11 @@ class AfsClient {
             hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
         
         return hash;
+    }
+
+    int afs_RELEASE(const char *path, struct fuse_file_info *fi)
+    {
+        
     }
 
     int afs_OPEN(const char *path, struct fuse_file_info *file_info, char fs_path[])
@@ -204,6 +211,67 @@ class AfsClient {
         stats->st_mtime = reply.mtime();
         stats->st_ctime = reply.ctime();
         return 0;
+    }
+
+    int afs_STORE(const std::string& path, char *buf, int size)
+    {
+        StoreReq request;
+        request.set_path(path);
+        request.set_size(size);
+        request.set_buf(std::string(buf, size));
+
+        StoreRes reply;
+
+        ClientContext context;
+
+        Status status = stub_->afs_STORE(&context, request, &reply);
+
+        if (status.ok()) {
+            return reply.error();
+        } else {
+            return -1;
+        }
+    }
+    
+    int afs_RELEASE(const char *path, struct fuse_file_info *fi)
+    {
+        int rc = 0;
+        int isModified=1;
+        char *buf;
+        struct stat info;
+        struct stat remoteFileInfo;
+
+        fsync(fi->fh);
+
+        memset(&info, 0, sizeof(struct stat));
+        fstat(fi->fh, &info);
+        afs_GETATTR(path, &remoteFileInfo);
+
+        if(remoteFileInfo.st_mtime > info.st_mtime) {
+            isModified = 0;
+        }
+
+        if(isModified) {
+            buf = (char *)malloc(info.st_size);
+            lseek(fi->fh, 0, SEEK_SET);
+            read(fi->fh, buf, info.st_size);
+            printf("To be sent: %s\n", buf, info.st_size);
+            afs_STORE(path, buf, info.st_size);
+            free(buf);
+        }
+        rc = close(fi->fh);
+
+    /*
+        char local_path[PATH_MAX];
+        local_path[0] = '\0';
+        char cacheFileName[80]; 
+            snprintf(cacheFileName, 80, "%lu", hash((unsigned char *)path));
+
+            strncat(local_path, fs_path, PATH_MAX);
+            strncat(local_path, cacheFileName, PATH_MAX);
+        lstat(local_path, &info);
+        printf("After Close: %d\n", info.st_mtime); */
+        return rc;
     }
 
     int afs_LS(const std::string& path, void *buf, fuse_fill_dir_t filler) {

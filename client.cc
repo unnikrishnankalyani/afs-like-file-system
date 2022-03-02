@@ -109,6 +109,11 @@ static int client_open(const char *path, struct fuse_file_info *file_info)
     return options.afsclient->afs_OPEN(path, file_info, fs_path);
 }
 
+static int client_release(const char *path, struct fuse_file_info *fi)
+{
+    return options.afsclient->afs_RELEASE(path, fi);
+}
+
 struct client_fuse_operations:fuse_operations
 {
     client_fuse_operations ()
@@ -120,7 +125,7 @@ struct client_fuse_operations:fuse_operations
         open       = client_open;
         getattr    = client_getattr;
         //uncomment the below as and when the corresponding implementation is done.
-        // release    = client_release;
+        release    = client_release;
     }
 } client_oper;
 

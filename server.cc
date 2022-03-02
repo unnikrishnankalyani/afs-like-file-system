@@ -31,6 +31,8 @@ using afs::GetattrReq;
 using afs::GetattrRes;
 using afs::FetchRequest;
 using afs::FetchReply;
+using afs::StoreReq;
+using afs::StoreRes;
 
 char root_path[MAX_PATH_LENGTH];
 
@@ -51,6 +53,35 @@ class AfsServiceImplementation final : public AFS:: Service{
             reply->set_ack(1);
             close(fd);
         }
+        return Status::OK;
+    }
+
+      Status afs_STORE(ServerContext* context, const StoreReq* request,
+               StoreRes* reply) override {
+
+        int fd;
+
+        char path[PATH_MAX];
+        path[0] = '\0';
+
+        getServerPath(request->path().c_str(), root_path, path);
+
+        printf("AFS PATH: %s\n", path);
+
+        fd = open(path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU);
+
+        if(fd == -1) {
+            reply->set_error(-1);
+            return Status::OK;
+        }
+
+
+        printf("Received String: %s\n", (request->buf()).c_str());
+        printf("Size: %d\n", request->size());
+        write(fd, (request->buf()).data(), request->size());
+        close(fd);
+
+        reply->set_error(0);
         return Status::OK;
     }
 
