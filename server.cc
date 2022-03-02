@@ -84,6 +84,43 @@ class AfsServiceImplementation final : public AFS:: Service{
 	
 	}
 
+    Status afs_FETCH(ServerContext* context, const FetchRequest* request,
+               FetchReply* reply) override {
+
+        int fd;
+
+        char path[PATH_MAX];
+        path[0] = '\0';
+        struct stat info;
+
+        getServerPath(request->path().c_str(), root_path, path);
+
+        printf("AFS server PATH: %s\n", path);
+
+        fd = open(path, O_RDONLY);
+
+        if(fd == -1) {
+            reply->set_error(-1);
+            return Status::OK;
+        }
+
+        fstat(fd, &info);
+
+        char *buf = (char *)malloc(info.st_size);
+
+        lseek(fd, 0, SEEK_SET);
+        read(fd, buf, info.st_size);
+        close(fd);
+
+        printf("Read string: %s\n", buf);
+
+        reply->set_error(0);
+        reply->set_buf(std::string(buf,info.st_size));
+        reply->set_size(info.st_size);
+        return Status::OK;
+    
+    }
+
     Status afs_LS(ServerContext* context,
                  const LsReq *request,
                  ServerWriter<LsRes>* writer) override {
