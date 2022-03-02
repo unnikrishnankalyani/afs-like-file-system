@@ -87,11 +87,6 @@ class AfsClient {
         return hash;
     }
 
-    int afs_RELEASE(const char *path, struct fuse_file_info *fi)
-    {
-        
-    }
-
     int afs_OPEN(const char *path, struct fuse_file_info *file_info, char fs_path[])
     {
             char *buf;
