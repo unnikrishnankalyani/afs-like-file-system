@@ -119,7 +119,7 @@ struct client_fuse_operations:fuse_operations
 {
     client_fuse_operations ()
     {
-        create     = client_create;
+        creat     = client_create;
         write      = client_write;
         read       = client_read;
         readdir    = client_readdir;
