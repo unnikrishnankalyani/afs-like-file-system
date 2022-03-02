@@ -60,9 +60,9 @@ class AfsClient {
         FetchReply reply;
 
         ClientContext context;
-
+        printf("before fetch\n");
         Status status = stub_->afs_FETCH(&context, request, &reply);
-
+        printf("after fetch\n");
         if (status.ok()) {
                     std::cout << reply.buf() <<std::endl;
             *buf = (char *)(reply.buf()).data();
