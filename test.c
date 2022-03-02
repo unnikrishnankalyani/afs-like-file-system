@@ -11,7 +11,12 @@ int main(int argc, char* argv[]) {
     int fd, fd1, fd2;
 
     struct stat info;
-    getServerPath("/first_file",argv[1],path);
+    getServerPath("/testfile",argv[1],path);
+    fd = open(path, O_RDWR | O_APPEND);
+
+    if(fd<0) {
+        printf("Error\n");
+    }
     printf("filepath : %s\n", path);
     lstat(path, &info);
 
