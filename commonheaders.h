@@ -1,5 +1,5 @@
 #define MAX_PATH_LENGTH 1000
-#include <string>
+#include <string.h>
 #include <unistd.h>
 #include <sys/syscall.h>
 
