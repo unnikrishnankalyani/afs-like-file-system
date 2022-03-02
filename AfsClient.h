@@ -74,7 +74,18 @@ class AfsClient {
         }
     }
 
-    int afs_OPEN(const char *path, struct fuse_file_info *file_info)
+    unsigned long hash(unsigned char *str)
+    {   
+        unsigned long hash = 5381;
+        int c;
+        
+        while (c = *str++)
+            hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+        
+        return hash;
+    }
+
+    int afs_OPEN(const char *path, struct fuse_file_info *file_info, char fs_path[])
     {
             char *buf;
             int size;
@@ -147,7 +158,7 @@ class AfsClient {
 
             printf("File Contents: %s\n", buf);
         //        fi->fh_old = 0;
-            fi->fh = fd; 
+            file_info->fh = fd; 
 
         return 0;
     }

@@ -106,7 +106,7 @@ static int client_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
 static int client_open(const char *path, struct fuse_file_info *file_info)
 {
-    return options.afsclient->afs_OPEN(path, file_info);
+    return options.afsclient->afs_OPEN(path, file_info, fs_path);
 }
 
 struct client_fuse_operations:fuse_operations
