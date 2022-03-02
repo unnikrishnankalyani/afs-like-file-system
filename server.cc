@@ -63,9 +63,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         int fd;
 
-        char path[PATH_MAX];
-        path[0] = '\0';
-
+        char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
 
         printf("AFS PATH: %s\n", path);
@@ -123,11 +121,9 @@ class AfsServiceImplementation final : public AFS:: Service{
                FetchReply* reply) override {
 
         int fd;
-
-        char path[PATH_MAX];
-        path[0] = '\0';
         struct stat info;
 
+        char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
 
         printf("AFS server PATH: %s\n", path);
