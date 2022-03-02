@@ -76,17 +76,17 @@ class AfsClient {
         }
         memset(stats, 0, sizeof(struct stat));
 
-        stats->st_ino = result.ino();
-        stats->st_mode = result.mode();
-        stats->st_nlink = result.nlink();
-        stats->st_uid = result.uid();
-        stats->st_gid = result.gid();
-        stats->st_size = result.size();
-        stats->st_blksize = result.blksize();
-        stats->st_blocks = result.blocks();
-        stats->st_atime = result.atime();
-        stats->st_mtime = result.mtime();
-        stats->st_ctime = result.ctime();
+        stats->st_ino = reply.ino();
+        stats->st_mode = reply.mode();
+        stats->st_nlink = reply.nlink();
+        stats->st_uid = reply.uid();
+        stats->st_gid = reply.gid();
+        stats->st_size = reply.size();
+        stats->st_blksize = reply.blksize();
+        stats->st_blocks = reply.blocks();
+        stats->st_atime = reply.atime();
+        stats->st_mtime = reply.mtime();
+        stats->st_ctime = reply.ctime();
         return 0;
     }
 
