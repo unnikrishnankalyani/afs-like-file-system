@@ -120,6 +120,7 @@ class AfsClient {
                 isFetched = 1;
 
                 fd = creat(local_path, S_IRWXU);
+                printf("new fd: %d\n", fd);
                 if(fd==-1) {
                     printf("Create Error\n");
                     return -errno;
