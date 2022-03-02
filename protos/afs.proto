@@ -13,7 +13,7 @@ service AFS {
   rpc afs_REMOVE (RemoveReq) returns (RemoveRes) {}
   rpc afs_LOOKUP(LookupReq) returns (LookupRes) {}
   rpc afs_SETATTR(SetattrReq) returns (SetattrRes) {}
-  rpc afs_GETATTR(CreateReq) returns (GetattrRes) {}
+  rpc afs_GETATTR(GetattrReq) returns (GetattrRes) {}
   rpc afs_COMMIT(CommitReq) returns (CommitRes) {}
   rpc afs_LS(LsReq) returns (stream LsRes){}
 

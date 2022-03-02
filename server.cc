@@ -52,7 +52,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         return Status::OK;
     }
 
-    Status afs_GETATTR(ServerContext* context, const CreateReq* request, 
+    Status afs_GETATTR(ServerContext* context, const GetattrReq* request, 
 					 GetattrRes* reply) override {
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
