@@ -37,6 +37,10 @@ static int client_create(const char* path, mode_t mode, struct fuse_file_info *f
 {
     return options.afsclient->afs_CREATE(path);
 }
+static int client_getattr(const char* path)
+{
+    return options.afsclient->afs_GETATTR(path);
+}
 
 static int client_write(const char *path, const char *buffer, size_t size, off_t offset,
                       struct fuse_file_info *file_info)

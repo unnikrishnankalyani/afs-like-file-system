@@ -62,6 +62,20 @@ class AfsClient {
 	    return ret_code;
     }
 
+    int afs_GETATTR(const char *path, struct GetattrRes* result){
+        ClientContext context;
+        GetattrReq clientpath;
+        clientpath.set_fh(path);
+
+        Status status = stub_->afs_GETATTR(&context, clientpath, &result);
+        if(result.err() != 0){
+            std::cout << " getattr errno: " << result.err() << std::endl;
+            return -1;
+        }
+        
+        return 0;
+    }
+
     int afs_LS(const std::string& path, void *buf, fuse_fill_dir_t filler) {
         LsReq request;
         request.set_path(path);
