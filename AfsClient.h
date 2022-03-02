@@ -62,8 +62,9 @@ class AfsClient {
 	    return ret_code;
     }
 
-    int afs_GETATTR(const char *path, struct GetattrRes* result){
+    int afs_GETATTR(const char *path){
         ClientContext context;
+        GetattrRes result
         GetattrReq request;
 
         request.set_path(path);
