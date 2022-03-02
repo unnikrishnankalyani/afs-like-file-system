@@ -12,9 +12,10 @@ int main(int argc, char* argv[]) {
 
     struct stat info;
     getServerPath("first_file",argv[1],path);
+    print("filepath : %s", path);
     lstat(path, &info);
 
-    printf("Last Mod: %d\n", info.st_mtime);
+    printf("Last Mod: %ld\n", info.st_mtime);
 
     fd = open(path, O_RDWR | O_APPEND);
 
