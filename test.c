@@ -6,7 +6,7 @@
 #include "commonheaders.h"
 
 int main(int argc, char* argv[]) {
-    char* path;
+    char path[MAX_PATH_LENGTH];
     
     int fd, fd1, fd2;
 
