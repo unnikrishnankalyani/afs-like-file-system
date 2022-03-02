@@ -250,7 +250,7 @@ class AfsClient {
             buf = (char *)malloc(info.st_size);
             lseek(fi->fh, 0, SEEK_SET);
             read(fi->fh, buf, info.st_size);
-            printf("To be sent: %s\n", buf, info.st_size);
+            printf("To be sent: %s\n", buf);
             afs_STORE(path, buf, info.st_size);
             free(buf);
         }
