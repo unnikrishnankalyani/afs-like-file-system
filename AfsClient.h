@@ -62,7 +62,7 @@ class AfsClient {
 	    return ret_code;
     }
 
-    int afs_GETATTR(const char *path){
+    int afs_GETATTR(const char *path, struct stat *stats){
         ClientContext context;
         GetattrRes reply;
         GetattrReq request;
@@ -74,7 +74,19 @@ class AfsClient {
             std::cout << " getattr errno: " << reply.err() << std::endl;
             return -1;
         }
-        
+        memset(stats, 0, sizeof(struct stat));
+
+        stats->st_ino = result.ino();
+        stats->st_mode = result.mode();
+        stats->st_nlink = result.nlink();
+        stats->st_uid = result.uid();
+        stats->st_gid = result.gid();
+        stats->st_size = result.size();
+        stats->st_blksize = result.blksize();
+        stats->st_blocks = result.blocks();
+        stats->st_atime = result.atime();
+        stats->st_mtime = result.mtime();
+        stats->st_ctime = result.ctime();
         return 0;
     }
 
