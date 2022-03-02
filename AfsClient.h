@@ -57,11 +57,11 @@ class AfsClient {
         request.set_path(path);
 
 
-        FetchReply reply;
+        FetchReply *reply = new FetchReply();
 
         ClientContext context;
 
-        Status status = stub_->afs_FETCH(&context, request, &reply);
+        Status status = stub_->afs_FETCH(&context, request, reply);
 
         if (status.ok()) {
                     std::cout << reply->buf() <<std::endl;

@@ -24,7 +24,7 @@ message OpenReq{
 }
 
 message OpenRes{
-  
+
 }
 
 message FetchRequest {
