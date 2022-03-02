@@ -27,6 +27,8 @@ using afs::CreateReq;
 using afs::CreateRes;
 using afs::LsReq;
 using afs::LsRes;
+using afs::GetattrReq;
+using afs::GetattrRes;
 
 char root_path[MAX_PATH_LENGTH];
 
@@ -50,40 +52,37 @@ class AfsServiceImplementation final : public AFS:: Service{
         return Status::OK;
     }
 
-    // Status afs_GETATTR(ServerContext* context, const GetattrReq* request, 
-	// 				 GetattrRes* reply) override {
-	// 	//cout<<"[DEBUG] : lstat: "<<s->str().c_str()<<endl;
-    //     char path[MAX_PATH_LENGTH];
-    //     getServerPath(request->path().c_str(), root_path, path);
+    Status afs_GETATTR(ServerContext* context, const GetattrReq* request, 
+					 GetattrRes* reply) override {
+        char path[MAX_PATH_LENGTH];
+        getServerPath(request->path().c_str(), root_path, path);
+        struct stat stats;
+		int res = lstat(path, &stats);
 
+        if(res == -1){
+		    perror(strerror(errno));
+		    reply->set_err(errno);
+		}
+		else{
+            reply->set_ino(stats.st_ino);
+            reply->set_mode(stats.st_mode);
+            reply->set_nlink(stats.st_nlink);
+            reply->set_uid(stats.st_uid);
+            reply->set_gid(stats.st_gid);
 
-	// 	int res = lstat(path, &st);
-
-    //     if(res == -1){
-	// 	    perror(strerror(errno));
-    //         //cout<<"errno: "<<errno<<endl;
-	// 	    reply->set_err(errno);
-	// 	}
-	// 	else{
-    //         reply->set_ino(st.st_ino);
-    //         reply->set_mode(st.st_mode);
-    //         reply->set_nlink(st.st_nlink);
-    //         reply->set_uid(st.st_uid);
-    //         reply->set_gid(st.st_gid);
-
-    //         reply->set_size(st.st_size);
-    //         reply->set_blksize(st.st_blksize);
-    //         reply->set_blocks(st.st_blocks);
-    //         reply->set_atime(st.st_atime);
-    //         reply->set_mtime(st.st_mtime);
-    //         reply->set_ctime(st.st_ctime);
+            reply->set_size(stats.st_size);
+            reply->set_blksize(stats.st_blksize);
+            reply->set_blocks(stats.st_blocks);
+            reply->set_atime(stats.st_atime);
+            reply->set_mtime(stats.st_mtime);
+            reply->set_ctime(stats.st_ctime);
 			
-	// 	    reply->set_err(0);
-	// 	}
+		    reply->set_err(0);
+		}
 		
-    //     return Status::OK;
+        return Status::OK;
 	
-	// }
+	}
 
     Status afs_LS(ServerContext* context,
                  const LsReq *request,

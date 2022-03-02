@@ -24,6 +24,8 @@ using afs::LsReq;
 using afs::LsRes;
 using afs::FetchRequest;
 using afs::FetchReply;
+using afs::GetattrReq;
+using afs::GetattrRes;
 
 class AfsClient {
     public:
@@ -161,6 +163,34 @@ class AfsClient {
         }
 
 	    return ret_code;
+    }
+
+    int afs_GETATTR(const char *path, struct stat *stats){
+        ClientContext context;
+        GetattrRes reply;
+        GetattrReq request;
+
+        request.set_path(path);
+
+        Status status = stub_->afs_GETATTR(&context, request, &reply);
+        if(reply.err() != 0){
+            std::cout << " getattr errno: " << reply.err() << std::endl;
+            return -1;
+        }
+        memset(stats, 0, sizeof(struct stat));
+
+        stats->st_ino = reply.ino();
+        stats->st_mode = reply.mode();
+        stats->st_nlink = reply.nlink();
+        stats->st_uid = reply.uid();
+        stats->st_gid = reply.gid();
+        stats->st_size = reply.size();
+        stats->st_blksize = reply.blksize();
+        stats->st_blocks = reply.blocks();
+        stats->st_atime = reply.atime();
+        stats->st_mtime = reply.mtime();
+        stats->st_ctime = reply.ctime();
+        return 0;
     }
 
     int afs_LS(const std::string& path, void *buf, fuse_fill_dir_t filler) {
