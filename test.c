@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
     printf("Closing in parent\n");
     close(fd2);
 */
-    }
+    // }
 
     return 0;
 }
