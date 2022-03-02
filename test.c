@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 
     printf("Last Mod: %ld\n", info.st_mtime);
 
-    fd = create(path, O_RDWR | O_APPEND |O_CREAT);
+    fd = creat(path, O_RDWR | O_APPEND |O_CREAT);
 
     if(fd<0) {
         printf("Error\n");
