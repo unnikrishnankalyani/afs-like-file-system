@@ -33,7 +33,7 @@ static const struct fuse_opt option_spec[] = {
 	FUSE_OPT_END
 };
 
-static int client_create(const char* path, mode_t mode, struct fuse_file_info *fi)
+static int client_create(const char* path, mode_t mode)
 {   
     std::cout <<"calling client create" <<std::endl;
     return options.afsclient->afs_CREATE(path);
