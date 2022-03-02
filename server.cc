@@ -29,6 +29,8 @@ using afs::LsReq;
 using afs::LsRes;
 using afs::GetattrReq;
 using afs::GetattrRes;
+using afs::FetchRequest;
+using afs::FetchReply;
 
 char root_path[MAX_PATH_LENGTH];
 
