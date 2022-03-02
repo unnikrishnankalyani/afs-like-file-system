@@ -11,8 +11,8 @@ int main(int argc, char* argv[]) {
     int fd, fd1, fd2;
 
     struct stat info;
-    getServerPath("first_file",argv[1],path);
-    printf("filepath : %s", path);
+    getServerPath("/first_file",argv[1],path);
+    printf("filepath : %s\n", path);
     lstat(path, &info);
 
     printf("Last Mod: %ld\n", info.st_mtime);
