@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 
     struct stat info;
     getServerPath("first_file",argv[1],path);
-    print("filepath : %s", path);
+    printf("filepath : %s", path);
     lstat(path, &info);
 
     printf("Last Mod: %ld\n", info.st_mtime);
