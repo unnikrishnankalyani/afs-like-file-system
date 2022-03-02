@@ -22,6 +22,8 @@ using afs::CreateReq;
 using afs::CreateRes;
 using afs::LsReq;
 using afs::LsRes;
+using afs::GetattrReq;
+using afs::GetattrRes;
 
 class AfsClient {
     public:
