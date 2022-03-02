@@ -3,17 +3,20 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include "commonheaders.h"
 
-int main(void) {
+int main(int argc, char* argv[]) {
+    char* path;
+    
     int fd, fd1, fd2;
 
     struct stat info;
-
-    lstat("/tmp/fuse/first_file", &info);
+    getServerPath("first_file",argv[1],path);
+    lstat(path, &info);
 
     printf("Last Mod: %d\n", info.st_mtime);
 
-    fd = open("/tmp/fuse/first_file", O_RDWR | O_APPEND);
+    fd = open(path, O_RDWR | O_APPEND);
 
     if(fd<0) {
         printf("Error\n");
@@ -29,27 +32,27 @@ int main(void) {
     printf("%s", buf);
 
 
-    fd1 = open("/tmp/fuse/19_file", O_RDWR | O_APPEND | O_CREAT, S_IRWXU);
+//     fd1 = open("/tmp/fuse/19_file", O_RDWR | O_APPEND | O_CREAT, S_IRWXU);
 
-    printf("New File: %d\n", fd);
-    write(fd, "New 19 file", strlen("New 19 file"));
+//     printf("New File: %d\n", fd);
+//     write(fd, "New 19 file", strlen("New 19 file"));
 
-    fd2 = open("/tmp/fuse/19_file", O_RDWR | O_APPEND | O_CREAT, S_IRWXU);
-    close(fd1);
-    printf("Open File: %d\n", fd2);
+//     fd2 = open("/tmp/fuse/19_file", O_RDWR | O_APPEND | O_CREAT, S_IRWXU);
+//     close(fd1);
+//     printf("Open File: %d\n", fd2);
 
-    int pid = fork();
-dup2(fd2,0);
-    //    close(fd2);   
-    if(pid==0) {
-        int rc;
-        printf("Closing now %d\n", fd2);
-            rc = write(0, "new", strlen("new"));
-    if(rc<0)
-        printf("Write Error\n");
-    } else {
+//     int pid = fork();
+// dup2(fd2,0);
+//     //    close(fd2);   
+//     if(pid==0) {
+//         int rc;
+//         printf("Closing now %d\n", fd2);
+//             rc = write(0, "new", strlen("new"));
+//     if(rc<0)
+//         printf("Write Error\n");
+//     } else {
 
-        wait(NULL);
+//         wait(NULL);
     
 /*
     int rc;
