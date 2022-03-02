@@ -80,7 +80,7 @@ message WriteRes {
 }
 
 message GetattrReq {
-  string fh = 1;
+  string path = 1;
 }
 
 message GetattrRes {
