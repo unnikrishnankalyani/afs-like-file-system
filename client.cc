@@ -45,12 +45,9 @@ static int client_write(const char *path, const char *buffer, size_t size, off_t
     int ret_code = 0;
         struct stat info;
 
-        // printf("File closed: %d\n", fcntl(fi->fh, F_GETFD));
-        // printf("File closed err: %d\n", errno);
-        // printf("Write File descriptor: %d\n", fi->fh);
         ret_code = write(file_info->fh, buffer, size);
         fstat(file_info->fh, &info);
-        // printf("Write return: %d\n", info.st_mtime);
+
         if(ret_code < 0) {
             printf("Error while writing into file: %d\n", errno);
             int fd;
@@ -58,7 +55,6 @@ static int client_write(const char *path, const char *buffer, size_t size, off_t
             char local_path[PATH_MAX];
             local_path[0] = '\0';
 
-            // snprintf(cached_file, 80, "%lu", hash((unsigned char *)path));
             strncat(local_path, fs_path, PATH_MAX);
             strncat(local_path, cached_file, PATH_MAX);
 
@@ -103,6 +99,11 @@ static int client_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 }
 
 
+static int client_open(const char *path, struct fuse_file_info *file_info)
+{
+    return options.afsclient->afs_OPEN(path, file_info);
+}
+
 struct client_fuse_operations:fuse_operations
 {
     client_fuse_operations ()
@@ -111,13 +112,11 @@ struct client_fuse_operations:fuse_operations
         write      = client_write;
         read       = client_read;
         readdir    = client_readdir;
+        open       = client_open;
 
         //uncomment the below as and when the corresponding implementation is done.
         
         // getattr    = client_getattr;
-        // readdir    = client_readdir;
-        // open       = client_open;
-        
         // release    = client_release;
     }
 } client_oper;

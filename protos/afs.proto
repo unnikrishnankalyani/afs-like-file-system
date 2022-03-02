@@ -16,7 +16,26 @@ service AFS {
   rpc afs_GETATTR(GetattrReq) returns (GetattrRes) {}
   rpc afs_COMMIT(CommitReq) returns (CommitRes) {}
   rpc afs_LS(LsReq) returns (stream LsRes){}
+  rpc afs_FETCH(FetchRequest) returns (FetchReply){}
+  rpc afs_OPEN(OpenReq) returns (OpenRes){}
+}
+message OpenReq{
 
+}
+
+message OpenRes{
+  
+}
+
+message FetchRequest {
+  string path = 1;
+}
+
+message FetchReply {
+  int32 error = 1;
+  string reason = 2;
+  int32 size = 3;
+  bytes buf = 4;
 }
 
 message LsReq {

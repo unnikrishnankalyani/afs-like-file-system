@@ -22,6 +22,8 @@ using afs::CreateReq;
 using afs::CreateRes;
 using afs::LsReq;
 using afs::LsRes;
+using afs::FetchRequest;
+using afs::FetchReply;
 
 class AfsClient {
     public:
@@ -45,6 +47,107 @@ class AfsClient {
             std::cout << status.error_code() << ": " << status.error_message() << std::endl;
             return -1;
         }
+    }
+
+    int afs_FETCH(const std::string& path, char **buf, int *size)
+    {
+        FetchRequest request;
+        request.set_path(path);
+
+
+        FetchReply *reply = new FetchReply();
+
+        ClientContext context;
+
+        Status status = stub_->afs_FETCH(&context, request, reply);
+
+        if (status.ok()) {
+                    std::cout << reply->buf() <<std::endl;
+            *buf = (char *)(reply->buf()).data();
+                    printf("%s\n", *buf);
+            *size = reply->size();
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+
+    int afs_OPEN(const char *path, struct fuse_file_info *file_info)
+    {
+            char *buf;
+            int size;
+            int rc;
+            int fd;
+            int isStale = 0;
+            int isFetched = 0;
+            char cacheFileName[80];
+            struct stat cacheFileInfo;
+            struct stat remoteFileInfo;
+            char local_path[PATH_MAX];
+            local_path[0] = '\0';
+            char cbuf[] = "Check String";
+            char nbuf[1000];
+
+            snprintf(cacheFileName, 80, "%lu", hash((unsigned char *)path));
+
+            strncat(local_path, fs_path, PATH_MAX);
+            strncat(local_path, cacheFileName, PATH_MAX);
+            printf("path: %s\n", local_path);
+
+            fd = open(local_path,   O_APPEND | O_RDWR);
+
+            if(fd == -1) {
+                printf("Open Return: %d\n", fd);
+
+                rc = afs_FETCH(path, &buf, &size);
+                if (rc<0) {
+                    return -ENOENT;
+                }
+
+                isFetched = 1;
+
+                fd = creat(local_path, S_IRWXU);
+                if(fd==-1) {
+                    printf("Create Error\n");
+                    return -errno;
+                }
+                fd = open(local_path,  O_APPEND | O_RDWR);
+                if(fd==-1) printf("Reopen Error\n"); 
+            } else {
+
+                lstat(local_path, &cacheFileInfo);
+                afs_GETATTR(path, &remoteFileInfo); 
+
+                if(remoteFileInfo.st_mtime > cacheFileInfo.st_mtime) {
+                    isStale = 1;
+                }
+
+                if(isStale) {
+                    rc = ftruncate(fd, 0);
+                    if(rc<0) {
+                        return -errno;
+                    }
+                    rc = afs_FETCH(path, &buf, &size);
+                    if (rc<0) {
+                        return -ENOENT;
+                    }
+                    isFetched = 1;
+                }
+            }
+
+            printf("File descr: %d Size:%d\n", fd, size);
+
+
+            if(isFetched) {
+                write(fd, buf, size);
+                fsync(fd);
+            }
+
+            printf("File Contents: %s\n", buf);
+        //        fi->fh_old = 0;
+            fi->fh = fd; 
+
+        return 0;
     }
 
     int afs_READ(const char *path, char *buffer, size_t size, off_t offset,
