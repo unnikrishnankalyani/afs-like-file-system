@@ -64,14 +64,14 @@ class AfsClient {
 
     int afs_GETATTR(const char *path){
         ClientContext context;
-        GetattrRes result
+        GetattrRes reply;
         GetattrReq request;
 
         request.set_path(path);
 
-        Status status = stub_->afs_GETATTR(&context, request, &result);
-        if(result.err() != 0){
-            std::cout << " getattr errno: " << result.err() << std::endl;
+        Status status = stub_->afs_GETATTR(&context, request, &reply);
+        if(reply.err() != 0){
+            std::cout << " getattr errno: " << reply.err() << std::endl;
             return -1;
         }
         
