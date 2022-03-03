@@ -164,7 +164,7 @@ class AfsClient {
     }
 
     int afs_READ(const char *path, char *buffer, size_t size, off_t offset,
-		      struct fuse_file_info *file_info){
+		      struct fuse_file_info *file_info, char cache_path[]){
         
         int ret_code = 0;
         char client_path[MAX_PATH_LENGTH];
