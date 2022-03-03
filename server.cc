@@ -132,7 +132,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         getServerPath(request->path().c_str(), root_path, path);
         printf("AFS server PATH, unlink: %s\n", path);
 
-        int res = unlink(client_path);
+        int res = unlink(path);
         if(res == -1)
         { 
             perror(strerror(errno));
@@ -148,7 +148,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         getServerPath(request->path().c_str(), root_path, path);
         printf("AFS server PATH, Chmod: %s\n", path);
 
-        int res = chmod(client_path);
+        int res = chmod(path);
         if(res == -1)
         { 
             perror(strerror(errno));
