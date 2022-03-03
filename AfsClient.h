@@ -43,7 +43,7 @@ class AfsClient {
         printf("Creating file in local cache\n");
         if (fd == -1) {
                 printf("Create Error in local cache.. \n");
-                return -1;
+                return -errno;
         }
 
         Status status = stub_->afs_CREATE(&context, request, &reply);
@@ -53,7 +53,7 @@ class AfsClient {
             return reply.ack();
         } else {
             std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            return -1;
+            return -errno;
         }
   
         return 0;
@@ -78,7 +78,7 @@ class AfsClient {
             *size = reply->size();
             return 0;
         } else {
-            return -1;
+            return -errno;
         }
     }
 
@@ -213,7 +213,7 @@ class AfsClient {
         if (status.ok()) {
             return reply.error();
         } else {
-            return -1;
+            return -reply.error();
         }
     }
     
@@ -280,7 +280,7 @@ class AfsClient {
         if (status.ok()) {
             return 0;
         } else {
-            return -1;
+            return -errno;
         }
 }
 
