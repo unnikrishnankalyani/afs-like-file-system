@@ -215,6 +215,7 @@ class AfsClient {
 
     int afs_UNLINK(const char *path)
     {
+        printf("unlinking: %s\n", path);
         int res = unlink(path);
         if(res == -1)
             return -errno;
