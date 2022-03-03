@@ -165,7 +165,7 @@ struct client_fuse_operations:fuse_operations
         utimens    = client_utimens;
         chmod      = client_chmod;
         fsync      = client_fsync;
-        getxattr   = client_getxattr;
+        // getxattr   = client_getxattr;
     }
 } client_oper;
 
