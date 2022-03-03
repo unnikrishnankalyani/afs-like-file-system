@@ -74,7 +74,7 @@ class AfsServiceImplementation final : public AFS:: Service{
             reply->set_error(-1);
             return Status::OK;
         }
-        
+
         printf("Received String: %s\n", (request->buf()).c_str());
         printf("Size: %d\n", request->size());
         write(fd, (request->buf()).data(), request->size());
@@ -157,7 +157,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 
       char path[MAX_PATH_LENGTH];
       getServerPath(request->path().c_str(), root_path, path);
-
+      printf("AFS server PATH, LS: %s\n", path);
       DIR *dp;
       struct dirent *de;
       LsRes reply;
