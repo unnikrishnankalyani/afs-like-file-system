@@ -148,7 +148,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         getServerPath(request->path().c_str(), root_path, path);
         printf("AFS server PATH, Chmod: %s\n", path);
 
-        int res = chmod(path);
+        int res = chmod(path, request->mode());
         if(res == -1)
         { 
             perror(strerror(errno));
