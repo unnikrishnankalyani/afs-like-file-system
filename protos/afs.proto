@@ -18,6 +18,7 @@ service AFS {
   rpc afs_LS(LsReq) returns (stream LsRes){}
   rpc afs_FETCH(FetchRequest) returns (FetchReply){}
   rpc afs_STORE(StoreReq) returns (StoreRes){}
+  rpc afs_UNLINK(UnlinkReq) returns (UnlinkRes){}
 
 }
 
@@ -42,6 +43,23 @@ message OpenRes{
 
 message FetchRequest {
   string path = 1;
+}
+
+message UnlinkReq {
+  string path = 1;
+}
+
+message UnlinkRes {
+  int32 error = 1;
+}
+
+message ChmodReq {
+  string path = 1;
+  uint32 mode = 2; 
+}
+
+message ChmodRes {
+  int32 error = 1;
 }
 
 message FetchReply {

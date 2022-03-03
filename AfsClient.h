@@ -18,6 +18,10 @@ using afs::GetattrReq;
 using afs::GetattrRes;
 using afs::StoreReq;
 using afs::StoreRes;
+using afs::UnlinkReq;
+using afs::UnlinkRes;
+using afs::ChmodReq;
+using afs::ChmodRes;
 
 class AfsClient {
     public:
@@ -234,9 +238,20 @@ class AfsClient {
         getLocalPath(path, cache_path, client_path);
         printf("unlinking: %s\n", client_path);
         int res = unlink(client_path);
-        if(res == -1)
-            return -errno;
-        return 0;
+        // if(res == -1)
+        //     return -errno;
+        // return 0;
+        ClientContext context;
+        UnlinkReq req;
+        req.set_path(path);
+        UnlinkRes reply;
+
+        Status status = stub_->afs_UNLINK(&context, req, &reply);
+        if (status.ok()) {
+            return 0;
+        } else {
+            return -reply.error();
+        }
     }
 
     int afs_UTIMENS(const char *path, const struct timespec ts[2], char cache_path[])
@@ -256,9 +271,21 @@ class AfsClient {
         getLocalPath(path, cache_path, client_path);
         printf("changing permissions of: %s\n", client_path);
         int res = chmod(client_path, mode);
-        if(res == -1)
-            return -errno;
-        return 0;
+        // if(res == -1)
+        //     return -errno;
+        // return 0;
+        ClientContext context;
+        ChmodReq req;
+        req.set_path(path);
+        req.set_mode(mode);
+        ChmodRes reply;
+
+        Status status = stub_->afs_CHMOD(&context, req, &reply);
+        if (status.ok()) {
+            return 0;
+        } else {
+            return -reply.error();
+        }
     }
 
     int afs_STORE(const std::string& path, char *buf, int size)

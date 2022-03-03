@@ -33,6 +33,10 @@ using afs::FetchRequest;
 using afs::FetchReply;
 using afs::StoreReq;
 using afs::StoreRes;
+using afs::UnlinkReq;
+using afs::UnlinkRes;
+using afs::ChmodReq;
+using afs::ChmodRes;
 
 char root_path[MAX_PATH_LENGTH];
 
@@ -86,6 +90,8 @@ class AfsServiceImplementation final : public AFS:: Service{
         return Status::OK;
     }
 
+
+
     Status afs_GETATTR(ServerContext* context, const GetattrReq* request, 
 					 GetattrRes* reply) override {
         char path[MAX_PATH_LENGTH];
@@ -116,6 +122,38 @@ class AfsServiceImplementation final : public AFS:: Service{
 		    reply->set_err(0);
 		}
 		
+        return Status::OK;
+	
+	}
+
+    Status afs_UNLINK(ServerContext* context, const UnlinkReq* request, 
+					 UnlinkRes* reply) override {
+        char path[MAX_PATH_LENGTH];
+        getServerPath(request->path().c_str(), root_path, path);
+        printf("AFS server PATH, unlink: %s\n", path);
+
+        int res = unlink(client_path);
+        if(res == -1)
+        { 
+            perror(strerror(errno));
+            reply->set_error(errno);
+        }
+        return Status::OK;
+	
+	}
+
+    Status afs_CHMOD(ServerContext* context, const ChmodReq* request, 
+					 ChmodRes* reply) override {
+        char path[MAX_PATH_LENGTH];
+        getServerPath(request->path().c_str(), root_path, path);
+        printf("AFS server PATH, Chmod: %s\n", path);
+
+        int res = chmod(client_path);
+        if(res == -1)
+        { 
+            perror(strerror(errno));
+            reply->set_error(errno);
+        }
         return Status::OK;
 	
 	}
