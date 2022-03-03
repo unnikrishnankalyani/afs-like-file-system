@@ -213,8 +213,10 @@ class AfsClient {
         return 0;
     }
 
-    int afs_UNLINK(const char *path)
+    int afs_UNLINK(const char *path, char cache_path[])
     {
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
         printf("unlinking: %s\n", path);
         int res = unlink(path);
         if(res == -1)

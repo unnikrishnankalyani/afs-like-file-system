@@ -140,7 +140,7 @@ static int client_fsync(const char *path, int isdatasync, struct fuse_file_info 
     return options.afsclient->afs_FSYNC(path, isdatasync, fi);
 }
 
-static int client_unlink(const char *path)
+static int client_unlink(const char *path, cache_path)
 {
     return options.afsclient->afs_UNLINK(path);
 }
