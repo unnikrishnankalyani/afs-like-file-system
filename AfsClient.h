@@ -76,16 +76,16 @@ class AfsClient {
         }
     }
 
-    unsigned long hash(unsigned char *str)
-    {   
-        unsigned long hash = 5381;
-        int c;
+    // unsigned long hash(unsigned char *str)
+    // {   
+    //     unsigned long hash = 5381;
+    //     int c;
         
-        while (c = *str++)
-            hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    //     while (c = *str++)
+    //         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
         
-        return hash;
-    }
+    //     return hash;
+    // }
 
     int afs_OPEN(const char *path, struct fuse_file_info *file_info, char fs_path[])
     {
@@ -314,7 +314,7 @@ class AfsClient {
             char local_path[PATH_MAX];
             local_path[0] = '\0';
 
-            // snprintf(cached_file, 80, "%lu", hash((unsigned char *)path));
+            snprintf(cached_file, 80, "%lu", hash((unsigned char *)path));
             strncat(local_path, fs_path, PATH_MAX);
             strncat(local_path, cached_file, PATH_MAX);
 
