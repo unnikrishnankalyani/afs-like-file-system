@@ -19,6 +19,7 @@ service AFS {
   rpc afs_FETCH(FetchRequest) returns (FetchReply){}
   rpc afs_STORE(StoreReq) returns (StoreRes){}
   rpc afs_UNLINK(UnlinkReq) returns (UnlinkRes){}
+  rpc afs_CHMOD(ChmodReq) returns (ChmodRes){}
 
 }
 
