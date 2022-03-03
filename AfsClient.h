@@ -1,6 +1,5 @@
 #include <grpc++/grpc++.h>
 #include "afs.grpc.pb.h"
-#include "commonheaders.h"
 
 using grpc::Channel;
 using grpc::Status;
@@ -23,7 +22,7 @@ class AfsClient {
     public:
         AfsClient(std::shared_ptr<Channel> channel) : stub_(AFS::NewStub(channel)) {}
 
-    int afs_CREATE(const char* path, char cache_path[]) {
+    int afs_CREATE(const char* path, char cache_path[],struct fuse_file_info *fi) {
         // CreateReq request;
 
         // request.set_path(path);
@@ -48,7 +47,7 @@ class AfsClient {
     
         printf("path: %s\n", client_path);
         fflush(stdout);
-        fd = open(client_path, O_CREAT | O_APPEND | O_RDWR, mode );
+        fd = open(client_path, O_CREAT | O_APPEND | O_RDWR );
         printf("Creating file in local cache\n");
         if (fd == -1) {
                 printf("Create Error in local cache.. \n");
@@ -57,7 +56,7 @@ class AfsClient {
 
         fi->fh = fd;
 
-        afs_Store(path, NULL, 0);
+        afs_STORE(path, NULL, 0);
 
         printf("Create file descr: %d\n", fi->fh);
         return 0;
@@ -317,7 +316,7 @@ class AfsClient {
             printf("Error while writing into file: %d\n", errno);
             int fd;
             char local_path[MAX_PATH_LENGTH];
-            getLocalPath(path, cache_path, client_path);
+            getLocalPath(path, cache_path, local_path);
 
             fd = open(local_path,  O_APPEND | O_RDWR);
 
