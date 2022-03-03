@@ -49,10 +49,11 @@ class AfsServiceImplementation final : public AFS:: Service{
         int fd = open(path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create
         
         if(fd == -1){
-            reply->set_ack(-1);
+            perror(strerror(errno));
+            reply->set_ack(errno);
         }
         else{
-            reply->set_ack(1);
+            reply->set_ack(0);
             close(fd);
         }
         return Status::OK;
@@ -71,7 +72,8 @@ class AfsServiceImplementation final : public AFS:: Service{
         fd = open(path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU);
 
         if(fd == -1) {
-            reply->set_error(-1);
+            perror(strerror(errno));
+		    reply->set_err(errno);
             return Status::OK;
         }
 
