@@ -199,7 +199,10 @@ class AfsClient {
 
     int afs_TRUNCATE(const char *path, off_t size)
     {
-        int res = truncate(path, size);
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
+        printf("truncating: %s\n", client_path);
+        int res = truncate(client_path, size);
         if(res == -1)
             return -errno;
         return 0;
@@ -207,7 +210,10 @@ class AfsClient {
 
     int afs_CHOWN(const char *path, uid_t uid, gid_t gid)
     {
-        int res = lchown(path, uid, gid);
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
+        printf("changing ownership of: %s\n", client_path);
+        int res = lchown(client_path, uid, gid);
         if(res == -1)
             return -errno;
         return 0;
@@ -217,7 +223,7 @@ class AfsClient {
     {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
-        printf("unlinking: %s\n", path);
+        printf("unlinking: %s\n", client_path);
         int res = unlink(client_path);
         if(res == -1)
             return -errno;
@@ -226,7 +232,10 @@ class AfsClient {
 
     int afs_UTIMENS(const char *path, const struct timespec ts[2])
     {
-        int res = utimensat(0, path, ts, AT_SYMLINK_NOFOLLOW);
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
+        printf("utimens: %s\n", client_path);
+        int res = utimensat(0, client_path, ts, AT_SYMLINK_NOFOLLOW);
         if(res == -1)
             return -errno;
         return 0;
@@ -234,7 +243,10 @@ class AfsClient {
 
     int afs_CHMOD(const char *path, mode_t mode)
     {
-        int res = chmod(path, mode);
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
+        printf("changing permissions of: %s\n", client_path);
+        int res = chmod(client_path, mode);
         if(res == -1)
             return -errno;
         return 0;
@@ -330,6 +342,9 @@ class AfsClient {
     int afs_FSYNC(const char *path, int isdatasync, struct fuse_file_info *fi)
     {
         int res;
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
+        printf("changing permissions of: %s\n", client_path);
         if (isdatasync)
             res = fdatasync(fi->fh);
         else
