@@ -105,7 +105,6 @@ class AfsClient {
             if(fd == -1) {
                 rc = afs_FETCH(path, &buf, &size);
                 if (rc<0) {
-                    
                     return -ENOENT;
                 }
 
@@ -113,12 +112,16 @@ class AfsClient {
 
                 fd = creat(client_path, S_IRWXU);
                 printf("New file: fd: %d\n", fd);
+
                 if(fd==-1) {
                     printf("Create Error\n");
                     return -errno;
                 }
+
                 fd = open(client_path,  O_APPEND | O_RDWR);
+
                 if(fd==-1) printf("Reopen Error\n"); 
+
             } else {
 
                 lstat(client_path, &cacheFileInfo);
@@ -142,7 +145,6 @@ class AfsClient {
             }
 
             printf("File descr: %d Size:%d\n", fd, size);
-
 
             if(isFetched) {
                 write(fd, buf, size);
@@ -290,12 +292,8 @@ class AfsClient {
         int ret_code = 0;
         struct stat info;
 
-        // printf("File closed: %d\n", fcntl(fi->fh, F_GETFD));
-        // printf("File closed err: %d\n", errno);
-        // printf("Write File descriptor: %d\n", fi->fh);
         ret_code = write(file_info->fh, buffer, size);
         fstat(file_info->fh, &info);
-        // printf("Write return: %d\n", info.st_mtime);
         if(ret_code < 0) {
             printf("Error while writing into file: %d\n", errno);
             int fd;
@@ -304,7 +302,6 @@ class AfsClient {
 
             fd = open(local_path,  O_APPEND | O_RDWR);
 
-            // printf("Newdile fd: %d\n", fd);
             lseek(fd,offset,SEEK_SET);
             for(int i=0; i<size; i++) {
                 printf("%c", buffer[i]);
