@@ -74,8 +74,7 @@ class AfsServiceImplementation final : public AFS:: Service{
             reply->set_error(-1);
             return Status::OK;
         }
-
-
+        
         printf("Received String: %s\n", (request->buf()).c_str());
         printf("Size: %d\n", request->size());
         write(fd, (request->buf()).data(), request->size());
