@@ -85,8 +85,13 @@ class AfsClient {
             return -1;
         }
     }
+<<<<<<< HEAD
     
     int afs_OPEN(const char *path, struct fuse_file_info *file_info, char fs_path[])
+=======
+
+    int afs_OPEN(const char *path, struct fuse_file_info *file_info, char cache_path[])
+>>>>>>> 93de2d8 (--debug)
     {
             char *buf;
             int size;
@@ -97,18 +102,15 @@ class AfsClient {
             char cacheFileName[80];
             struct stat cacheFileInfo;
             struct stat remoteFileInfo;
-            char local_path[PATH_MAX];
-            local_path[0] = '\0';
+
             char cbuf[] = "Check String";
             char nbuf[1000];
 
-            snprintf(cacheFileName, 80, "%lu", hash((unsigned char *)path));
+            char client_path[MAX_PATH_LENGTH];
+            getLocalPath(path, cache_path, client_path);
+            printf("path: %s\n", client_path);
 
-            strncat(local_path, fs_path, PATH_MAX);
-            strncat(local_path, cacheFileName, PATH_MAX);
-            printf("path: %s\n", local_path);
-
-            fd = open(local_path,   O_APPEND | O_RDWR);
+            fd = open(client_path,   O_APPEND | O_RDWR);
 
             if(fd == -1) {
                 printf("Open Return: %d\n", fd);
@@ -121,17 +123,17 @@ class AfsClient {
 
                 isFetched = 1;
 
-                fd = creat(local_path, S_IRWXU);
+                fd = creat(client_path, S_IRWXU);
                 printf("new fd: %d\n", fd);
                 if(fd==-1) {
                     printf("Create Error\n");
                     return -errno;
                 }
-                fd = open(local_path,  O_APPEND | O_RDWR);
+                fd = open(client_path,  O_APPEND | O_RDWR);
                 if(fd==-1) printf("Reopen Error\n"); 
             } else {
 
-                lstat(local_path, &cacheFileInfo);
+                lstat(client_path, &cacheFileInfo);
                 afs_GETATTR(path, &remoteFileInfo); 
 
                 if(remoteFileInfo.st_mtime > cacheFileInfo.st_mtime) {
@@ -261,7 +263,7 @@ class AfsClient {
         char cacheFileName[80]; 
             snprintf(cacheFileName, 80, "%lu", hash((unsigned char *)path));
 
-            strncat(local_path, fs_path, PATH_MAX);
+            strncat(local_path, cache_path, PATH_MAX);
             strncat(local_path, cacheFileName, PATH_MAX);
         lstat(local_path, &info);
         printf("After Close: %d\n", info.st_mtime); */
@@ -296,7 +298,7 @@ class AfsClient {
 
 
     int afs_WRITE(const char *path, const char *buffer, size_t size, off_t offset,
-                      struct fuse_file_info *file_info, char fs_path[]){
+                      struct fuse_file_info *file_info, char cache_path[]){
         int ret_code = 0;
         struct stat info;
 
@@ -313,8 +315,13 @@ class AfsClient {
             char local_path[PATH_MAX];
             local_path[0] = '\0';
 
+<<<<<<< HEAD
             snprintf(cached_file, 80, "%lu", hash((unsigned char *)path));
             strncat(local_path, fs_path, PATH_MAX);
+=======
+            // snprintf(cached_file, 80, "%lu", hash((unsigned char *)path));
+            strncat(local_path, cache_path, PATH_MAX);
+>>>>>>> 93de2d8 (--debug)
             strncat(local_path, cached_file, PATH_MAX);
 
             fd = open(local_path,  O_APPEND | O_RDWR);
