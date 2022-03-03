@@ -100,7 +100,7 @@ class AfsClient {
             getLocalPath(path, cache_path, client_path);
             printf("path: %s\n", client_path);
 
-            fd = open(client_path,   O_APPEND | O_RDWR);
+            fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR);
 
             if(fd == -1) {
                 rc = afs_FETCH(path, &buf, &size);
