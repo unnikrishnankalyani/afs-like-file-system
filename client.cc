@@ -60,8 +60,8 @@ static int client_write(const char *path, const char *buffer, size_t size, off_t
 
             strncat(local_path, cache_path, PATH_MAX);
             strncat(local_path, cached_file, PATH_MAX);
-
-            fd = open(local_path,  O_APPEND | O_RDWR); //changed last 3
+            printf("writing to path : %s\n", local_path);
+            fd = open(local_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
 
             // printf("Newdile fd: %d\n", fd);
             lseek(fd,offset,SEEK_SET);
