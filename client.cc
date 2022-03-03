@@ -1,22 +1,14 @@
-#include <string>
 #include <time.h>
-#include <sys/time.h>
 #include <sys/stat.h>
 
 #include <iostream>
 #define FUSE_USE_VERSION 31
 #include <fuse.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <limits.h>
+
 
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
 #include "AfsClient.h"
-#include "commonheaders.h"
 
 static struct options {	
 	AfsClient* afsclient;
