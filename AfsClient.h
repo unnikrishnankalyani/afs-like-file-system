@@ -197,6 +197,38 @@ class AfsClient {
         return 0;
     }
 
+    int afs_TRUNCATE(const char *path, off_t size)
+    {
+        int res = truncate(path, size);
+        if(res == -1)
+            return -errno;
+        return 0;
+    }
+
+    int afs_CHOWN(const char *path, uid_t uid, gid_t gid)
+    {
+        int res = lchown(path, uid, gid);
+        if(res == -1)
+            return -errno;
+        return 0;
+    }
+
+    int afs_UTIMENS(const char *path, const struct timespec ts[2])
+    {
+        int res = utimensat(0, path, ts, AT_SYMLINK_NOFOLLOW);
+        if(res == -1)
+            return -errno;
+        return 0;
+    }
+
+    int afs_CHMOD(const char *path, mode_t mode)
+    {
+        int res = chmod(path, mode);
+        if(res == -1)
+            return -errno;
+        return 0;
+    }
+
     int afs_STORE(const std::string& path, char *buf, int size)
     {
         StoreReq request;

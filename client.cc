@@ -115,6 +115,26 @@ static int client_release(const char *path, struct fuse_file_info *fi)
 //     return options.afsclient->afs_MKDIR(path, mode);
 // }
 
+static int client_truncate(const char *path, off_t size)
+{
+    return options.afsclient->afs_TRUNCATE(path, size);
+}
+
+static int client_chown(const char *path, uid_t uid, gid_t gid)
+{
+    return options.afsclient->afs_CHOWN(path, uid, gid);
+}
+
+static int client_utimens(const char *path, const struct timespec ts[2])
+{
+    return options.afsclient->afs_UTIMENS(path, ts);
+}
+
+static int client_chmod(const char *path, mode_t mode)
+{
+    return options.afsclient->afs_CHMOD(path, mode);
+}
+
 struct client_fuse_operations:fuse_operations
 {
     client_fuse_operations ()
@@ -129,6 +149,10 @@ struct client_fuse_operations:fuse_operations
         release    = client_release;
         // mkdir      = client_mkdir;
         mknod      = client_mknod;
+        truncate   = client_truncate;
+        chown      = client_chown;
+        utimens    = client_utimens;
+        chmod      = client_chmod;
     }
 } client_oper;
 
