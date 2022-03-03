@@ -109,7 +109,7 @@ class AfsClient {
 
                 isFetched = 1;
 
-                fd = creat(client_path, | S_IRWXU | S_IRWXG | S_IRWXO);
+                fd = creat(client_path, S_IRWXU | S_IRWXG | S_IRWXO);
                 printf("3 New file: fd: %d\n", fd);
 
                 if(fd==-1) {
