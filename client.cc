@@ -235,6 +235,7 @@ int main(int argc, char* argv[]){
 
     //cache path and actual path
     strncpy(cache_path, realpath(argv[argc-1], NULL), MAX_PATH_LENGTH);
+    printf("argv[argc-1] : %s\n", argv[argc-1]);
     // strncat(cache_path, "/", MAX_PATH_LENGTH);
     argv[argc-1] = NULL;
     argc--;
