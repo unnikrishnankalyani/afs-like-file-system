@@ -30,6 +30,11 @@ static int client_create(const char* path, mode_t mode, struct fuse_file_info *f
     std::cout <<"calling client create" <<std::endl;
     return options.afsclient->afs_CREATE(path, cache_path, fi);
 }
+static int client_mknod(const char* path, mode_t mode, dev_t dev)
+{   
+    std::cout <<"dummy mknod" <<std::endl;
+    return 0;
+}
 static int client_getattr(const char *path, struct stat *stats,
              struct fuse_file_info *fi)
 {
@@ -122,6 +127,7 @@ struct client_fuse_operations:fuse_operations
         //uncomment the below as and when the corresponding implementation is done.
         release    = client_release;
         // mkdir      = client_mkdir;
+        mknod      = client_mknod;
     }
 } client_oper;
 
