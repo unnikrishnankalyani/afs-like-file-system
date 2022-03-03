@@ -58,8 +58,6 @@ class AfsClient {
         fi->fh = fd;
 
         afs_STORE(path, NULL, 0);
-
-        printf("Create file descr: %ld\n", fi->fh);
         return 0;
     }
 
@@ -94,12 +92,9 @@ class AfsClient {
             int fd;
             int isStale = 0;
             int isFetched = 0;
-            char cacheFileName[80];
+
             struct stat cacheFileInfo;
             struct stat remoteFileInfo;
-
-            char cbuf[] = "Check String";
-            char nbuf[1000];
 
             char client_path[MAX_PATH_LENGTH];
             getLocalPath(path, cache_path, client_path);
