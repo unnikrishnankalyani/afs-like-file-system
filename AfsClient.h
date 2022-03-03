@@ -397,7 +397,7 @@ class AfsClient {
             char local_path[MAX_PATH_LENGTH];
             getLocalPath(path, cache_path, local_path);
 
-            fd = open(local_path,  O_APPEND | O_RDWR); //changed last 3
+            fd = open(local_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
 
             lseek(fd,offset,SEEK_SET);
             for(int i=0; i<size; i++) {
