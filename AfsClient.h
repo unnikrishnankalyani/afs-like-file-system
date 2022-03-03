@@ -213,6 +213,14 @@ class AfsClient {
         return 0;
     }
 
+    int afs_UNLINK(const char *path)
+    {
+        int res = unlink(path);
+        if(res == -1)
+            return -errno;
+        return 0;
+    }
+
     int afs_UTIMENS(const char *path, const struct timespec ts[2])
     {
         int res = utimensat(0, path, ts, AT_SYMLINK_NOFOLLOW);

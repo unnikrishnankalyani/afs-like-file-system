@@ -140,6 +140,11 @@ static int client_fsync(const char *path, int isdatasync, struct fuse_file_info 
     return options.afsclient->afs_FSYNC(path, isdatasync, fi);
 }
 
+static int client_unlink(const char *path)
+{
+    return options.afsclient->afs_FSYNC(path);
+}
+
 // static int client_getxattr(const char *path, const char *name, char *value,
 // 			size_t size)
 // {
@@ -166,6 +171,7 @@ struct client_fuse_operations:fuse_operations
         chmod      = client_chmod;
         fsync      = client_fsync;
         // getxattr   = client_getxattr;
+        unlink     = client_unlink;
     }
 } client_oper;
 
