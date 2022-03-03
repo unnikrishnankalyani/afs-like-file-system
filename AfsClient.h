@@ -99,9 +99,10 @@ class AfsClient {
             printf("path: %s\n", client_path);
 
             fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR); //changed last 3
-
+            printf("1 fd: %d\n", fd);
             if(fd == -1) {
                 rc = afs_FETCH(path, &buf, &size);
+                printf("2 rc: %d\n", fd);
                 if (rc<0) {
                     return -ENOENT;
                 }
@@ -109,7 +110,7 @@ class AfsClient {
                 isFetched = 1;
 
                 fd = creat(client_path, S_IRWXU);
-                printf("New file: fd: %d\n", fd);
+                printf("3 New file: fd: %d\n", fd);
 
                 if(fd==-1) {
                     printf("Create Error\n");
@@ -123,18 +124,21 @@ class AfsClient {
             } else {
 
                 lstat(client_path, &cacheFileInfo);
+                printf("4 lstat\n");
                 afs_GETATTR(path, &remoteFileInfo); 
-
+                printf("5 getattr\n");
                 if(remoteFileInfo.st_mtime > cacheFileInfo.st_mtime) {
                     isStale = 1;
                 }
-
+                printf("6 done\n");
                 if(isStale) {
                     rc = ftruncate(fd, 0);
+                    printf("7 ftruncate: rc: %d\n", rc);
                     if(rc<0) {
                         return -errno;
                     }
                     rc = afs_FETCH(path, &buf, &size);
+                    printf("8 fetch rc: %d\n", rc);
                     if (rc<0) {
                         return -ENOENT;
                     }
@@ -145,8 +149,11 @@ class AfsClient {
             printf("File descr: %d Size:%d\n", fd, size);
 
             if(isFetched) {
+                printf("9 before write\n");
                 write(fd, buf, size);
+                printf("10 after write\n");
                 fsync(fd);
+                printf("11 after fsync\n");
             }
 
             printf("File Contents: %s\n", buf);
@@ -160,7 +167,9 @@ class AfsClient {
 		      struct fuse_file_info *file_info){
         
         int ret_code = 0;
-
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
+        printf("reading from : %s\n", client_path);
         ret_code = pread(file_info->fh, buffer, size, offset);
         if(ret_code < 0) {
             return -errno;
@@ -339,21 +348,21 @@ class AfsClient {
         }
 }
 
-    int afs_FSYNC(const char *path, int isdatasync, struct fuse_file_info *fi)
-    {
-        int res;
-        // char client_path[MAX_PATH_LENGTH];
-        // getLocalPath(path, cache_path, client_path);
-        // printf("changing permissions of: %s\n", client_path);
-        if (isdatasync)
-            res = fdatasync(fi->fh);
-        else
-            res = fsync(fi->fh);
-        if (res == -1)
-            return -errno;
+    // int afs_FSYNC(const char *path, int isdatasync, struct fuse_file_info *fi)
+    // {
+    //     int res;
+    //     // char client_path[MAX_PATH_LENGTH];
+    //     // getLocalPath(path, cache_path, client_path);
+    //     // printf("changing permissions of: %s\n", client_path);
+    //     if (isdatasync)
+    //         res = fdatasync(fi->fh);
+    //     else
+    //         res = fsync(fi->fh);
+    //     if (res == -1)
+    //         return -errno;
 
-        return 0;
-    }
+    //     return 0;
+    // }
 
     // int afs_GETXATTR(const char *path, const char *name, char *value,
 	// 		size_t size)
