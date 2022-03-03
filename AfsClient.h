@@ -59,7 +59,7 @@ class AfsClient {
 
         afs_STORE(path, NULL, 0);
 
-        printf("Create file descr: %d\n", fi->fh);
+        printf("Create file descr: %ld\n", fi->fh);
         return 0;
     }
 
