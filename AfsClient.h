@@ -24,40 +24,38 @@ class AfsClient {
         AfsClient(std::shared_ptr<Channel> channel) : stub_(AFS::NewStub(channel)) {}
 
     int afs_CREATE(const char* path, char cache_path[],struct fuse_file_info *fi) {
-        // CreateReq request;
+        CreateReq request;
 
-        // request.set_path(path);
+        request.set_path(path);
 
-        // CreateRes reply;
+        CreateRes reply;
 
-        // ClientContext context;
+        ClientContext context;
 
-        // Status status = stub_->afs_CREATE(&context, request, &reply);
-        
-        // //add Retry
-        // if(status.ok()){
-        //     return reply.ack();
-        // } else {
-        //     std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-        //     return -1;
-        // }
         int fd;
 
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
     
         printf("path: %s\n", client_path);
-        fflush(stdout);
+
         fd = open(client_path, O_CREAT | O_APPEND | O_RDWR );
         printf("Creating file in local cache\n");
         if (fd == -1) {
                 printf("Create Error in local cache.. \n");
-                return -errno;
+                return -1;
         }
 
-        fi->fh = fd;
-
-        afs_STORE(path, NULL, 0);
+        Status status = stub_->afs_CREATE(&context, request, &reply);
+        
+        //add Retry
+        if(status.ok()){
+            return reply.ack();
+        } else {
+            std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+            return -1;
+        }
+  
         return 0;
     }
 
