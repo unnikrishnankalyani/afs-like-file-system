@@ -46,7 +46,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         std::cout << "server create" <<std::endl;
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
-        int fd = open(path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create
+        int fd = open(path, O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO); // fixing flags and modes for create. changed last 1
         
         if(fd == -1){
             perror(strerror(errno));

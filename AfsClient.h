@@ -39,7 +39,7 @@ class AfsClient {
     
         printf("path: %s\n", client_path);
 
-        fd = open(client_path, O_CREAT | O_APPEND | O_RDWR );
+        fd = open(client_path, O_CREAT | O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
         printf("Creating file in local cache\n");
         if (fd == -1) {
                 printf("Create Error in local cache.. \n");
@@ -98,7 +98,7 @@ class AfsClient {
             getLocalPath(path, cache_path, client_path);
             printf("path: %s\n", client_path);
 
-            fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR);
+            fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
 
             if(fd == -1) {
                 rc = afs_FETCH(path, &buf, &size);
@@ -116,7 +116,7 @@ class AfsClient {
                     return -errno;
                 }
 
-                fd = open(client_path,  O_APPEND | O_RDWR);
+                fd = open(client_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
 
                 if(fd==-1) printf("Reopen Error\n"); 
 
@@ -298,7 +298,7 @@ class AfsClient {
             char local_path[MAX_PATH_LENGTH];
             getLocalPath(path, cache_path, local_path);
 
-            fd = open(local_path,  O_APPEND | O_RDWR);
+            fd = open(local_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
 
             lseek(fd,offset,SEEK_SET);
             for(int i=0; i<size; i++) {
