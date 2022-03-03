@@ -103,8 +103,6 @@ class AfsClient {
             fd = open(client_path,   O_APPEND | O_RDWR);
 
             if(fd == -1) {
-                printf("Open Return: %d\n", fd);
-
                 rc = afs_FETCH(path, &buf, &size);
                 if (rc<0) {
                     
@@ -114,7 +112,7 @@ class AfsClient {
                 isFetched = 1;
 
                 fd = creat(client_path, S_IRWXU);
-                printf("new fd: %d\n", fd);
+                printf("New file: fd: %d\n", fd);
                 if(fd==-1) {
                     printf("Create Error\n");
                     return -errno;
