@@ -316,6 +316,28 @@ class AfsClient {
         }
 }
 
+    int afs_FSYNC(const char *path, int isdatasync, struct fuse_file_info *fi)
+    {
+        int res;
+        if (isdatasync)
+            res = fdatasync(fi->fh);
+        else
+            res = fsync(fi->fh);
+        if (res == -1)
+            return -errno;
+
+        return 0;
+    }
+
+    int afs_GETXATTR(const char *path, const char *name, char *value,
+			size_t size)
+    {
+        int res = lgetxattr(path, name, value, size);
+        if (res == -1)
+            return -errno;
+        return res;
+    }
+
 
     int afs_WRITE(const char *path, const char *buffer, size_t size, off_t offset,
                       struct fuse_file_info *file_info, char cache_path[]){
