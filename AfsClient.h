@@ -218,7 +218,7 @@ class AfsClient {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
         printf("unlinking: %s\n", path);
-        int res = unlink(path);
+        int res = unlink(client_path);
         if(res == -1)
             return -errno;
         return 0;
