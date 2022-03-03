@@ -181,7 +181,7 @@ class AfsClient {
         Status status = stub_->afs_GETATTR(&context, request, &reply);
         if(reply.err() != 0){
             std::cout << " getattr errno: " << reply.err() << std::endl;
-            return -1;
+            return reply.err();
         }
         memset(stats, 0, sizeof(struct stat));
 
