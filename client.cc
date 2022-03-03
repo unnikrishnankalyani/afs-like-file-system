@@ -140,11 +140,11 @@ static int client_fsync(const char *path, int isdatasync, struct fuse_file_info 
     return options.afsclient->afs_FSYNC(path, isdatasync, fi);
 }
 
-static int client_getxattr(const char *path, const char *name, char *value,
-			size_t size)
-{
-    return options.afsclient->afs_GETXATTR(path, name, value, size);
-}
+// static int client_getxattr(const char *path, const char *name, char *value,
+// 			size_t size)
+// {
+//     return options.afsclient->afs_GETXATTR(path, name, value, size);
+// }
 
 struct client_fuse_operations:fuse_operations
 {

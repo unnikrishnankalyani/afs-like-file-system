@@ -329,14 +329,14 @@ class AfsClient {
         return 0;
     }
 
-    int afs_GETXATTR(const char *path, const char *name, char *value,
-			size_t size)
-    {
-        int res = lgetxattr(path, name, value, size);
-        if (res == -1)
-            return -errno;
-        return res;
-    }
+    // int afs_GETXATTR(const char *path, const char *name, char *value,
+	// 		size_t size)
+    // {
+    //     int res = lgetxattr(path, name, value, size);
+    //     if (res == -1)
+    //         return -errno;
+    //     return res;
+    // }
 
 
     int afs_WRITE(const char *path, const char *buffer, size_t size, off_t offset,
