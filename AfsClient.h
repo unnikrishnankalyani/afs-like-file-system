@@ -322,6 +322,14 @@ class AfsClient {
         return rc;
     }
 
+    int afs_FLUSH(const char *path, struct fuse_file_info *fi)
+    {
+        int res = close(dup(fi->fh));
+         if(res == -1)
+            return -errno;
+        return 0;
+    }
+
     int afs_LS(const std::string& path, void *buf, fuse_fill_dir_t filler) {
         LsReq request;
         request.set_path(path);
@@ -347,6 +355,8 @@ class AfsClient {
             return -errno;
         }
 }
+
+
 
     // int afs_FSYNC(const char *path, int isdatasync, struct fuse_file_info *fi)
     // {
