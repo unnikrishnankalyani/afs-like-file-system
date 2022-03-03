@@ -112,10 +112,10 @@ static int client_release(const char *path, struct fuse_file_info *fi)
     return options.afsclient->afs_RELEASE(path, fi);
 }
 
-static int client_mkdir(const char* path, mode_t mode)
-{
-    return options.afsclient->afs_MKDIR(path, mode);
-}
+// static int client_mkdir(const char* path, mode_t mode)
+// {
+//     return options.afsclient->afs_MKDIR(path, mode);
+// }
 
 struct client_fuse_operations:fuse_operations
 {
@@ -129,7 +129,7 @@ struct client_fuse_operations:fuse_operations
         getattr    = client_getattr;
         //uncomment the below as and when the corresponding implementation is done.
         release    = client_release;
-        mkdir      = client_mkdir;
+        // mkdir      = client_mkdir;
     }
 } client_oper;
 

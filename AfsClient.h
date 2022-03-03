@@ -63,15 +63,15 @@ class AfsClient {
         return 0;
     }
 
-    int afs_MKDIR(const char *path, mode_t mode)
-    {
-        int res = mkdir(path, mode);
+    // int afs_MKDIR(const char *path, mode_t mode)
+    // {
+    //     int res = mkdir(path, mode);
 
-        if(res == -1)
-            return -errno;
+    //     if(res == -1)
+    //         return -errno;
         
-        return 1;
-    }
+    //     return 1;
+    // }
 
     int afs_FETCH(const std::string& path, char **buf, int *size)
     {
