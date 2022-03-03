@@ -66,7 +66,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
 
-        printf("AFS PATH: %s\n", path);
+        printf("AFS PATH STORE: %s\n", path);
 
         fd = open(path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU);
 
@@ -88,6 +88,8 @@ class AfsServiceImplementation final : public AFS:: Service{
 					 GetattrRes* reply) override {
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
+        printf("AFS server PATH, GETATTR: %s\n", path);
+
         struct stat stats;
 		int res = lstat(path, &stats);
 
@@ -125,7 +127,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
 
-        printf("AFS server PATH: %s\n", path);
+        printf("AFS server PATH FETCH: %s\n", path);
 
         fd = open(path, O_RDONLY);
 
