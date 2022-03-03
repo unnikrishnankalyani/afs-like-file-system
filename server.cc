@@ -73,7 +73,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         if(fd == -1) {
             perror(strerror(errno));
-		    reply->set_err(errno);
+		    reply->set_error(errno);
             return Status::OK;
         }
 
