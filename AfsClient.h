@@ -39,7 +39,7 @@ class AfsClient {
     
         printf("path: %s\n", client_path);
 
-        fd = open(client_path, O_CREAT | O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
+        fd = open(client_path, O_CREAT | O_APPEND | O_RDWR); //changed last 3
         printf("Creating file in local cache\n");
         if (fd == -1) {
                 printf("Create Error in local cache.. \n");
@@ -98,7 +98,7 @@ class AfsClient {
             getLocalPath(path, cache_path, client_path);
             printf("path: %s\n", client_path);
 
-            fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
+            fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR); //changed last 3
             printf("1 fd: %d\n", fd);
             if(fd == -1) {
                 rc = afs_FETCH(path, &buf, &size);
@@ -109,7 +109,7 @@ class AfsClient {
 
                 isFetched = 1;
 
-                fd = creat(client_path, S_IRWXU | S_IRWXG | S_IRWXO);
+                fd = creat(client_path, S_IRWXU);
                 printf("3 New file: fd: %d\n", fd);
 
                 if(fd==-1) {
@@ -117,7 +117,7 @@ class AfsClient {
                     return -errno;
                 }
 
-                fd = open(client_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
+                fd = open(client_path,  O_APPEND | O_RDWR); //changed last 3
 
                 if(fd==-1) printf("Reopen Error\n"); 
 
@@ -397,7 +397,7 @@ class AfsClient {
             char local_path[MAX_PATH_LENGTH];
             getLocalPath(path, cache_path, local_path);
 
-            fd = open(local_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
+            fd = open(local_path,  O_APPEND | O_RDWR); //changed last 3
             printf("writing to file: %s\n", local_path);
             printf("size: %zu\n", size);
             printf("offset: %jd\n", (intmax_t)size);
