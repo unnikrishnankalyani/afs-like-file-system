@@ -185,7 +185,7 @@ int main(int argc, char* argv[]){
 
     //cache path and actual path
     strncpy(cache_path, realpath(argv[argc-1], NULL), MAX_PATH_LENGTH);
-    strncat(cache_path, "/", MAX_PATH_LENGTH);
+    // strncat(cache_path, "/", MAX_PATH_LENGTH);
     argv[argc-1] = NULL;
     argc--;
     printf("File System Cache Path on Client: %s\n", cache_path);
