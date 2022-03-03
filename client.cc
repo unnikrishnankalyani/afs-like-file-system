@@ -23,7 +23,7 @@ static struct options {
 	int show_help;
 } options;
 
-char fs_path[MAX_PATH_LENGTH];
+char cache_path[MAX_PATH_LENGTH];
 
 #define OPTION(t, p)                           \
     { t, offsetof(struct options, p), 1 }
@@ -36,7 +36,7 @@ static const struct fuse_opt option_spec[] = {
 static int client_create(const char* path, mode_t mode, struct fuse_file_info *fi)
 {   
     std::cout <<"calling client create" <<std::endl;
-    return options.afsclient->afs_CREATE(path);
+    return options.afsclient->afs_CREATE(path, cache_path);
 }
 static int client_getattr(const char *path, struct stat *stats,
              struct fuse_file_info *fi)
@@ -47,7 +47,7 @@ static int client_getattr(const char *path, struct stat *stats,
 static int client_write(const char *path, const char *buffer, size_t size, off_t offset,
                       struct fuse_file_info *file_info)
 {
-    // return options.afsclient->afs_WRITE(path, buffer, size, offset, file_info, fs_path);
+    // return options.afsclient->afs_WRITE(path, buffer, size, offset, file_info, cache_path);
     int ret_code = 0;
         struct stat info;
 
@@ -61,7 +61,7 @@ static int client_write(const char *path, const char *buffer, size_t size, off_t
             char local_path[PATH_MAX];
             local_path[0] = '\0';
 
-            strncat(local_path, fs_path, PATH_MAX);
+            strncat(local_path, cache_path, PATH_MAX);
             strncat(local_path, cached_file, PATH_MAX);
 
             fd = open(local_path,  O_APPEND | O_RDWR);
@@ -104,7 +104,7 @@ static int client_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
 static int client_open(const char *path, struct fuse_file_info *file_info)
 {
-    return options.afsclient->afs_OPEN(path, file_info, fs_path);
+    return options.afsclient->afs_OPEN(path, file_info, cache_path);
 }
 
 static int client_release(const char *path, struct fuse_file_info *fi)
@@ -179,11 +179,11 @@ int main(int argc, char* argv[]){
     // return fuse_main(argc, argv, &client_oper, &options);
 
     //cache path and actual path
-    strncpy(fs_path, realpath(argv[argc-1], NULL), MAX_PATH_LENGTH);
-    strncat(fs_path, "/", MAX_PATH_LENGTH);
+    strncpy(cache_path, realpath(argv[argc-1], NULL), MAX_PATH_LENGTH);
+    strncat(cache_path, "/", MAX_PATH_LENGTH);
     argv[argc-1] = NULL;
     argc--;
-    printf("File System Real Path on Client: %s\n", fs_path);
+    printf("File System Cache Path on Client: %s\n", cache_path);
 
 
     return fuse_main(argc, argv, &client_oper, NULL);

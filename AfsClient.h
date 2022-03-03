@@ -1,16 +1,6 @@
 #include <grpc++/grpc++.h>
 #include "afs.grpc.pb.h"
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-#include <iostream>
-#include <fuse.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
+#include "commonheaders.h"
 
 using grpc::Channel;
 using grpc::Status;
@@ -33,24 +23,44 @@ class AfsClient {
     public:
         AfsClient(std::shared_ptr<Channel> channel) : stub_(AFS::NewStub(channel)) {}
 
-    int afs_CREATE(const char* path) {
-        CreateReq request;
+    int afs_CREATE(const char* path, char cache_path[]) {
+        // CreateReq request;
 
-        request.set_path(path);
+        // request.set_path(path);
 
-        CreateRes reply;
+        // CreateRes reply;
 
-        ClientContext context;
+        // ClientContext context;
 
-        Status status = stub_->afs_CREATE(&context, request, &reply);
+        // Status status = stub_->afs_CREATE(&context, request, &reply);
         
-        //add Retry
-        if(status.ok()){
-            return reply.ack();
-        } else {
-            std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            return -1;
+        // //add Retry
+        // if(status.ok()){
+        //     return reply.ack();
+        // } else {
+        //     std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+        //     return -1;
+        // }
+        int fd;
+
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
+    
+        printf("path: %s\n", client_path);
+        fflush(stdout);
+        fd = open(client_path, O_CREAT | O_APPEND | O_RDWR, mode );
+        printf("Creating file in local cache\n");
+        if (fd == -1) {
+                printf("Create Error in local cache.. \n");
+                return -errno;
         }
+
+        fi->fh = fd;
+
+        afs_Store(path, NULL, 0);
+
+        printf("Create file descr: %d\n", fi->fh);
+        return 0;
     }
 
     int afs_FETCH(const std::string& path, char **buf, int *size)
@@ -75,18 +85,7 @@ class AfsClient {
             return -1;
         }
     }
-
-    // unsigned long hash(unsigned char *str)
-    // {   
-    //     unsigned long hash = 5381;
-    //     int c;
-        
-    //     while (c = *str++)
-    //         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-        
-    //     return hash;
-    // }
-
+    
     int afs_OPEN(const char *path, struct fuse_file_info *file_info, char fs_path[])
     {
             char *buf;
