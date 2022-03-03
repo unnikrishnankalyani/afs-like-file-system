@@ -44,39 +44,39 @@ static int client_getattr(const char *path, struct stat *stats,
 static int client_write(const char *path, const char *buffer, size_t size, off_t offset,
                       struct fuse_file_info *file_info)
 {
-    // return options.afsclient->afs_WRITE(path, buffer, size, offset, file_info, cache_path);
-    int ret_code = 0;
-        struct stat info;
+    return options.afsclient->afs_WRITE(path, buffer, size, offset, file_info, cache_path);
+    // int ret_code = 0;
+    //     struct stat info;
 
-        ret_code = write(file_info->fh, buffer, size);
-        fstat(file_info->fh, &info);
+    //     ret_code = write(file_info->fh, buffer, size);
+    //     fstat(file_info->fh, &info);
 
-        if(ret_code < 0) {
-            printf("Error while writing into file: %d\n", errno);
-            int fd;
-            char cached_file[80];
-            char local_path[PATH_MAX];
-            local_path[0] = '\0';
+    //     if(ret_code < 0) {
+    //         printf("Error while writing into file: %d\n", errno);
+    //         int fd;
+    //         char cached_file[80];
+    //         char local_path[PATH_MAX];
+    //         local_path[0] = '\0';
 
-            strncat(local_path, cache_path, PATH_MAX);
-            strncat(local_path, cached_file, PATH_MAX);
-            printf("writing to path : %s\n", local_path);
-            fd = open(local_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
+    //         strncat(local_path, cache_path, PATH_MAX);
+    //         strncat(local_path, cached_file, PATH_MAX);
+    //         printf("writing to path : %s\n", local_path);
+    //         fd = open(local_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
 
-            // printf("Newdile fd: %d\n", fd);
-            lseek(fd,offset,SEEK_SET);
-            for(int i=0; i<size; i++) {
-                printf("%c", buffer[i]);
-            }
-            ret_code = write(fd, buffer, size);
-            close(fd);
-            if(ret_code<0) {
-                printf("Error while re-writing file %d\n", errno);
-                printf("Return error: %d\n", ret_code);
-                return -errno;
-            }
-        }
-        return ret_code;
+    //         // printf("Newdile fd: %d\n", fd);
+    //         lseek(fd,offset,SEEK_SET);
+    //         for(int i=0; i<size; i++) {
+    //             printf("%c", buffer[i]);
+    //         }
+    //         ret_code = write(fd, buffer, size);
+    //         close(fd);
+    //         if(ret_code<0) {
+    //             printf("Error while re-writing file %d\n", errno);
+    //             printf("Return error: %d\n", ret_code);
+    //             return -errno;
+    //         }
+    //     }
+    //     return ret_code;
 }
 
 
