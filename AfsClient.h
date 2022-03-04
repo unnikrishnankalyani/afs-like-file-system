@@ -110,7 +110,7 @@ class AfsClient {
                 printf("2. Open in CREAT mode (will be fetched): %d\n", fd);
                 fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR); //changed last 3
 
-                if(fd==-1) printf("Reopen Error - what to do with this??\n"); 
+                if(fd==-1) printf("Reopen Error - Probable PERMISSION issues\n"); 
 
             } else {
                 lstat(client_path, &cacheFileInfo);
