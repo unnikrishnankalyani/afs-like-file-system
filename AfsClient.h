@@ -137,8 +137,11 @@ class AfsClient {
                 write(fd, buf, size);
                 printf("10. fsync\n");
                 fsync(fd);
-                printf("9. File Size: %ld\n", size);
+                printf("9. File Size (as fetched from server and written into cache): %ld\n", size);
             }
+            //This is just for debug:
+            lstat(client_path, &cacheFileInfo);
+            printf("10. Final Size: %ld\n", cacheFileInfo.st_size);
             
             //Set file handler
             file_info->fh = fd; 
