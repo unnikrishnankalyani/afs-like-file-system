@@ -136,20 +136,20 @@ static int client_chmod(const char *path, mode_t mode, struct fuse_file_info *fi
     return options.afsclient->afs_CHMOD(path, mode, cache_path);
 }
 
-// static int client_fsync(const char *path, int isdatasync, struct fuse_file_info *fi)
-// {
-//     return options.afsclient->afs_FSYNC(path, isdatasync, fi);
-// }
+static int client_fsync(const char *path, int isdatasync, struct fuse_file_info *fi)
+{
+    return options.afsclient->afs_FSYNC(path, isdatasync, fi);
+}
 
 static int client_unlink(const char *path)
 {
     return options.afsclient->afs_UNLINK(path, cache_path);
 }
 
-static int client_flush(const char *path, struct fuse_file_info *fi)
-{
-    return options.afsclient->afs_FLUSH(path, fi);
-}
+// static int client_flush(const char *path, struct fuse_file_info *fi)
+// {
+//     return options.afsclient->afs_FLUSH(path, fi);
+// }
 
 // static int client_getxattr(const char *path, const char *name, char *value,
 // 			size_t size)
