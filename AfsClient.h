@@ -146,8 +146,9 @@ class AfsClient {
                     if (rc<0) {
                         return -ENOENT;
                     }
-                    isFetched = 1;
+                    
                 }
+                isFetched = 1;
             }
 
             printf("File descr: %d Size:%d\n", fd, size);
