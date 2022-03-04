@@ -314,7 +314,7 @@ class AfsClient {
         fstat(fi->fh, &info);
         printf("RELEASE: LOCAL: Last Mod before fsync: %ld\n", info.st_mtime);
 
-        fsync(fi->fh);
+        // fsync(fi->fh);
 
         memset(&info, 0, sizeof(struct stat));
         fstat(fi->fh, &info);
