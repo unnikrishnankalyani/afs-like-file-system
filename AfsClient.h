@@ -92,8 +92,7 @@ class AfsClient {
             int size = -2;
             int rc;
             int fd;
-            int isStale = 0;
-            int isFetched = 0;
+            int fetchNewCopy = 0;
 
             struct stat cacheFileInfo;
             struct stat remoteFileInfo;
@@ -102,67 +101,46 @@ class AfsClient {
             getLocalPath(path, cache_path, client_path);
             printf("path: %s\n", client_path);
 
-            fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR); //changed last 3
-            printf("1 fd: %d\n", fd);
+            fd = open(client_path,  O_APPEND | O_RDWR); //changed last 3 removed O_CREAT because it has to fetch if not there
+            
             if(fd == -1) {
+                printf("1. file does not exist: %d\n", fd);
+                fetchNewCopy = 1;
+                printf("2. Open in CREAT mode (will be fetched): %d\n", fd);
+                fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR); //changed last 3
+
+                if(fd==-1) printf("Reopen Error - what to do with this??\n"); 
+
+            } else {
+                lstat(client_path, &cacheFileInfo);
+                printf("4. Get stats to compare time stamps\n");
+                afs_GETATTR(path, &remoteFileInfo); 
+                if(remoteFileInfo.st_mtime > cacheFileInfo.st_mtime) {
+                    fetchNewCopy = 1;
+                    printf("5. Stale copy - fetch new \n");
+                }
+            }
+
+            if(fetchNewCopy) {
+                rc = ftruncate(fd, 0);
+                printf("6. ftruncate: rc: %d\n", rc);
+                if(rc<0) {
+                    return -errno;
+                }
                 rc = afs_FETCH(path, &buf, &size);
-                printf("2 rc: %d\n", fd);
+                printf("8. Fetching new copy. rc: %d\n", rc);
+                
                 if (rc<0) {
                     return -ENOENT;
                 }
-
-                isFetched = 1;
-
-                fd = creat(client_path, S_IRWXU);
-                printf("3 New file: fd: %d\n", fd);
-
-                if(fd==-1) {
-                    printf("Create Error\n");
-                    return -errno;
-                }
-
-                fd = open(client_path,  O_APPEND | O_RDWR); //changed last 3
-
-                if(fd==-1) printf("Reopen Error\n"); 
-
-            } else {
-
-                lstat(client_path, &cacheFileInfo);
-                printf("4 lstat\n");
-                afs_GETATTR(path, &remoteFileInfo); 
-                printf("5 getattr\n");
-                if(remoteFileInfo.st_mtime > cacheFileInfo.st_mtime) {
-                    isStale = 1;
-                }
-                printf("6 done\n");
-                if(isStale) {
-                    rc = ftruncate(fd, 0);
-                    printf("7 ftruncate: rc: %d\n", rc);
-                    if(rc<0) {
-                        return -errno;
-                    }
-                    rc = afs_FETCH(path, &buf, &size);
-                    printf("8 fetch rc: %d\n", rc);
-                    if (rc<0) {
-                        return -ENOENT;
-                    }
-                    
-                }
-                isFetched = 1;
-            }
-
-            printf("File descr: %d Size:%d\n", fd, size);
-
-            if(isFetched) {
-                printf("9 before write\n");
+                printf("9. Write to file: %s\n", buf);
                 write(fd, buf, size);
-                printf("10 after write\n");
+                printf("10. fsync\n");
                 fsync(fd);
-                printf("11 after fsync\n");
+                printf("9. File Size: %ld\n", size);
             }
-
-            printf("File Contents: %s\n", buf);
-        //        fi->fh_old = 0;
+            
+            //Set file handler
             file_info->fh = fd; 
 
         return 0;
