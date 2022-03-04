@@ -59,6 +59,8 @@ class AfsClient {
             std::cout << status.error_code() << ": " << status.error_message() << std::endl;
             return -errno;
         }
+        //Set file handler
+        fi->fh = fd; 
   
         return 0;
     }
@@ -275,7 +277,7 @@ class AfsClient {
         StoreReq request;
         request.set_path(path);
         request.set_size(size);
-        printf("Store request: Path = %s Size = %ld", path, size);
+        printf("Store request: Path = %s Size = %d", path, size);
         request.set_buf(std::string(buf, size));
 
         StoreRes reply;
