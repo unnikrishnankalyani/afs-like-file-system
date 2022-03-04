@@ -275,6 +275,7 @@ class AfsClient {
         StoreReq request;
         request.set_path(path);
         request.set_size(size);
+        printf("Store request: Path = %s Size = %ld", path, size);
         request.set_buf(std::string(buf, size));
 
         StoreRes reply;
