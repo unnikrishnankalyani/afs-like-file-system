@@ -51,7 +51,9 @@ class AfsClient {
         }
 
         Status status = stub_->afs_CREATE(&context, request, &reply);
-        
+        //Set file handler
+        fi->fh = fd; 
+
         //add Retry
         if(status.ok()){
             return reply.ack();
@@ -59,9 +61,6 @@ class AfsClient {
             std::cout << status.error_code() << ": " << status.error_message() << std::endl;
             return -errno;
         }
-        //Set file handler
-        fi->fh = fd; 
-  
         return 0;
     }
 
