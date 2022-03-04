@@ -89,7 +89,7 @@ class AfsClient {
     int afs_OPEN(const char *path, struct fuse_file_info *file_info, char cache_path[])
     {
             char *buf;
-            int size;
+            int size = -2;
             int rc;
             int fd;
             int isStale = 0;
