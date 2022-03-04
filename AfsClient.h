@@ -385,21 +385,21 @@ class AfsClient {
 
 
 
-    // int afs_FSYNC(const char *path, int isdatasync, struct fuse_file_info *fi)
-    // {
-    //     int res;
-    //     // char client_path[MAX_PATH_LENGTH];
-    //     // getLocalPath(path, cache_path, client_path);
-    //     // printf("changing permissions of: %s\n", client_path);
-    //     if (isdatasync)
-    //         res = fdatasync(fi->fh);
-    //     else
-    //         res = fsync(fi->fh);
-    //     if (res == -1)
-    //         return -errno;
+    int afs_FSYNC(const char *path, int isdatasync, struct fuse_file_info *fi)
+    {
+        int res;
+        // char client_path[MAX_PATH_LENGTH];
+        // getLocalPath(path, cache_path, client_path);
+        // printf("changing permissions of: %s\n", client_path);
+        if (isdatasync)
+            res = fdatasync(fi->fh);
+        else
+            res = fsync(fi->fh);
+        if (res == -1)
+            return -errno;
 
-    //     return 0;
-    // }
+        return 0;
+    }
 
     // int afs_GETXATTR(const char *path, const char *name, char *value,
 	// 		size_t size)

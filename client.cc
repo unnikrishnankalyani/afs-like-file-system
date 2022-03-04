@@ -146,10 +146,10 @@ static int client_unlink(const char *path)
     return options.afsclient->afs_UNLINK(path, cache_path);
 }
 
-// static int client_flush(const char *path, struct fuse_file_info *fi)
-// {
-//     return options.afsclient->afs_FLUSH(path, fi);
-// }
+static int client_flush(const char *path, struct fuse_file_info *fi)
+{
+    return options.afsclient->afs_FLUSH(path, fi);
+}
 
 // static int client_getxattr(const char *path, const char *name, char *value,
 // 			size_t size)
@@ -175,7 +175,7 @@ struct client_fuse_operations:fuse_operations
         chown      = client_chown;
         utimens    = client_utimens;
         chmod      = client_chmod;
-        // fsync      = client_fsync;
+        fsync      = client_fsync;
         // getxattr   = client_getxattr;
         unlink     = client_unlink;
         // flush      = client_flush;
