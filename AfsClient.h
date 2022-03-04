@@ -156,6 +156,12 @@ class AfsClient {
         int ret_code = 0;
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
+
+        //Just to debug - 
+        struct stat info;
+        lstat(cache_path, &info);
+        printf("READ: Last Mod: %ld\n", info.st_mtime);
+
         printf("reading from : %s\n", client_path);
         ret_code = pread(file_info->fh, buffer, size, offset);
         if(ret_code < 0) {
@@ -299,12 +305,20 @@ class AfsClient {
         char *buf;
         struct stat info;
         struct stat remoteFileInfo;
+        
+        //Just to debug - 
+        fstat(fi->fh, &info);
+        printf("RELEASE: LOCAL: Last Mod before fsync: %ld\n", info.st_mtime);
 
         fsync(fi->fh);
 
         memset(&info, 0, sizeof(struct stat));
         fstat(fi->fh, &info);
         afs_GETATTR(path, &remoteFileInfo);
+
+        //Just to debug - 
+        printf("RELEASE: LOCAL: Last Mod: after fsync %ld\n", info.st_mtime);
+        printf("RELEASE: REMOTE: Last Mod: %ld\n", remoteFileInfo.st_mtime);
 
         if(remoteFileInfo.st_mtime > info.st_mtime) {
             isModified = 0;
