@@ -138,11 +138,11 @@ class AfsClient {
                 write(fd, buf, size);
                 printf("10. fsync\n");
                 fsync(fd);
-                printf("9. File Size (as fetched from server and written into cache): %ld\n", size);
+                printf("9. File Size (as fetched from server and written into cache): %d\n", size);
             }
             //This is just for debug:
             lstat(client_path, &cacheFileInfo);
-            printf("10. Final Size: %ld\n", cacheFileInfo.st_size);
+            printf("10. Final Size: %d\n", cacheFileInfo.st_size);
             
             //Set file handler
             file_info->fh = fd; 
@@ -276,7 +276,7 @@ class AfsClient {
         StoreReq request;
         request.set_path(path);
         request.set_size(size);
-        printf("Store request: Path = %s Size = %d", path, size);
+        printf("Store request: Path = %s Size = %d \n", path, size);
         request.set_buf(std::string(buf, size));
 
         StoreRes reply;
