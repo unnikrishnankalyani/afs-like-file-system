@@ -371,7 +371,7 @@ class AfsClient {
         printf("RELEASE: LOCAL: Last Mod before fsync: %ld\n", info.st_mtime);
         close(fi->fh);
         int fd = open(client_path, O_RDONLY);
-        file_info->fh = fd;
+        fi->fh = fd;
 
         memset(&info, 0, sizeof(struct stat));
         fstat(fi->fh, &info);
