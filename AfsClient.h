@@ -481,18 +481,29 @@ class AfsClient {
         struct stat info;
         fstat(file_info->fh, &info);
         printf("~~~~~~~~BEFORE WRITE: Last Mod: %ld\n", info.st_mtime);
-        int res;
-
-        (void) path;
-        res = pwrite(file_info->fh, buffer, size, offset);
-        if (res == -1)
-            res = -errno;
+        if (size>0){
+            char client_tmp_path[MAX_PATH_LENGTH];
+            char client_path[MAX_PATH_LENGTH];
+            getLocalTmpPath(path, cache_path, client_tmp_path);
+            getLocalPath(path, cache_path, client_path);
+            int fd = open(client_tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
+            ret_code = pwrite(fd, buffer, size, offset);        
+            if (ret_code == -1)
+                ret_code = -errno;
+            
+            close(file_info->fh);
+            close(fd);
+            remove(client_path);
+            rename(client_tmp_path, client_path);
+            file_info->fh = open(client_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
+        }
 
         //Debug ---
         fstat(file_info->fh, &info);
+        ret_code = pwrite(file_info->fh, buffer, size, offset);
         printf("~~~~~~~~AFTER WRITE and FSYNC and CLOSE: Last Mod: %ld\n", info.st_mtime);
-
-        return res;
+        
+        return ret_code;
         // ret_code = write(file_info->fh, buffer, size);
         // fsync(file_info->fh);
         // close(file_info->fh);

@@ -30,6 +30,17 @@ void getLocalPath(const char* file_path, const char*  cache_path, char* client_p
     strncat(client_path, file_path, MAX_PATH_LENGTH);
 
 }
+void getLocalTmpPath(const char* file_path, const char*  cache_path, char* client_path)
+{
+    // char cacheFileName[80];
+    // snprintf(cacheFileName, 80, "%lu", hash((unsigned char *)file_path));
+    client_path[0] = '\0';
+    strncat(client_path, cache_path, MAX_PATH_LENGTH);
+    // strncat(client_path, cacheFileName, MAX_PATH_LENGTH);
+    strncat(client_path, file_path, MAX_PATH_LENGTH);
+    strncat(client_path, "_tmp", MAX_PATH_LENGTH);
+
+}
 
 unsigned long hash(unsigned char *str)
 {   
