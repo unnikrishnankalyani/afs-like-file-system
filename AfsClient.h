@@ -441,17 +441,33 @@ class AfsClient {
     int afs_WRITE(const char *path, const char *buffer, size_t size, off_t offset,
                       struct fuse_file_info *file_info, char cache_path[]){
         int ret_code = 0;
+        
 
         if (size>0){
             char client_tmp_path[MAX_PATH_LENGTH];
             getLocalTmpPath(path, cache_path, client_tmp_path);
             int fd = open(client_tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
             // Copy from file to tmp file
-            char c = fgetc(file_info->fh);
-            while (c != EOF){
-                fputc(c, fd);
-                c = fgetc(file_info->fh);
-            }
+            struct stat stat;
+
+           if (fstat(file_info->fh, &stat) == -1) {
+               perror("fstat");
+               return -1;
+           }
+
+           off64_t len, ret;
+           len = stat.st_size;
+
+           do {
+               ret = copy_file_range(file_info->fh, NULL, fd, NULL, len, 0);
+               if (ret == -1) {
+                   perror("copy_file_range");
+                   return -1;
+               }
+
+               len -= ret;
+           } while (len > 0 && ret > 0);
+
             ret_code = pwrite(fd, buffer, size, offset);        
             if (ret_code == -1)
                 ret_code = -errno;
