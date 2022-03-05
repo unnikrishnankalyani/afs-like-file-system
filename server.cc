@@ -205,7 +205,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         printf("AFS server PATH FETCH: %s\n", path);
 
-        fd = open(path, O_RDONLY);
+        fd = open(path, O_RDWR);
 
         if(fd == -1) {
             reply->set_error(-1);
