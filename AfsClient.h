@@ -478,9 +478,14 @@ class AfsClient {
                       struct fuse_file_info *file_info, char cache_path[]){
         int ret_code = 0;
         struct stat info;
+        fstat(file_info->fh, &info);
+        printf("~~~~~~~~BEFORE WRITE: Last Mod: %ld\n", info.st_mtime);
 
         ret_code = write(file_info->fh, buffer, size);
+        fsync(file_info->fh);
         fstat(file_info->fh, &info);
+        printf("~~~~~~~~AFTER WRITE and FSYNC: Last Mod: %ld\n", info.st_mtime);
+
         if(ret_code < 0) {
             printf("Error while writing into file: %d\n", errno);
             int fd;
