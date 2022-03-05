@@ -483,8 +483,10 @@ class AfsClient {
 
         ret_code = write(file_info->fh, buffer, size);
         fsync(file_info->fh);
+        close(file_info->fh);
         fstat(file_info->fh, &info);
-        printf("~~~~~~~~AFTER WRITE and FSYNC: Last Mod: %ld\n", info.st_mtime);
+        
+        printf("~~~~~~~~AFTER WRITE and FSYNC and CLOSE: Last Mod: %ld\n", info.st_mtime);
 
         if(ret_code < 0) {
             printf("Error while writing into file: %d\n", errno);
