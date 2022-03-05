@@ -484,7 +484,7 @@ class AfsClient {
         int res;
 
         (void) path;
-        res = pwrite(fileinfo->fh, buffer, size, offset);
+        res = pwrite(file_info->fh, buffer, size, offset);
         if (res == -1)
             res = -errno;
 
