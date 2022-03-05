@@ -372,7 +372,7 @@ class AfsClient {
         fstat(fi->fh, &info);
         printf("RELEASE: LOCAL: Last Mod before fsync: %ld\n", info.st_mtime);
 
-        // fsync(fi->fh);
+        fsync(fi->fh);
 
         memset(&info, 0, sizeof(struct stat));
         fstat(fi->fh, &info);
@@ -387,7 +387,7 @@ class AfsClient {
         }
 
         if(isModified) {
-            fsync(fi->fh);
+            // fsync(fi->fh);
             buf = (char *)malloc(info.st_size);
             lseek(fi->fh, 0, SEEK_SET);
             read(fi->fh, buf, info.st_size);
