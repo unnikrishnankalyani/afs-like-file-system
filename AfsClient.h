@@ -370,6 +370,8 @@ class AfsClient {
         fstat(fi->fh, &info);
         printf("RELEASE: LOCAL: Last Mod before fsync: %ld\n", info.st_mtime);
         close(fi->fh);
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
         int fd = open(client_path, O_RDONLY);
         fi->fh = fd;
 
