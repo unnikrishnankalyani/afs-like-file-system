@@ -386,8 +386,10 @@ class AfsClient {
             afs_STORE(path, buffer, info.st_size);
 
             rename(client_tmp_path, client_path);
+
+            printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buffer);
             free(buffer);
-            printf("~~~~~~~~Wrote temp to main and flushed \n");
+            
         }
         
         return rc;
