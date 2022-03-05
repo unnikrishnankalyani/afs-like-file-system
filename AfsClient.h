@@ -381,12 +381,13 @@ class AfsClient {
             lstat(client_tmp_path, &info);
 
             buffer = (char *)malloc(info.st_size);
-            
+            int fd = open(client_tmp_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
+            read(fd, buffer, info.st_size);
             afs_STORE(path, buffer, info.st_size);
 
             rename(client_tmp_path, client_path);
             free(buffer);
-            printf("~~~~~~~~Wrote temp to main and flushed %ld\n");
+            printf("~~~~~~~~Wrote temp to main and flushed \n");
         }
         
         return rc;
