@@ -309,7 +309,7 @@ class AfsClient {
         }
     }
 
-    int afs_RMDIR(const char *path, mode_t mode, char cache_path[])
+    int afs_RMDIR(const char *path, char cache_path[])
     {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
@@ -321,7 +321,6 @@ class AfsClient {
         ClientContext context;
         RmdirReq req;
         req.set_path(path);
-        req.set_mode(mode);
         RmdirRes reply;
 
         Status status = stub_->afs_RMDIR(&context, req, &reply);
