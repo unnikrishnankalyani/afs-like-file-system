@@ -47,7 +47,7 @@ class AfsClient {
     
         printf("path: %s\n", client_path);
 
-        fd = open(client_path, O_CREAT | O_APPEND | O_RDWR); //changed last 3
+        fd = open(client_path, O_CREAT | O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
         printf("Creating file in local cache\n");
         if (fd == -1) {
                 printf("Create Error in local cache.. \n");
@@ -106,13 +106,13 @@ class AfsClient {
             getLocalPath(path, cache_path, client_path);
             printf("path: %s\n", client_path);
 
-            fd = open(client_path,  O_APPEND | O_RDWR); //changed last 3 removed O_CREAT because it has to fetch if not there
+            fd = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3 removed O_CREAT because it has to fetch if not there
             
             if(fd == -1) {
                 printf("1. file does not exist: %d\n", fd);
                 fetchNewCopy = 1;
                 printf("2. Open in CREAT mode (will be fetched): %d\n", fd);
-                fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR); //changed last 3
+                fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
 
                 if(fd==-1) printf("Reopen Error - Probable PERMISSION issues\n"); 
 
@@ -120,7 +120,7 @@ class AfsClient {
                 lstat(client_path, &cacheFileInfo);
                 printf("4. Get stats to compare time stamps\n");
                 afs_GETATTR(path, &remoteFileInfo); 
-                if(remoteFileInfo.st_mtime > cacheFileInfo.st_mtime) {
+                if(remoteFileInfo.st_mtime >= cacheFileInfo.st_mtime) {
                     fetchNewCopy = 1;
                     printf("5. Stale copy - fetch new \n");
                 }

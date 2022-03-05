@@ -77,7 +77,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         printf("AFS PATH STORE: %s\n", path);
 
-        fd = open(path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU);
+        fd = open(path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
 
         if(fd == -1) {
             perror(strerror(errno));
