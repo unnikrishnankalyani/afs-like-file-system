@@ -344,7 +344,7 @@ class AfsClient {
         StoreReq request;
         request.set_path(path);
         request.set_size(size);
-        printf("Store request: Path = %s Size = %d \n", path, size);
+        std::cout<<"Store request: Path ="<<path<<" Size = "<< size <<std::endl;
         request.set_buf(std::string(buf, size));
 
         StoreRes reply;
@@ -391,7 +391,7 @@ class AfsClient {
             buf = (char *)malloc(info.st_size);
             lseek(fi->fh, 0, SEEK_SET);
             read(fi->fh, buf, info.st_size);
-            printf("To be sent: %s\n", buf);
+            std::cout<<"To be sent:"<< buf <<std::endl;
             afs_STORE(path, buf, info.st_size);
             free(buf);
         }
