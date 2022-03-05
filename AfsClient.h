@@ -173,6 +173,8 @@ class AfsClient {
         printf("**************** File handle READ ************: %d\n", file_info->fh);
         printf("**************** File size, offset READ ************: %d, %d\n", size, offset);
 
+        int fd = open(client_path, O_RDONLY);
+        file_info->fh = fd;
         ret_code = pread(file_info->fh, buffer, size, offset);
 
         //Just to debug - 
