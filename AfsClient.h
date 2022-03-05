@@ -362,60 +362,35 @@ class AfsClient {
         }
     }
     
-    int afs_RELEASE(const char *path, struct fuse_file_info *fi)
+    int afs_RELEASE(const char *path, struct fuse_file_info *fi, char cache_path[])
     {
         int rc = 0;
-        int isModified=1;
         char *buf;
         struct stat info;
-        struct stat remoteFileInfo;
-        
-        //Just to debug - 
-        fstat(fi->fh, &info);
-        printf("RELEASE: LOCAL: Last Mod before fsync: %ld\n", info.st_mtime);
+        char client_tmp_path[MAX_PATH_LENGTH];
+        char client_path[MAX_PATH_LENGTH];
+        getLocalTmpPath(path, cache_path, client_tmp_path);
+        getLocalPath(path, cache_path, client_path);
 
-        // fsync(fi->fh);
+        int modified = access(client_tmp_path, F_OK);
 
-        memset(&info, 0, sizeof(struct stat));
-        fstat(fi->fh, &info);
-        afs_GETATTR(path, &remoteFileInfo);
+        if (modified==0){
+            rc = close(fi->fh);
+            remove(client_path);
+            
+            lstat(client_tmp_path, &info);
 
-        //Just to debug - 
-        printf("RELEASE: LOCAL: Last Mod: after fsync %ld\n", info.st_mtime);
-        printf("RELEASE: REMOTE: Last Mod: %ld\n", remoteFileInfo.st_mtime);
+            buffer = (char *)malloc(info.st_size);
+            
+            afs_STORE(path, buffer, info.st_size);
 
-
-        if(isModified) {
-            fsync(fi->fh);
-            buf = (char *)malloc(info.st_size);
-            lseek(fi->fh, 0, SEEK_SET);
-            read(fi->fh, buf, info.st_size);
-            printf("To be sent: %s\n", buf);
-            afs_STORE(path, buf, info.st_size);
-            free(buf);
+            rename(client_tmp_path, client_path);
+            free(buffer);
+            printf("~~~~~~~~Wrote temp to main and flushed %ld\n");
         }
-        rc = close(fi->fh);
-
-    /*
-        char local_path[PATH_MAX];
-        local_path[0] = '\0';
-        char cacheFileName[80]; 
-            snprintf(cacheFileName, 80, "%lu", hash((unsigned char *)path));
-
-            strncat(local_path, cache_path, PATH_MAX);
-            strncat(local_path, cacheFileName, PATH_MAX);
-        lstat(local_path, &info);
-        printf("After Close: %d\n", info.st_mtime); */
+        
         return rc;
     }
-
-    // int afs_FLUSH(const char *path, struct fuse_file_info *fi)
-    // {
-    //     int res = close(dup(fi->fh));
-    //      if(res == -1)
-    //         return -errno;
-    //     return 0;
-    // }
 
     int afs_LS(const std::string& path, void *buf, fuse_fill_dir_t filler) {
         LsReq request;
@@ -480,31 +455,12 @@ class AfsClient {
         printf("~~~~~~~~BEFORE WRITE: Last Mod: %ld\n", info.st_mtime);
         if (size>0){
             char client_tmp_path[MAX_PATH_LENGTH];
-            char client_path[MAX_PATH_LENGTH];
             getLocalTmpPath(path, cache_path, client_tmp_path);
-            getLocalPath(path, cache_path, client_path);
             int fd = open(client_tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
             ret_code = pwrite(fd, buffer, size, offset);        
             if (ret_code == -1)
                 ret_code = -errno;
-            struct stat info;
-            stat(client_path, &info);
-            printf("~~~~~~~client_path: Last Mod: %ld\n", info.st_mtime);
-            stat(client_tmp_path, &info);
-            printf("~~~~~~~client_tmp_path: Last Mod: %ld\n", info.st_mtime);
-            close(file_info->fh);
-            close(fd);
-            remove(client_path);
-            rename(client_tmp_path, client_path);
-            stat(client_path, &info);
-            printf("~~~~~~~client_path: Last Mod: %ld\n", info.st_mtime);
-            file_info->fh = open(client_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
         }
-
-        //Debug ---
-        fstat(file_info->fh, &info);
-        ret_code = pwrite(file_info->fh, buffer, size, offset);
-        printf("~~~~~~~~AFTER WRITE and FSYNC and CLOSE: Last Mod: %ld\n", info.st_mtime);
         
         return ret_code;
         // ret_code = write(file_info->fh, buffer, size);
