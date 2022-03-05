@@ -54,7 +54,7 @@ class AfsClient {
             std::cout << status.error_code() << ": " << status.error_message() << std::endl;
             return -errno;
         }
-        
+
         fd = open(client_path, O_CREAT | O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
         printf("Creating file in local cache\n");
         if (fd == -1) {
@@ -371,11 +371,8 @@ class AfsClient {
         //Just to debug - 
         fstat(fi->fh, &info);
         printf("RELEASE: LOCAL: Last Mod before fsync: %ld\n", info.st_mtime);
-        close(fi->fh);
-        char client_path[MAX_PATH_LENGTH];
-        getLocalPath(path, cache_path, client_path);
-        int fd = open(client_path, O_RDONLY);
-        fi->fh = fd;
+
+        // fsync(fi->fh);
 
         memset(&info, 0, sizeof(struct stat));
         fstat(fi->fh, &info);
@@ -384,18 +381,17 @@ class AfsClient {
         //Just to debug - 
         printf("RELEASE: LOCAL: Last Mod: after fsync %ld\n", info.st_mtime);
         printf("RELEASE: REMOTE: Last Mod: %ld\n", remoteFileInfo.st_mtime);
-        std::cout << "Size: "<<info.st_size<<std::endl;
 
         if(remoteFileInfo.st_mtime >= info.st_mtime) {
             isModified = 0;
         }
 
         if(isModified) {
-            // fsync(fi->fh);
+            fsync(fi->fh);
             buf = (char *)malloc(info.st_size);
             lseek(fi->fh, 0, SEEK_SET);
             read(fi->fh, buf, info.st_size);
-            std::cout<<"To be sent:"<< buf <<std::endl;
+            printf("To be sent: %s\n", buf);
             afs_STORE(path, buf, info.st_size);
             free(buf);
         }
@@ -406,7 +402,6 @@ class AfsClient {
         local_path[0] = '\0';
         char cacheFileName[80]; 
             snprintf(cacheFileName, 80, "%lu", hash((unsigned char *)path));
-
             strncat(local_path, cache_path, PATH_MAX);
             strncat(local_path, cacheFileName, PATH_MAX);
         lstat(local_path, &info);
