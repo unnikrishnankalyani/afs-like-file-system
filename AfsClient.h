@@ -381,7 +381,7 @@ class AfsClient {
         //Just to debug - 
         printf("RELEASE: LOCAL: Last Mod: after fsync %ld\n", info.st_mtime);
         printf("RELEASE: REMOTE: Last Mod: %ld\n", remoteFileInfo.st_mtime);
-        std::cout << "Size: "<<info.st_size<<cout::endl;
+        std::cout << "Size: "<<info.st_size<<std::endl;
 
         if(remoteFileInfo.st_mtime >= info.st_mtime) {
             isModified = 0;
