@@ -57,7 +57,7 @@ class AfsClient {
         Status status = stub_->afs_CREATE(&context, request, &reply);
         //Set file handler
         fi->fh = fd; 
-
+        printf("**************** File handle CREATE ************: %d\n", fd);
         //add Retry
         if(status.ok()){
             return reply.ack();
@@ -150,6 +150,9 @@ class AfsClient {
             
             //Set file handler
             file_info->fh = fd; 
+            printf("**************** File handle OPEN ************: %d\n", fd);
+
+
 
         return 0;
     }
@@ -167,6 +170,9 @@ class AfsClient {
         printf("~~~~~~~BEFORE READ: Last Mod: %ld\n", info.st_mtime);
 
         printf("reading from : %s\n", client_path);
+        printf("**************** File handle READ ************: %d\n", file_info->fh);
+        ("**************** File size, offset READ ************: %d, %d\n", size, offset);
+
         ret_code = pread(file_info->fh, buffer, size, offset);
 
         //Just to debug - 
