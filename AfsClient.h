@@ -491,15 +491,15 @@ class AfsClient {
             if (ret_code == -1)
                 ret_code = -errno;
             struct stat info;
-            lstat(client_path, &info);
+            stat(client_path, &info);
             printf("~~~~~~~client_path: Last Mod: %ld\n", info.st_mtime);
-            lstat(client_tmp_path, &info);
+            stat(client_tmp_path, &info);
             printf("~~~~~~~client_tmp_path: Last Mod: %ld\n", info.st_mtime);
             close(file_info->fh);
             close(fd);
             remove(client_path);
             rename(client_tmp_path, client_path);
-            lstat(client_path, &info);
+            stat(client_path, &info);
             printf("~~~~~~~client_path: Last Mod: %ld\n", info.st_mtime);
             file_info->fh = open(client_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
         }
