@@ -120,9 +120,9 @@ class AfsClient {
                 lstat(client_path, &cacheFileInfo);
                 printf("4. Get stats to compare time stamps\n");
                 afs_GETATTR(path, &remoteFileInfo); 
-                if(remoteFileInfo.st_mtime >= cacheFileInfo.st_mtime) {
+                if(remoteFileInfo.st_mtime > cacheFileInfo.st_mtime) {
                     fetchNewCopy = 1;
-                    std::cout << "remoteFileInfo.st_mtime cacheFileInfo.st_mtime:" << remoteFileInfo.st_mtime << cacheFileInfo.st_mtime<<std::endl;
+                    std::cout << "remoteFileInfo.st_mtime cacheFileInfo.st_mtime:" << remoteFileInfo.st_mtime <<","<< cacheFileInfo.st_mtime<<std::endl;
                     printf("5. Stale copy - fetch new \n");
                 }
             }
