@@ -457,6 +457,8 @@ class AfsClient {
 
            off64_t len, ret;
            len = stat.st_size;
+           printf("leeeengthhhhhh");
+           std::cout << len <<std::endl;
 
            do {
                ret = copy_file_range(file_info->fh, NULL, fd, NULL, len, 0);
