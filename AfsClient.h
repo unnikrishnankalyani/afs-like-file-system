@@ -452,6 +452,7 @@ class AfsClient {
         // char client_path[MAX_PATH_LENGTH];
         // getLocalPath(path, cache_path, client_path);
         // printf("changing permissions of: %s\n", client_path);
+        printf("isdatasync : %d\n", isdatasync);
         if (isdatasync)
             res = fdatasync(fi->fh);
         else
