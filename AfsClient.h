@@ -173,8 +173,6 @@ class AfsClient {
         printf("**************** File handle READ ************: %d\n", file_info->fh);
         printf("**************** File size, offset READ ************: %d, %d\n", size, offset);
 
-        int fd = open(client_path, O_RDONLY);
-        file_info->fh = fd;
         ret_code = pread(file_info->fh, buffer, size, offset);
 
         //Just to debug - 
@@ -371,8 +369,9 @@ class AfsClient {
         //Just to debug - 
         fstat(fi->fh, &info);
         printf("RELEASE: LOCAL: Last Mod before fsync: %ld\n", info.st_mtime);
-
-        fsync(fi->fh);
+        close(fi->fh);
+        int fd = open(client_path, O_RDONLY);
+        file_info->fh = fd;
 
         memset(&info, 0, sizeof(struct stat));
         fstat(fi->fh, &info);
