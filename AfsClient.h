@@ -358,7 +358,7 @@ class AfsClient {
         }
     }
     
-    int afs_RELEASE(const char *path, struct fuse_file_info *fi)
+    int afs_RELEASE(const char *path, struct fuse_file_info *fi, char cache_path[])
     {
         int rc = 0;
         int isModified=1;
