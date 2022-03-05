@@ -470,6 +470,9 @@ class AfsClient {
                len -= ret;
            } while (len > 0 && ret > 0);
 
+           printf("offfsetttttt");
+           std::cout << offset <<std::endl;
+
             ret_code = pwrite(fd, buffer, size, offset);        
             if (ret_code == -1)
                 ret_code = -errno;
