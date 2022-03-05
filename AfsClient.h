@@ -122,6 +122,7 @@ class AfsClient {
                 afs_GETATTR(path, &remoteFileInfo); 
                 if(remoteFileInfo.st_mtime >= cacheFileInfo.st_mtime) {
                     fetchNewCopy = 1;
+                    std::cout << "remoteFileInfo.st_mtime cacheFileInfo.st_mtime:" << remoteFileInfo.st_mtime << cacheFileInfo.st_mtime<<std::endl;
                     printf("5. Stale copy - fetch new \n");
                 }
             }
