@@ -176,6 +176,8 @@ class AfsClient {
         int fd = open(client_path, O_RDONLY);
         file_info->fh = fd;
         ret_code = pread(file_info->fh, buffer, size, offset);
+        printf("READ buffer from : %s\n", buffer);
+
 
         //Just to debug - 
         lstat(client_path, &info);
@@ -452,6 +454,7 @@ class AfsClient {
         // char client_path[MAX_PATH_LENGTH];
         // getLocalPath(path, cache_path, client_path);
         // printf("changing permissions of: %s\n", client_path);
+        printf("isdatasync : %d\n", isdatasync);
         if (isdatasync)
             res = fdatasync(fi->fh);
         else
@@ -476,32 +479,36 @@ class AfsClient {
                       struct fuse_file_info *file_info, char cache_path[]){
         int ret_code = 0;
         struct stat info;
-
-        ret_code = write(file_info->fh, buffer, size);
         fstat(file_info->fh, &info);
-        if(ret_code < 0) {
-            printf("Error while writing into file: %d\n", errno);
-            int fd;
-            char local_path[MAX_PATH_LENGTH];
-            getLocalPath(path, cache_path, local_path);
-
-            fd = open(local_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
-            printf("writing to file: %s\n", local_path);
-            printf("size: %zu\n", size);
-            printf("offset: %jd\n", (intmax_t)size);
-            lseek(fd,offset,SEEK_SET);
-            for(int i=0; i<size; i++) {
-                printf("%c", buffer[i]);
-            }
-            ret_code = write(fd, buffer, size);
+        printf("~~~~~~~~BEFORE WRITE: Last Mod: %ld\n", info.st_mtime);
+        if (size>0){
+            char client_tmp_path[MAX_PATH_LENGTH];
+            char client_path[MAX_PATH_LENGTH];
+            getLocalTmpPath(path, cache_path, client_tmp_path);
+            getLocalPath(path, cache_path, client_path);
+            int fd = open(client_tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
+            ret_code = pwrite(fd, buffer, size, offset);        
+            if (ret_code == -1)
+                ret_code = -errno;
+            
+            close(file_info->fh);
             close(fd);
-            if(ret_code<0) {
-                printf("Error while re-writing file %d\n", errno);
-                printf("Return error: %d\n", ret_code);
-                return -errno;
-            }
+            remove(client_path);
+            rename(client_tmp_path, client_path);
+            file_info->fh = open(client_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
         }
+
+        //Debug ---
+        fstat(file_info->fh, &info);
+        ret_code = pwrite(file_info->fh, buffer, size, offset);
+        printf("~~~~~~~~AFTER WRITE and FSYNC and CLOSE: Last Mod: %ld\n", info.st_mtime);
+        
         return ret_code;
+        // ret_code = write(file_info->fh, buffer, size);
+        // fsync(file_info->fh);
+        // close(file_info->fh);
+        
+
     }
 
     private:
