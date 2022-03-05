@@ -108,7 +108,7 @@ static int client_open(const char *path, struct fuse_file_info *file_info)
 
 static int client_release(const char *path, struct fuse_file_info *fi)
 {
-    return options.afsclient->afs_RELEASE(path, fi, cache_path);
+    return options.afsclient->afs_RELEASE(path, fi);
 }
 
 // static int client_mkdir(const char* path, mode_t mode)
