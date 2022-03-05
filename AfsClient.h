@@ -176,6 +176,8 @@ class AfsClient {
         int fd = open(client_path, O_RDONLY);
         file_info->fh = fd;
         ret_code = pread(file_info->fh, buffer, size, offset);
+        printf("READ buffer from : %s\n", buffer);
+
 
         //Just to debug - 
         lstat(client_path, &info);
