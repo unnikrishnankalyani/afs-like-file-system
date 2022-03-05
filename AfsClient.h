@@ -46,6 +46,7 @@ class AfsClient {
         getLocalPath(path, cache_path, client_path);
     
         printf("path: %s\n", client_path);
+        Status status = stub_->afs_CREATE(&context, request, &reply);
 
         fd = open(client_path, O_CREAT | O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
         printf("Creating file in local cache\n");
@@ -53,8 +54,7 @@ class AfsClient {
                 printf("Create Error in local cache.. \n");
                 return -errno;
         }
-
-        Status status = stub_->afs_CREATE(&context, request, &reply);
+        
         //Set file handler
         fi->fh = fd; 
         printf("**************** File handle CREATE ************: %d\n", fd);
