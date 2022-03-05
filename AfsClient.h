@@ -365,7 +365,7 @@ class AfsClient {
     int afs_RELEASE(const char *path, struct fuse_file_info *fi, char cache_path[])
     {
         int rc = 0;
-        char *buf;
+        char *buffer;
         struct stat info;
         char client_tmp_path[MAX_PATH_LENGTH];
         char client_path[MAX_PATH_LENGTH];
