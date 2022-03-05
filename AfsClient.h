@@ -437,22 +437,11 @@ class AfsClient {
         return 0;
     }
 
-    // int afs_GETXATTR(const char *path, const char *name, char *value,
-	// 		size_t size)
-    // {
-    //     int res = lgetxattr(path, name, value, size);
-    //     if (res == -1)
-    //         return -errno;
-    //     return res;
-    // }
-
 
     int afs_WRITE(const char *path, const char *buffer, size_t size, off_t offset,
                       struct fuse_file_info *file_info, char cache_path[]){
         int ret_code = 0;
-        struct stat info;
-        fstat(file_info->fh, &info);
-        printf("~~~~~~~~BEFORE WRITE: Last Mod: %ld\n", info.st_mtime);
+
         if (size>0){
             char client_tmp_path[MAX_PATH_LENGTH];
             getLocalTmpPath(path, cache_path, client_tmp_path);
@@ -463,11 +452,6 @@ class AfsClient {
         }
         
         return ret_code;
-        // ret_code = write(file_info->fh, buffer, size);
-        // fsync(file_info->fh);
-        // close(file_info->fh);
-        
-
     }
 
     private:
