@@ -39,6 +39,15 @@ class AfsClient {
         CreateRes reply;
 
         ClientContext context;
+        Status status = stub_->afs_CREATE(&context, request, &reply);
+        
+        //add Retry
+        if(status.ok()){
+            return reply.ack();
+        } else {
+            std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+            return -errno;
+        }
 
         int fd;
 
@@ -53,18 +62,11 @@ class AfsClient {
                 printf("Create Error in local cache.. \n");
                 return -errno;
         }
-
-        Status status = stub_->afs_CREATE(&context, request, &reply);
         //Set file handler
         fi->fh = fd; 
         printf("**************** File handle CREATE ************: %d\n", fd);
-        //add Retry
-        if(status.ok()){
-            return reply.ack();
-        } else {
-            std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            return -errno;
-        }
+
+        
         return 0;
     }
 
