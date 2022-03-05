@@ -446,6 +446,12 @@ class AfsClient {
             char client_tmp_path[MAX_PATH_LENGTH];
             getLocalTmpPath(path, cache_path, client_tmp_path);
             int fd = open(client_tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
+            // Copy from file to tmp file
+            char c = fgetc(file_info->fh);
+            while (c != EOF){
+                fputc(c, fd);
+                c = fgetc(file_info->fh);
+            }
             ret_code = pwrite(fd, buffer, size, offset);        
             if (ret_code == -1)
                 ret_code = -errno;
