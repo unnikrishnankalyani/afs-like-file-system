@@ -33,7 +33,9 @@ int main(int argc, char* argv[]) {
 
     read(fd, buf, 1900);
 
-    //write(fd, "hello world", strlen("hello world")+1);
+    printf("READ, NOW WRITE .. CHECK IF FLUSHING\n");
+
+    write(fd, "hello world", strlen("hello world")+1);
 
     close(fd);
     printf("%s", buf);
