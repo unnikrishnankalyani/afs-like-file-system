@@ -384,9 +384,6 @@ class AfsClient {
         printf("RELEASE: LOCAL: Last Mod: after fsync %ld\n", info.st_mtime);
         printf("RELEASE: REMOTE: Last Mod: %ld\n", remoteFileInfo.st_mtime);
 
-        if(remoteFileInfo.st_mtime >= info.st_mtime) {
-            isModified = 0;
-        }
 
         if(isModified) {
             fsync(fi->fh);
