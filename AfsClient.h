@@ -481,37 +481,23 @@ class AfsClient {
         struct stat info;
         fstat(file_info->fh, &info);
         printf("~~~~~~~~BEFORE WRITE: Last Mod: %ld\n", info.st_mtime);
+        int res;
 
-        ret_code = write(file_info->fh, buffer, size);
-        fsync(file_info->fh);
-        close(file_info->fh);
+        (void) path;
+        res = pwrite(fi->fh, buf, size, offset);
+        if (res == -1)
+            res = -errno;
+
+        //Debug ---
         fstat(file_info->fh, &info);
-        
         printf("~~~~~~~~AFTER WRITE and FSYNC and CLOSE: Last Mod: %ld\n", info.st_mtime);
 
-        if(ret_code < 0) {
-            printf("Error while writing into file: %d\n", errno);
-            int fd;
-            char local_path[MAX_PATH_LENGTH];
-            getLocalPath(path, cache_path, local_path);
+        return res;
+        // ret_code = write(file_info->fh, buffer, size);
+        // fsync(file_info->fh);
+        // close(file_info->fh);
+        
 
-            fd = open(local_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
-            printf("writing to file: %s\n", local_path);
-            printf("size: %zu\n", size);
-            printf("offset: %jd\n", (intmax_t)size);
-            lseek(fd,offset,SEEK_SET);
-            for(int i=0; i<size; i++) {
-                printf("%c", buffer[i]);
-            }
-            ret_code = write(fd, buffer, size);
-            close(fd);
-            if(ret_code<0) {
-                printf("Error while re-writing file %d\n", errno);
-                printf("Return error: %d\n", ret_code);
-                return -errno;
-            }
-        }
-        return ret_code;
     }
 
     private:
