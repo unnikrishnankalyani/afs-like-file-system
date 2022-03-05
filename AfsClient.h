@@ -329,6 +329,7 @@ class AfsClient {
         }
 
         if(isModified) {
+            fsync(fi->fh);
             buf = (char *)malloc(info.st_size);
             lseek(fi->fh, 0, SEEK_SET);
             read(fi->fh, buf, info.st_size);
