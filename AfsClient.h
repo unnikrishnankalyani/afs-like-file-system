@@ -22,6 +22,10 @@ using afs::UnlinkReq;
 using afs::UnlinkRes;
 using afs::ChmodReq;
 using afs::ChmodRes;
+using afs::MkdirReq;
+using afs::MkdirRes;
+using afs::RmdirReq;
+using afs::RmdirRes;
 
 class AfsClient {
     public:
@@ -274,6 +278,53 @@ class AfsClient {
         ChmodRes reply;
 
         Status status = stub_->afs_CHMOD(&context, req, &reply);
+        if (status.ok()) {
+            return 0;
+        } else {
+            return -reply.error();
+        }
+    }
+    
+
+    int afs_MKDIR(const char *path, mode_t mode, char cache_path[])
+    {
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
+        printf("creating directory: %s\n", client_path);
+        int res = mkdir(client_path, mode);
+        // if(res == -1)
+        //     return -errno;
+        // return 0;
+        ClientContext context;
+        MkdirReq req;
+        req.set_path(path);
+        req.set_mode(mode);
+        MkdirRes reply;
+
+        Status status = stub_->afs_MKDIR(&context, req, &reply);
+        if (status.ok()) {
+            return 0;
+        } else {
+            return -reply.error();
+        }
+    }
+
+    int afs_RMDIR(const char *path, mode_t mode, char cache_path[])
+    {
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
+        printf("removing directory: %s\n", client_path);
+        int res = rmdir(client_path);
+        // if(res == -1)
+        //     return -errno;
+        // return 0;
+        ClientContext context;
+        RmdirReq req;
+        req.set_path(path);
+        req.set_mode(mode);
+        RmdirRes reply;
+
+        Status status = stub_->afs_RMDIR(&context, req, &reply);
         if (status.ok()) {
             return 0;
         } else {

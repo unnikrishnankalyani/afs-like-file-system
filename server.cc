@@ -37,6 +37,10 @@ using afs::UnlinkReq;
 using afs::UnlinkRes;
 using afs::ChmodReq;
 using afs::ChmodRes;
+using afs::MkdirReq;
+using afs::MkdirRes;
+using afs::RmdirReq;
+using afs::RmdirRes;
 
 char root_path[MAX_PATH_LENGTH];
 
@@ -149,6 +153,38 @@ class AfsServiceImplementation final : public AFS:: Service{
         printf("AFS server PATH, Chmod: %s\n", path);
 
         int res = chmod(path, request->mode());
+        if(res == -1)
+        { 
+            perror(strerror(errno));
+            reply->set_error(errno);
+        }
+        return Status::OK;
+	
+	}
+
+    Status afs_MKDIR(ServerContext* context, const MkdirReq* request, 
+					 MkdirRes* reply) override {
+        char path[MAX_PATH_LENGTH];
+        getServerPath(request->path().c_str(), root_path, path);
+        printf("AFS server PATH, mkdir: %s\n", path);
+
+        int res = mkdir(path, request->mode());
+        if(res == -1)
+        { 
+            perror(strerror(errno));
+            reply->set_error(errno);
+        }
+        return Status::OK;
+	
+	}
+
+    Status afs_RMDIR(ServerContext* context, const RmdirReq* request, 
+					 RmdirRes* reply) override {
+        char path[MAX_PATH_LENGTH];
+        getServerPath(request->path().c_str(), root_path, path);
+        printf("AFS server PATH, rmdir: %s\n", path);
+
+        int res = rmdir(path);
         if(res == -1)
         { 
             perror(strerror(errno));

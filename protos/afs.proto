@@ -20,7 +20,26 @@ service AFS {
   rpc afs_STORE(StoreReq) returns (StoreRes){}
   rpc afs_UNLINK(UnlinkReq) returns (UnlinkRes){}
   rpc afs_CHMOD(ChmodReq) returns (ChmodRes){}
+  rpc afs_MKDIR(MkdirReq) returns (MkdirRes){}
+  rpc afs_RMDIR(RmdirReq) returns (RmdirRes){}
 
+}
+
+message MkdirReq {
+  string path = 1;
+  uint32 mode = 2; 
+}
+
+message MkdirRes {
+  int32 error = 1;
+}
+
+message RmdirReq {
+  string path = 1;
+}
+
+message RmdirRes {
+  int32 error = 1;
 }
 
 message StoreReq {

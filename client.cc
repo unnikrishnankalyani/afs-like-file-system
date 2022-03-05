@@ -146,15 +146,15 @@ static int client_unlink(const char *path)
     return options.afsclient->afs_UNLINK(path, cache_path);
 }
 
-// static int client_mkdir(const char *path, mode_t mode)
-// {
-//     return options.afsclient->afs_MKDIR(path, mode, cache_path);
-// }
+static int client_mkdir(const char *path, mode_t mode)
+{
+    return options.afsclient->afs_MKDIR(path, mode, cache_path);
+}
 
-// static int client_rmdir(const char *path)
-// {
-//     return options.afsclient->afs_RMDIR(path, cache_path);
-// }
+static int client_rmdir(const char *path)
+{
+    return options.afsclient->afs_RMDIR(path, cache_path);
+}
 
 // static int client_flush(const char *path, struct fuse_file_info *fi)
 // {
@@ -189,8 +189,8 @@ struct client_fuse_operations:fuse_operations
         // getxattr   = client_getxattr;
         unlink     = client_unlink;
         // flush      = client_flush;
-        // mkdir      = client_mkdir;
-        // rmdir      = client_rmdir;
+        mkdir      = client_mkdir;
+        rmdir      = client_rmdir;
     }
 } client_oper;
 
