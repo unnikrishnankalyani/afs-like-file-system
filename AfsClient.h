@@ -46,14 +46,6 @@ class AfsClient {
         getLocalPath(path, cache_path, client_path);
     
         printf("path: %s\n", client_path);
-        Status status = stub_->afs_CREATE(&context, request, &reply);
-        //add Retry
-        if(status.ok()){
-            return reply.ack();
-        } else {
-            std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            return -errno;
-        }
 
         fd = open(client_path, O_CREAT | O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
         printf("Creating file in local cache\n");
@@ -61,11 +53,18 @@ class AfsClient {
                 printf("Create Error in local cache.. \n");
                 return -errno;
         }
-        
+
+        Status status = stub_->afs_CREATE(&context, request, &reply);
         //Set file handler
         fi->fh = fd; 
         printf("**************** File handle CREATE ************: %d\n", fd);
-
+        //add Retry
+        if(status.ok()){
+            return reply.ack();
+        } else {
+            std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+            return -errno;
+        }
         return 0;
     }
 
@@ -123,7 +122,6 @@ class AfsClient {
                 afs_GETATTR(path, &remoteFileInfo); 
                 if(remoteFileInfo.st_mtime > cacheFileInfo.st_mtime) {
                     fetchNewCopy = 1;
-                    std::cout << "remoteFileInfo.st_mtime cacheFileInfo.st_mtime:" << remoteFileInfo.st_mtime <<","<< cacheFileInfo.st_mtime<<std::endl;
                     printf("5. Stale copy - fetch new \n");
                 }
             }
@@ -175,8 +173,10 @@ class AfsClient {
         printf("**************** File handle READ ************: %d\n", file_info->fh);
         printf("**************** File size, offset READ ************: %d, %d\n", size, offset);
 
+        int fd = open(client_path, O_RDONLY);
+        file_info->fh = fd;
         ret_code = pread(file_info->fh, buffer, size, offset);
-        printf("buffer : %s\n", buffer);
+
         //Just to debug - 
         lstat(client_path, &info);
         printf("~~~~~~~~AFTER READ: Last Mod: %ld\n", info.st_mtime);
@@ -344,7 +344,7 @@ class AfsClient {
         StoreReq request;
         request.set_path(path);
         request.set_size(size);
-        std::cout<<"Store request: Path ="<<path<<" Size = "<< size <<std::endl;
+        printf("Store request: Path = %s Size = %d \n", path, size);
         request.set_buf(std::string(buf, size));
 
         StoreRes reply;
@@ -360,7 +360,7 @@ class AfsClient {
         }
     }
     
-    int afs_RELEASE(const char *path, struct fuse_file_info *fi, char cache_path[])
+    int afs_RELEASE(const char *path, struct fuse_file_info *fi)
     {
         int rc = 0;
         int isModified=1;
@@ -402,6 +402,7 @@ class AfsClient {
         local_path[0] = '\0';
         char cacheFileName[80]; 
             snprintf(cacheFileName, 80, "%lu", hash((unsigned char *)path));
+
             strncat(local_path, cache_path, PATH_MAX);
             strncat(local_path, cacheFileName, PATH_MAX);
         lstat(local_path, &info);
