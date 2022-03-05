@@ -166,7 +166,7 @@ class AfsClient {
 
         //Just to debug - 
         struct stat info;
-        lstat(cache_path, &info);
+        lstat(client_path, &info);
         printf("~~~~~~~BEFORE READ: Last Mod: %ld\n", info.st_mtime);
 
         printf("reading from : %s\n", client_path);
@@ -176,7 +176,7 @@ class AfsClient {
         ret_code = pread(file_info->fh, buffer, size, offset);
 
         //Just to debug - 
-        lstat(cache_path, &info);
+        lstat(client_path, &info);
         printf("~~~~~~~~AFTER READ: Last Mod: %ld\n", info.st_mtime);
         if(ret_code < 0) {
             return -errno;
