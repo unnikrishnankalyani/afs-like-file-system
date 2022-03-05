@@ -5,8 +5,6 @@ option java_package = "ex.grpc";
 package afs;
 
 service AFS {
-  rpc afs_MKDIR(MkdirReq) returns (MkdirRes) {}
-  rpc afs_RMDIR(RmdirReq) returns (RmdirRes) {}
   rpc afs_READ(ReadReq) returns (ReadRes) {}
   rpc afs_WRITE(WriteReq) returns (WriteRes) {}
   rpc afs_CREATE(CreateReq) returns (CreateRes) {}
@@ -122,22 +120,6 @@ message ReadResult_FAIL {
 }
 
 message ReadRes {
-
-}
-
-message MkdirReq {
-
-}
-
-message MkdirRes {
-  
-}
-
-message RmdirReq {
-
-}
-
-message RmdirRes {
 
 }
 
