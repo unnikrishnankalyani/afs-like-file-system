@@ -477,7 +477,7 @@ class AfsClient {
             char local_path[MAX_PATH_LENGTH];
             getLocalPath(path, cache_path, local_path);
 
-            fd = open(local_path,  O_APPEND | O_RDWR); //changed last 3
+            fd = open(local_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
             printf("writing to file: %s\n", local_path);
             printf("size: %zu\n", size);
             printf("offset: %jd\n", (intmax_t)size);
