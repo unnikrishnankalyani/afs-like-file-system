@@ -220,7 +220,7 @@ class AfsClient {
         ClientContext context;
         GetattrRes reply;
         GetattrReq request;
-        Status status;
+        Status status = new Status();
 
         request.set_path(path);
         do
@@ -250,7 +250,7 @@ class AfsClient {
                 stats->st_ctime = reply.ctime();
                 return 0;
             }
-            status = NULL;
+            status = new Status();
         } while (retry_req(status));
         
         // if(status.ok())
