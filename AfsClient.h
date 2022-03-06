@@ -384,11 +384,11 @@ class AfsClient {
         struct stat info, remoteFileInfo;
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
-        afs_GETATTR(path, &remoteFileInfo) ;
         lstat(client_path, &info);
-        long modified = get(path) - remoteFileInfo.st_mtime ;
+        long modified = get(path) ;
+        //SEMANTICS: ALWAYS FLUSH IF MODIFIED, IRRESPECTIVE OF SERVER ATTRIBUTES
         std::cout << "Modified? time elapsed - " << modified << std::endl;
-        if (modified>0){
+        if (modified == -12345678){ //write modification
             rc = close(fi->fh);
             buffer = (char *)malloc(info.st_size);
             int fd = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
@@ -488,8 +488,8 @@ class AfsClient {
             rename(client_tmp_path, client_path);  
             long hashfile = hashfilename(path);
             // server mtime in nanoseconds
-            put(hashfile, 1000+get(path)); //1000 is dummy
-            std::cout << "updating write time  " << get(path)+1000 <<std::endl;
+            put(hashfile, -12345678); //-12345678 is dummy flag indicating a modification
+            std::cout << "updating write time  " << -12345678 <<std::endl;
             //flush to persistent storage
             dump(cache_path);  
 
