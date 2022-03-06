@@ -188,7 +188,7 @@ printf("path: %s\n", client_path);
   int i;
 
   for (i=0; i<HTABLESIZE; i++){
-      printf(i);
+      printf("i %d" , i);
     if(ht[i] != NULL){
       hash_node *temp_hn = ht[i];
       while (temp_hn!=NULL){
