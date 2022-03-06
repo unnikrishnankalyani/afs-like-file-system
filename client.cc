@@ -258,7 +258,7 @@ int main(int argc, char* argv[]){
     char client_path[MAX_PATH_LENGTH];
     char * path = "/database.txt";
     getLocalPath(path, cache_path, client_path);
-    fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
+    int fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
     close(fd);
     init_ht();
 
