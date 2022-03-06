@@ -200,6 +200,13 @@ class AfsClient {
         request.set_path(path);
 
         Status status = stub_->afs_GETATTR(&context, request, &reply);
+        if(status.ok())
+        {
+            printf("getattr success\n");
+        }
+        else{
+            printf("getattr failed\n");
+        }
         if(reply.err() != 0){
             std::cout << " getattr errno: " << reply.err() << std::endl;
             return -reply.err();
