@@ -353,7 +353,7 @@ class AfsClient {
         }
     }
 
-    int afs_STORE(const char *path, char *buf, int size)
+    int afs_STORE(const char *path, char *buf, int size, char* cache_path)
     {
         StoreReq request;
         request.set_path(path);
@@ -401,7 +401,7 @@ class AfsClient {
             buffer = (char *)malloc(info.st_size);
             int fd = open(client_tmp_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
             read(fd, buffer, info.st_size);
-            afs_STORE(path, buffer, info.st_size);
+            afs_STORE(path, buffer, info.st_size, cache_path);
             
             remove(client_path);
             rename(client_tmp_path, client_path);
