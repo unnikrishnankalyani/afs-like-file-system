@@ -389,7 +389,7 @@ class AfsClient {
         getLocalPath(path, cache_path, client_path);
         afs_GETATTR(path, &remoteFileInfo) ;
 
-        long modified = get(path) - remoteFileInfo.mtime ;
+        long modified = get(path) - remoteFileInfo.st_mtime ;
         std::cout << "Modified? time elapsed - " << modified << std::endl;
         if (modified>0){
             rc = close(fi->fh);
