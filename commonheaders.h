@@ -102,7 +102,7 @@ hash_node *create_hash_node(long key, long value){
   return new_hn;
 }
 
-long get(unsigned char* filename, int b){
+long get(const char* filename, int b){
  
     long hashfile = hashfilename(filename);
     long hash_index = hashtableindex(hashfile);
