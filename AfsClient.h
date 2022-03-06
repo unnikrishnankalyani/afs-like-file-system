@@ -376,7 +376,7 @@ class AfsClient {
 
         if (modified==0){
             rc = close(fi->fh);
-            remove(client_path);
+            
             
             lstat(client_tmp_path, &info);
 
@@ -384,7 +384,8 @@ class AfsClient {
             int fd = open(client_tmp_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
             read(fd, buffer, info.st_size);
             afs_STORE(path, buffer, info.st_size);
-
+            
+            remove(client_path);
             rename(client_tmp_path, client_path);
 
             printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buffer);
@@ -451,30 +452,30 @@ class AfsClient {
             getLocalTmpPath(path, cache_path, client_tmp_path);
             int fd = open(client_tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
             // Copy from file to tmp file
-            struct stat stat;
+        //     struct stat stat;
 
-           if (fstat(file_info->fh, &stat) == -1) {
-               perror("fstat");
-               return -1;
-           }
+        //    if (fstat(file_info->fh, &stat) == -1) {
+        //        perror("fstat");
+        //        return -1;
+        //    }
 
-           off64_t len, ret;
-           len = stat.st_size;
-           printf("leeeengthhhhhh");
-           std::cout << len <<std::endl;
+        //    off64_t len, ret;
+        //    len = stat.st_size;
+        //    printf("leeeengthhhhhh");
+        //    std::cout << len <<std::endl;
 
-           do {
-               ret = copy_file_range(file_info->fh, NULL, fd, NULL, len, 0);
-               if (ret == -1) {
-                   perror("copy_file_range");
-                   return -1;
-               }
+        //    do {
+        //        ret = copy_file_range(file_info->fh, NULL, fd, NULL, len, 0);
+        //        if (ret == -1) {
+        //            perror("copy_file_range");
+        //            return -1;
+        //        }
 
-               len -= ret;
-           } while (len > 0 && ret > 0);
+        //        len -= ret;
+        //    } while (len > 0 && ret > 0);
 
-           printf("offfsetttttt");
-           std::cout << offset <<std::endl;
+        //    printf("offfsetttttt");
+        //    std::cout << offset <<std::endl;
 
             ret_code = pwrite(fd, buffer, size, offset);        
             if (ret_code == -1)
