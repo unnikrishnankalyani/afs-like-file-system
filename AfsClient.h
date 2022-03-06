@@ -5,7 +5,7 @@
 
 using grpc::Channel;
 using grpc::Status;
-using grpc::StatusCode
+using grpc::StatusCode;
 using grpc::ClientContext;
 using grpc::ClientReader;
 

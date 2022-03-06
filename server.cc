@@ -22,7 +22,7 @@ using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::ServerWriter;
 using grpc::Status;
-using grpc::StatusCode
+using grpc::StatusCode;
 
 using afs::AFS;
 using afs::CreateReq;
