@@ -38,7 +38,7 @@ void getServerPath(const char* clientpath, const char*  root_path, char* server_
 void getLocalPath(const char* file_path, const char*  cache_path, char* client_path)
 {
     // char cacheFileName[80];
-    // snprintf(cacheFileName, 80, "%lu", hash((unsigned char *)file_path));
+    // snprintf(cacheFileName, 80, "%lu", hash((const char* )file_path));
     client_path[0] = '\0';
     strncat(client_path, cache_path, MAX_PATH_LENGTH);
     // strncat(client_path, cacheFileName, MAX_PATH_LENGTH);
@@ -48,7 +48,7 @@ void getLocalPath(const char* file_path, const char*  cache_path, char* client_p
 void getLocalTmpPath(const char* file_path, const char*  cache_path, char* client_path)
 {
     // char cacheFileName[80];
-    // snprintf(cacheFileName, 80, "%lu", hash((unsigned char *)file_path));
+    // snprintf(cacheFileName, 80, "%lu", hash((const char* )file_path));
     client_path[0] = '\0';
     strncat(client_path, cache_path, MAX_PATH_LENGTH);
     // strncat(client_path, cacheFileName, MAX_PATH_LENGTH);
@@ -57,7 +57,7 @@ void getLocalTmpPath(const char* file_path, const char*  cache_path, char* clien
 
 }
 
-unsigned long hashfilename(unsigned char *str)
+unsigned long hashfilename(const char* str)
 {   
     unsigned long hash = 5381;
     int c;
