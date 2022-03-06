@@ -94,7 +94,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         close(fd);
 
         reply->set_error(0);
-        reply->set_time((stats.st_mtime).tv_nsec);
+        reply->set_time(stats.st_mtime->tv_nsec);
         return Status::OK;
     }
 
