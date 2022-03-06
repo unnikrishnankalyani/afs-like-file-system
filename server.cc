@@ -97,8 +97,6 @@ class AfsServiceImplementation final : public AFS:: Service{
         return Status::OK;
     }
 
-
-
     Status afs_GETATTR(ServerContext* context, const GetattrReq* request, 
 					 GetattrRes* reply) override {
         char path[MAX_PATH_LENGTH];
@@ -112,7 +110,6 @@ class AfsServiceImplementation final : public AFS:: Service{
 		    perror(strerror(errno));
 		    reply->set_err(errno);
             printf("error while getattr : %d\n", errno);
-            // return Status::CANCELLED;
 		}
 		else{
             reply->set_ino(stats.st_ino);

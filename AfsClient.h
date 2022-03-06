@@ -3,6 +3,8 @@
 #include "commonheaders.h"
 #include <grpc/impl/codegen/status.h>
 #include <grpcpp/impl/codegen/status_code_enum.h>
+#include <chrono>
+#include <thread>
 
 using grpc::Channel;
 using grpc::Status;
@@ -33,6 +35,9 @@ using afs::RmdirRes;
 class AfsClient {
     public:
         AfsClient(std::shared_ptr<Channel> channel) : stub_(AFS::NewStub(channel)) {}
+
+    int interval = 2500;
+    int retries = 1;
 
     int afs_CREATE(const char* path, char cache_path[],struct fuse_file_info *fi) {
         CreateReq request;
@@ -192,39 +197,83 @@ class AfsClient {
 	    return ret_code;
     }
 
+    bool retry_req(Status status, int retries)
+    {
+        if(status.ok() || retries > 5)
+        {
+            printf("retry not required\n");
+            retries = 1;
+            interval = 2500;
+            return false;
+        }
+        else{
+            printf("retrying for the %d time\n", retries);
+            retries += 1;
+            std::this_thread::sleep_for(std::chrono::milliseconds(interval));
+            interval *= interval;
+        }
+    }
+
     int afs_GETATTR(const char *path, struct stat *stats){
         ClientContext context;
         GetattrRes reply;
         GetattrReq request;
 
         request.set_path(path);
-
-        Status status = stub_->afs_GETATTR(&context, request, &reply);
-        if(status.ok())
+        do
         {
-            printf("getattr success\n");
-        }
-        else{
-            printf("getattr failed\n");
-        }
-        if(reply.err() != 0){
-            std::cout << " getattr errno: " << reply.err() << std::endl;
-            return -reply.err();
-        }
-        memset(stats, 0, sizeof(struct stat));
+            Status status = stub_->afs_GETATTR(&context, request, &reply);
+            if(status.ok())
+            {
+                printf("getattr success\n");
+                if(reply.err() != 0){
+                    std::cout << " getattr errno: " << reply.err() << std::endl;
+                    return -reply.err();
+                }
+                memset(stats, 0, sizeof(struct stat));
 
-        stats->st_ino = reply.ino();
-        stats->st_mode = reply.mode();
-        stats->st_nlink = reply.nlink();
-        stats->st_uid = reply.uid();
-        stats->st_gid = reply.gid();
-        stats->st_size = reply.size();
-        stats->st_blksize = reply.blksize();
-        stats->st_blocks = reply.blocks();
-        stats->st_atime = reply.atime();
-        stats->st_mtime = reply.mtime();
-        stats->st_ctime = reply.ctime();
-        return 0;
+                stats->st_ino = reply.ino();
+                stats->st_mode = reply.mode();
+                stats->st_nlink = reply.nlink();
+                stats->st_uid = reply.uid();
+                stats->st_gid = reply.gid();
+                stats->st_size = reply.size();
+                stats->st_blksize = reply.blksize();
+                stats->st_blocks = reply.blocks();
+                stats->st_atime = reply.atime();
+                stats->st_mtime = reply.mtime();
+                stats->st_ctime = reply.ctime();
+                return 0;
+            }
+        } while (retry_req(status));
+        
+        // if(status.ok())
+        // {
+        //     printf("getattr success\n");
+        //     if(reply.err() != 0){
+        //         std::cout << " getattr errno: " << reply.err() << std::endl;
+        //         return -reply.err();
+        //     }
+        //     memset(stats, 0, sizeof(struct stat));
+
+        //     stats->st_ino = reply.ino();
+        //     stats->st_mode = reply.mode();
+        //     stats->st_nlink = reply.nlink();
+        //     stats->st_uid = reply.uid();
+        //     stats->st_gid = reply.gid();
+        //     stats->st_size = reply.size();
+        //     stats->st_blksize = reply.blksize();
+        //     stats->st_blocks = reply.blocks();
+        //     stats->st_atime = reply.atime();
+        //     stats->st_mtime = reply.mtime();
+        //     stats->st_ctime = reply.ctime();
+        //     return 0;
+        // }
+        // else{
+        //     printf("getattr failed\n");
+
+        // }
+        
     }
 
     int afs_TRUNCATE(const char *path, off_t size, char cache_path[])
