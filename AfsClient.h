@@ -36,7 +36,7 @@ class AfsClient {
     public:
         AfsClient(std::shared_ptr<Channel> channel) : stub_(AFS::NewStub(channel)) {}
 
-    int interval = 2500;
+    int interval = 1000;
     int retries = 1;
 
     int afs_CREATE(const char* path, char cache_path[],struct fuse_file_info *fi) {
@@ -80,23 +80,24 @@ class AfsClient {
     {
         FetchRequest request;
         request.set_path(path);
-
-
         FetchReply *reply = new FetchReply();
 
-        ClientContext context;
-        printf("before fetch\n");
-        Status status = stub_->afs_FETCH(&context, request, reply);
-        printf("after fetch\n");
-        if (status.ok()) {
-                    std::cout << reply->buf() <<std::endl;
-            *buf = (char *)(reply->buf()).data();
-                    printf("%s\n", *buf);
-            *size = reply->size();
-            return 0;
-        } else {
-            return -errno;
-        }
+        do
+        {
+            ClientContext context;
+            printf("before fetch\n");
+            Status status = stub_->afs_FETCH(&context, request, reply);
+            printf("after fetch\n");
+            if (status.ok()) {
+                        std::cout << reply->buf() <<std::endl;
+                *buf = (char *)(reply->buf()).data();
+                        printf("%s\n", *buf);
+                *size = reply->size();
+                return 0;
+            }
+            is_ok = false;
+        } while (retry_req(is_ok));
+        return -errno;
     }
 
     int afs_OPEN(const char *path, struct fuse_file_info *file_info, char cache_path[])
@@ -407,18 +408,22 @@ class AfsClient {
         request.set_size(size);
         printf("Store request: Path = %s Size = %d \n", path, size);
         request.set_buf(std::string(buf, size));
-
         StoreRes reply;
-
-        ClientContext context;
-
-        Status status = stub_->afs_STORE(&context, request, &reply);
-
-        if (status.ok()) {
-            return reply.error();
-        } else {
-            return -reply.error();
-        }
+        bool is_ok = false;
+        do
+        {
+            ClientContext context;
+            Status status = stub_->afs_STORE(&context, request, &reply);
+            if (status.ok()) {
+                is_ok = true;
+                retries = 1;
+                interval = 2500;
+                printf("afs_STORE success\n");
+                return 0;
+            }
+            is_ok = false;
+        } while (retry_req(is_ok));
+        return -reply.error();
     }
     
     int afs_RELEASE(const char *path, struct fuse_file_info *fi, char cache_path[])
