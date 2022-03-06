@@ -184,12 +184,15 @@ printf("path: %s\n", client_path);
   FILE *fptr; 
   printf("dumping... \n");
   fptr = fopen(client_path,"w"); //do I need a backup?
+  printf("fptr %d", fptr);
   int i;
 
   for (i=0; i<HTABLESIZE; i++){
+      printf(i);
     if(ht[i] != NULL){
       hash_node *temp_hn = ht[i];
       while (temp_hn!=NULL){
+        printf("%d,%s\n", temp_hn->key, temp_hn->value);
         fprintf(fptr,"%d,%s\n", temp_hn->key, temp_hn->value);
         temp_hn = temp_hn->next;
       }
