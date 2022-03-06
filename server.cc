@@ -16,6 +16,7 @@
 #include "afs.grpc.pb.h"
 #include "commonheaders.h"
 #include <grpc/impl/codegen/status.h>
+#include <grpcpp/impl/codegen/status_code_enum.h>
 
 using grpc::Server;
 using grpc::ServerBuilder;
