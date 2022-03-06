@@ -148,7 +148,7 @@ message GetattrRes {
   sint64 blksize = 8; // blocksize for file system I/O 
   sint64  blocks = 9;  // number of 512B blocks allocated 
   int32    atime = 10;   // time of last access 
-  int32    mtime = 11;   // time of last modification
+  int64    mtime = 11;   // time of last modification
   int32    ctime = 12;   // time of last status change
   int32    err = 13; 
 }
