@@ -388,11 +388,14 @@ class AfsClient {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
         afs_GETATTR(path, &remoteFileInfo) ;
-        fstat(fi->fh, &info);
+        lstat(client_path, &info);
         long modified = get(path) - remoteFileInfo.st_mtime ;
         std::cout << "Modified? time elapsed - " << modified << std::endl;
         if (modified>0){
             rc = close(fi->fh);
+            buffer = (char *)malloc(info.st_size);
+            int fd = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
+            read(fd, buffer, info.st_size);
             afs_STORE(path, buffer, info.st_size, cache_path);
             printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buffer);
             free(buffer);
