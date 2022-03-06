@@ -186,17 +186,15 @@ printf("path: %s\n", client_path);
   fptr = fopen(client_path,"w"); //do I need a backup?
 printf("fptr ..\n");
 
-  int i;
-printf("i ..\n");
-printf(" tablesize %d ", HTABLESIZE);
+  int i;    
 
   for (i=0; i<HTABLESIZE; i++){
       printf("i %d" , i);
     if(ht[i] != NULL){
       hash_node *temp_hn = ht[i];
       while (temp_hn!=NULL){
-        printf("%d,%d\n", temp_hn->key, temp_hn->value);
-        fprintf(fptr,"%d,%d\n", temp_hn->key, temp_hn->value);
+        printf("%ld,%ld\n", temp_hn->key, temp_hn->value);
+        fprintf(fptr,"%ld,%ld\n", temp_hn->key, temp_hn->value);
         temp_hn = temp_hn->next;
       }
     }
