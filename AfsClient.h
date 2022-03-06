@@ -301,29 +301,37 @@ class AfsClient {
 
     int afs_MKDIR(const char *path, mode_t mode, char cache_path[])
     {
-        char client_path[MAX_PATH_LENGTH];
-        getLocalPath(path, cache_path, client_path);
-        printf("creating directory: %s\n", client_path);
-        int res = mkdir(client_path, mode);
-        // if(res == -1)
-        //     return -errno;
-        // return 0;
-        ClientContext context;
-        MkdirReq req;
-        req.set_path(path);
-        req.set_mode(mode);
-        MkdirRes reply;
+        try{
+            char client_path[MAX_PATH_LENGTH];
+            getLocalPath(path, cache_path, client_path);
+            printf("creating directory: %s\n", client_path);
+            int res = mkdir(client_path, mode);
+            // if(res == -1)
+            //     return -errno;
+            // return 0;
+            ClientContext context;
+            MkdirReq req;
+            req.set_path(path);
+            req.set_mode(mode);
+            MkdirRes reply;
 
-        Status status = stub_->afs_MKDIR(&context, req, &reply);
-        if (status.ok()) {
-            printf("error : %d\n", errno);
-            return 0;
-        } else {
-            printf("error while creating dir : %d\n", reply.error());
-            printf("error message : %s\n", status.error_message().c_str());
-            printf("error code : %d\n", status.error_code());
-            return -reply.error();
+            Status status = stub_->afs_MKDIR(&context, req, &reply);
+            if (status.ok()) {
+                printf("error : %d\n", errno);
+                    return 0;
+                } else {
+                    printf("error while creating dir : %d\n", reply.error());
+                    printf("error message : %s\n", status.error_message().c_str());
+                    printf("error code : %d\n", status.error_code());
+                    return -reply.error();
+                }
         }
+        catch(const std::exception& e)
+        {
+            printf("caught in client \n");
+            throw;
+        }
+        
     }
 
     int afs_RMDIR(const char *path, char cache_path[])

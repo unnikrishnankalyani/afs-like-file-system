@@ -148,7 +148,14 @@ static int client_unlink(const char *path)
 
 static int client_mkdir(const char *path, mode_t mode)
 {
-    return options.afsclient->afs_MKDIR(path, mode, cache_path);
+    try{
+        return options.afsclient->afs_MKDIR(path, mode, cache_path);
+    }
+    catch(const std::exception& e)
+    {
+        printf("retrying for mkdir!\n");
+    }
+    
 }
 
 static int client_rmdir(const char *path)
