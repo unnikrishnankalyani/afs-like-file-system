@@ -384,28 +384,16 @@ class AfsClient {
     {
         int rc = 0;
         char *buffer;
-        struct stat info;
-        char client_tmp_path[MAX_PATH_LENGTH];
+        struct stat info, remoteFileInfo;
         char client_path[MAX_PATH_LENGTH];
-        getLocalTmpPath(path, cache_path, client_tmp_path);
         getLocalPath(path, cache_path, client_path);
+        afs_GETATTR(path, &remoteFileInfo) 
 
-        int modified = access(client_tmp_path, F_OK);
-
-        if (modified==0){
+        long modified = get(path) - remoteFileInfo.mtime ;
+        std::cout << "Modified? time elapsed - " << modified << std::endl;
+        if (modified>0){
             rc = close(fi->fh);
-            
-            
-            lstat(client_tmp_path, &info);
-
-            buffer = (char *)malloc(info.st_size);
-            int fd = open(client_tmp_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
-            read(fd, buffer, info.st_size);
             afs_STORE(path, buffer, info.st_size, cache_path);
-            
-            remove(client_path);
-            rename(client_tmp_path, client_path);
-
             printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buffer);
             free(buffer);
             
@@ -493,11 +481,20 @@ class AfsClient {
         //    printf("offfsetttttt");
         //    std::cout << offset <<std::endl;
 
-            ret_code = pwrite(fd, buffer, size, offset);        
+            ret_code = pwrite(fd, buffer, size, offset); 
+            remove(client_path);
+            rename(client_tmp_path, client_path);  
+            long hashfile = hashfilename(path);
+            // server mtime in nanoseconds
+            put(hashfile, 1000+get(path)); //1000 is dummy
+            std::cout << "updating write time  " << get(path)+1000 <<std::endl;
+            //flush to persistent storage
+            dump(cache_path);  
+
             if (ret_code == -1)
                 ret_code = -errno;
-        }
-        
+            }
+            
         return ret_code;
     }
 

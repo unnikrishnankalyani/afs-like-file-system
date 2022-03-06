@@ -102,7 +102,7 @@ hash_node *create_hash_node(long key, long value){
   return new_hn;
 }
 
-long get(const char* filename, int b){
+long get(const char* filename){
  
     long hashfile = hashfilename(filename);
     long hash_index = hashtableindex(hashfile);
@@ -184,12 +184,11 @@ printf("path: %s\n", client_path);
   FILE *fptr; 
   printf("dumping... \n");
   fptr = fopen(client_path,"w"); //do I need a backup?
-printf("fptr ..\n");
+
 
   int i;    
 
   for (i=0; i<HTABLESIZE; i++){
-      printf("i %d" , i);
     if(ht[i] != NULL){
       hash_node *temp_hn = ht[i];
       while (temp_hn!=NULL){
