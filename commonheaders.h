@@ -184,6 +184,8 @@ printf("path: %s\n", client_path);
   FILE *fptr; 
   printf("dumping... \n");
   fptr = fopen(client_path,"w"); //do I need a backup?
+  if(fptr == NULL)
+    printf("fptr is null\n");
   int i;
 
   for (i=0; i<HTABLESIZE; i++){
