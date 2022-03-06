@@ -126,7 +126,8 @@ class AfsServiceImplementation final : public AFS:: Service{
             reply->set_blksize(stats.st_blksize);
             reply->set_blocks(stats.st_blocks);
             reply->set_atime(stats.st_atime);
-            reply->set_mtime(stats.st_mtime.tv_nsec);
+            struct  timespec ts =  stats.st_mtim;  /* time of last data modification */
+            reply->set_mtime(ts.tv_nsec);
             reply->set_ctime(stats.st_ctime);
 			
 		    reply->set_err(0);
