@@ -305,16 +305,12 @@ class AfsClient {
             char client_path[MAX_PATH_LENGTH];
             getLocalPath(path, cache_path, client_path);
             printf("creating directory: %s\n", client_path);
-            int res = mkdir(client_path, mode);
-            // if(res == -1)
-            //     return -errno;
-            // return 0;
+
             ClientContext context;
             MkdirReq req;
             req.set_path(path);
             req.set_mode(mode);
             MkdirRes reply;
-
             Status status = stub_->afs_MKDIR(&context, req, &reply);
             if (status.ok()) {
                 printf("error : %d\n", errno);
@@ -325,6 +321,14 @@ class AfsClient {
                 printf("error code : %d\n", status.error_code());
                 return -reply.error();
             }
+
+            int res = mkdir(client_path, mode);
+            // if(res == -1)
+            //     return -errno;
+            // return 0;
+   
+
+            
         }
         catch(const std::exception& e)
         {
