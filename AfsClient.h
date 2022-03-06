@@ -128,10 +128,9 @@ class AfsClient {
                 if(fd==-1) printf("Reopen Error - Probable PERMISSION issues\n"); 
 
             } else {
-                lstat(client_path, &cacheFileInfo);
                 printf("4. Get stats to compare time stamps\n");
                 afs_GETATTR(path, &remoteFileInfo); 
-                if(remoteFileInfo.st_mtime > cacheFileInfo.st_mtime) {
+                if(remoteFileInfo.st_mtime > get(path)) {
                     fetchNewCopy = 1;
                     printf("5. Stale copy - fetch new \n");
                 }
@@ -178,7 +177,6 @@ class AfsClient {
         //Just to debug - 
         struct stat info;
         lstat(client_path, &info);
-        printf("~~~~~~~BEFORE READ: Last Mod: %ld\n", info.st_mtime);
 
         printf("reading from : %s\n", client_path);
         printf("**************** File handle READ ************: %d\n", file_info->fh);
@@ -192,7 +190,6 @@ class AfsClient {
 
         //Just to debug - 
         lstat(client_path, &info);
-        printf("~~~~~~~~AFTER READ: Last Mod: %ld\n", info.st_mtime);
         if(ret_code < 0) {
             return -errno;
         }
