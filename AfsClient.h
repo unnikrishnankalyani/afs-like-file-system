@@ -74,7 +74,7 @@ class AfsClient {
         return 0;
     }
 
-    int afs_FETCH(const char *path, char **buf, int *size)
+    int afs_FETCH(const char *path, char **buf, int *size, char* cache_path)
     {
         FetchRequest request;
         request.set_path(path);
@@ -143,7 +143,7 @@ class AfsClient {
                 if(rc<0) {
                     return -errno;
                 }
-                rc = afs_FETCH(path, &buf, &size);
+                rc = afs_FETCH(path, &buf, &size, cache_path);
                 printf("8. Fetching new copy. rc: %d\n", rc);
                 
                 if (rc<0) {
