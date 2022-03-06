@@ -60,7 +60,7 @@ class AfsClient {
         printf("**************** File handle CREATE ************: %d\n", fd);
         //add Retry
         if(status.ok()){
-            long hashfile = hashfilename(path);
+            long hashfile = hashfilename((const char*) path);
             // server mtime in nanoseconds
             put(hashfile, reply.time());
             std::cout << "reply time create" << reply.time() <<std::endl;
@@ -87,7 +87,7 @@ class AfsClient {
         printf("after fetch\n");
         if (status.ok()) {
             std::cout << reply->buf() <<std::endl;
-            long hashfile = hashfilename(path);
+            long hashfile = hashfilename((const char*) path);
             // server mtime in nanoseconds
             put(hashfile, reply.time());
             std::cout << "reply time fetch" << reply.time() <<std::endl;
@@ -368,7 +368,7 @@ class AfsClient {
         Status status = stub_->afs_STORE(&context, request, &reply);
 
         if (status.ok()) {
-            long hashfile = hashfilename(path);
+            long hashfile = hashfilename((const char*) path);
             // server mtime in nanoseconds
             put(hashfile, reply.time());
             std::cout << "reply time store" << reply.time() <<std::endl;
