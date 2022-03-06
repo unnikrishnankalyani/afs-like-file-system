@@ -49,7 +49,7 @@ message StoreReq {
 message StoreRes {
   int32 error = 1;
   string reason = 2;
-  int64 time = 3;
+  long time = 3;
 }
 
 message OpenReq{
@@ -86,7 +86,7 @@ message FetchReply {
   string reason = 2;
   int32 size = 3;
   bytes buf = 4;
-  int64 time = 5;
+  long time = 5;
 }
 
 message LsReq {
@@ -104,13 +104,13 @@ message file_attr {
     afsDIR = 1;
   }
   ftype   type = 1;   // file type
-  uint64  size = 2;   // file size in bytes.
+  ulong  size = 2;   // file size in bytes.
 }
 
 message ReadReq {
   string file = 1;
-  uint64 offset = 2;
-  uint64 count = 3;
+  ulong offset = 2;
+  ulong count = 3;
 }
 
 
@@ -144,11 +144,11 @@ message GetattrRes {
   uint32   nlink = 4;    // number of hard links 
   uint32     uid = 5;     // user ID of owner 
   uint32     gid = 6;     // group ID of owner 
-  sint64     size = 7;    // total size, in bytes 
-  sint64 blksize = 8; // blocksize for file system I/O 
-  sint64  blocks = 9;  // number of 512B blocks allocated 
+  slong     size = 7;    // total size, in bytes 
+  slong blksize = 8; // blocksize for file system I/O 
+  slong  blocks = 9;  // number of 512B blocks allocated 
   int32    atime = 10;   // time of last access 
-  int64    mtime = 11;   // time of last modification
+  int32    mtime = 11;   // time of last modification
   int32    ctime = 12;   // time of last status change
   int32    err = 13; 
 }
@@ -186,7 +186,7 @@ message CreateReq {
 
 message CreateRes {
   int32 ack = 1;
-  int64 time = 2;
+  long time = 2;
 }
 
 message LookupReq {
