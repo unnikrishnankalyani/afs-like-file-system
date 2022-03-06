@@ -457,8 +457,10 @@ class AfsClient {
             char client_path[MAX_PATH_LENGTH];
             getLocalPath(path, cache_path, client_path);
             int fd = open(client_tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
-            char *buffer = (char *)malloc(info.st_size);
+            struct stat info;
+            lstat(client_path, &info);
             int fd_main = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
+            char *buffer = (char *)malloc(info.st_size);
             read(fd_main, buffer, info.st_size);
             write(fd, buffer, info.st_size);
             close(fd_main);
