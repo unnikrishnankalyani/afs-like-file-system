@@ -15,12 +15,15 @@
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
 #include "commonheaders.h"
+#include <grpc/impl/codegen/status.h>
+#include <grpcpp/impl/codegen/status_code_enum.h>
 
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::ServerWriter;
 using grpc::Status;
+using grpc::StatusCode;
 
 using afs::AFS;
 using afs::CreateReq;
@@ -62,6 +65,10 @@ class AfsServiceImplementation final : public AFS:: Service{
         }
         else{
             reply->set_ack(0);
+            struct stat stats;
+            int res = lstat(path, &stats);
+            struct  timespec ts =  stats.st_mtim;  /* time of last data modification */
+            reply->set_time(ts.tv_nsec);
             close(fd);
         }
         return Status::OK;
@@ -88,13 +95,16 @@ class AfsServiceImplementation final : public AFS:: Service{
         printf("Received String: %s\n", (request->buf()).c_str());
         printf("Size: %d\n", request->size());
         write(fd, (request->buf()).data(), request->size());
+        struct stat stats;
+        int res = lstat(path, &stats);
         close(fd);
 
         reply->set_error(0);
+        struct  timespec ts =  stats.st_mtim;  /* time of last data modification */
+
+        reply->set_time(ts.tv_nsec);
         return Status::OK;
     }
-
-
 
     Status afs_GETATTR(ServerContext* context, const GetattrReq* request, 
 					 GetattrRes* reply) override {
@@ -104,10 +114,11 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         struct stat stats;
 		int res = lstat(path, &stats);
-
+        printf("res after getattr :  %d\n", res);
         if(res == -1){
 		    perror(strerror(errno));
 		    reply->set_err(errno);
+            printf("error while getattr : %d\n", errno);
 		}
 		else{
             reply->set_ino(stats.st_ino);
@@ -120,7 +131,8 @@ class AfsServiceImplementation final : public AFS:: Service{
             reply->set_blksize(stats.st_blksize);
             reply->set_blocks(stats.st_blocks);
             reply->set_atime(stats.st_atime);
-            reply->set_mtime(stats.st_mtime);
+            struct  timespec ts =  stats.st_mtim;  /* time of last data modification */
+            reply->set_mtime(ts.tv_nsec);
             reply->set_ctime(stats.st_ctime);
 			
 		    reply->set_err(0);
@@ -164,18 +176,29 @@ class AfsServiceImplementation final : public AFS:: Service{
 
     Status afs_MKDIR(ServerContext* context, const MkdirReq* request, 
 					 MkdirRes* reply) override {
-        char path[MAX_PATH_LENGTH];
-        getServerPath(request->path().c_str(), root_path, path);
-        printf("AFS server PATH, mkdir: %s\n", path);
 
-        int res = mkdir(path, request->mode());
-        if(res == -1)
-        { 
-            perror(strerror(errno));
-            reply->set_error(errno);
+        try{
+            char path[MAX_PATH_LENGTH];
+            getServerPath(request->path().c_str(), root_path, path);
+            printf("AFS server PATH, mkdir: %s\n", path);
+
+            int res = mkdir(path, request->mode());
+            printf("res after mkdir : %d\n", res);
+            if(res == -1)
+            { 
+                printf("error in server while creaing folder : %d\n", errno);
+                perror(strerror(errno));
+                reply->set_error(errno);
+                return Status(StatusCode::UNAVAILABLE, "unavailable message returned");
+            }
+            return Status::OK;
         }
-        return Status::OK;
-	
+        catch (const std::exception& e)
+        {
+            reply->set_error(errno);
+            // return Status(StatusCode::INTERNAL, e.what());
+            throw;
+        }
 	}
 
     Status afs_RMDIR(ServerContext* context, const RmdirReq* request, 
@@ -218,6 +241,8 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         lseek(fd, 0, SEEK_SET);
         read(fd, buf, info.st_size);
+        struct stat stats;
+        int res = fstat(fd, &stats);
         close(fd);
 
         printf("Read string: %s\n", buf);
@@ -225,6 +250,9 @@ class AfsServiceImplementation final : public AFS:: Service{
         reply->set_error(0);
         reply->set_buf(std::string(buf,info.st_size));
         reply->set_size(info.st_size);
+	    struct  timespec ts =  stats.st_mtim;  /* time of last data modification */
+
+        reply->set_time(ts.tv_nsec);
         return Status::OK;
     
     }
