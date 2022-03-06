@@ -173,6 +173,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         int res = mkdir(path, request->mode());
         if(res == -1)
         { 
+            printf("error in server while creaing folder : %d\n", errno);
             perror(strerror(errno));
             reply->set_error(errno);
             return Status::CANCELLED;

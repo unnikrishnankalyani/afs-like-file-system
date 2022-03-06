@@ -313,6 +313,7 @@ class AfsClient {
 
         Status status = stub_->afs_MKDIR(&context, req, &reply);
         if (status.ok()) {
+            printf("error : %d\n", errno);
             return 0;
         } else {
             printf("error while creating dir : %d\n", reply.error());
