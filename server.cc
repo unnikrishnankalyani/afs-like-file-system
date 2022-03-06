@@ -187,7 +187,8 @@ class AfsServiceImplementation final : public AFS:: Service{
         }
         catch (const std::exception& e)
         {
-            return Status(INTERNAL, e.what());
+            reply->set_error(errno);
+            return Status::INTERNAL;
         }
 	}
 
