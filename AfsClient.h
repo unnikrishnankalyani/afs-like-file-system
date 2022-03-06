@@ -1,7 +1,7 @@
 #include <grpc++/grpc++.h>
 #include "afs.grpc.pb.h"
 #include "commonheaders.h"
-#include <status.h>
+ #include <grpc/impl/codegen/status.h>
 
 using grpc::Channel;
 using grpc::Status;

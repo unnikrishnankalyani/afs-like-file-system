@@ -15,7 +15,7 @@
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
 #include "commonheaders.h"
-#include <status.h>
+#include <grpc/impl/codegen/status.h>
 
 using grpc::Server;
 using grpc::ServerBuilder;
