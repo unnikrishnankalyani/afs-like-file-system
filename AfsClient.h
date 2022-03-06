@@ -60,9 +60,7 @@ class AfsClient {
         printf("**************** File handle CREATE ************: %d\n", fd);
         //add Retry
         if(status.ok()){
-            char * cstr = new char [path.length()+1];
-            std::strcpy (cstr, path.c_str())
-            long hashfile = hashfilename(cstr);
+            long hashfile = hashfilename(path);
             // server mtime in nanoseconds
             put(hashfile, reply->time());
             std::cout << "reply time create" << reply->time() <<std::endl;
@@ -76,7 +74,7 @@ class AfsClient {
         return 0;
     }
 
-    int afs_FETCH(const std::string& path, char **buf, int *size)
+    int afs_FETCH(const char *path, char **buf, int *size)
     {
         FetchRequest request;
         request.set_path(path);
@@ -89,9 +87,7 @@ class AfsClient {
         printf("after fetch\n");
         if (status.ok()) {
             std::cout << reply->buf() <<std::endl;
-            char * cstr = new char [path.length()+1];
-            std::strcpy (cstr, path.c_str())
-            long hashfile = hashfilename(cstr);
+            long hashfile = hashfilename(path);
             // server mtime in nanoseconds
             put(hashfile, reply->time());
             std::cout << "reply time fetch" << reply->time() <<std::endl;
@@ -357,7 +353,7 @@ class AfsClient {
         }
     }
 
-    int afs_STORE(const std::string& path, char *buf, int size)
+    int afs_STORE(const char *path, char *buf, int size)
     {
         StoreReq request;
         request.set_path(path);
@@ -372,9 +368,7 @@ class AfsClient {
         Status status = stub_->afs_STORE(&context, request, &reply);
 
         if (status.ok()) {
-            char * cstr = new char [path.length()+1];
-            std::strcpy (cstr, path.c_str())
-            long hashfile = hashfilename(cstr);
+            long hashfile = hashfilename(path);
             // server mtime in nanoseconds
             put(hashfile, reply->time());
             std::cout << "reply time store" << reply->time() <<std::endl;
@@ -420,7 +414,7 @@ class AfsClient {
         return rc;
     }
 
-    int afs_LS(const std::string& path, void *buf, fuse_fill_dir_t filler) {
+    int afs_LS(const char *path, void *buf, fuse_fill_dir_t filler) {
         LsReq request;
         request.set_path(path);
 
