@@ -211,6 +211,7 @@ class AfsClient {
             retries += 1;
             std::this_thread::sleep_for(std::chrono::milliseconds(interval));
             interval *= interval;
+            return true;
         }
     }
 
