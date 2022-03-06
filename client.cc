@@ -45,38 +45,6 @@ static int client_write(const char *path, const char *buffer, size_t size, off_t
                       struct fuse_file_info *file_info)
 {
     return options.afsclient->afs_WRITE(path, buffer, size, offset, file_info, cache_path);
-    // int ret_code = 0;
-    //     struct stat info;
-
-    //     ret_code = write(file_info->fh, buffer, size);
-    //     fstat(file_info->fh, &info);
-
-    //     if(ret_code < 0) {
-    //         printf("Error while writing into file: %d\n", errno);
-    //         int fd;
-    //         char cached_file[80];
-    //         char local_path[PATH_MAX];
-    //         local_path[0] = '\0';
-
-    //         strncat(local_path, cache_path, PATH_MAX);
-    //         strncat(local_path, cached_file, PATH_MAX);
-    //         printf("writing to path : %s\n", local_path);
-    //         fd = open(local_path,  O_APPEND | O_RDWR | S_IRWXU | S_IRWXG | S_IRWXO); //changed last 3
-
-    //         // printf("Newdile fd: %d\n", fd);
-    //         lseek(fd,offset,SEEK_SET);
-    //         for(int i=0; i<size; i++) {
-    //             printf("%c", buffer[i]);
-    //         }
-    //         ret_code = write(fd, buffer, size);
-    //         close(fd);
-    //         if(ret_code<0) {
-    //             printf("Error while re-writing file %d\n", errno);
-    //             printf("Return error: %d\n", ret_code);
-    //             return -errno;
-    //         }
-    //     }
-    //     return ret_code;
 }
 
 
@@ -163,17 +131,6 @@ static int client_rmdir(const char *path)
     return options.afsclient->afs_RMDIR(path, cache_path);
 }
 
-// static int client_flush(const char *path, struct fuse_file_info *fi)
-// {
-//     return options.afsclient->afs_FLUSH(path, fi);
-// }
-
-// static int client_getxattr(const char *path, const char *name, char *value,
-// 			size_t size)
-// {
-//     return options.afsclient->afs_GETXATTR(path, name, value, size);
-// }
-
 struct client_fuse_operations:fuse_operations
 {
     client_fuse_operations ()
@@ -201,56 +158,12 @@ struct client_fuse_operations:fuse_operations
     }
 } client_oper;
 
-
-// void RunAfsClient(std::string ipadd) {
-//     std::string address(ipadd+":5000");
-//     AfsClient client(
-//         grpc::CreateChannel(
-//             address,
-//             grpc::InsecureChannelCredentials()
-//         )
-//     );
-
-//     int response;
-
-//     std::string msg = "testmsg: hi!";
-//     response = client.afs_CREATE(msg);
-            
-    
-//     std::cout << "Success: " << response << std::endl;
-// }
-
-// int main(int argc, char* argv[]){
-
-//     std::string ipadd = "0.0.0.0";
-//     if (argc >1){
-//             ipadd = argv[1];
-//         }
-
-//     RunAfsClient(ipadd);
-
-//     return 0;
-// }
-
 int main(int argc, char* argv[]){
 
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 
 	options.afsclient = new AfsClient(grpc::CreateChannel(
   "0.0.0.0:50051", grpc::InsecureChannelCredentials()));
-
-
-    // if (fuse_opt_parse(&args, &options, option_spec, NULL) == -1)
-	// return 1;
-
-    // if (options.show_help) {
-    //     show_help(argv[0]);
-    //     assert(fuse_opt_add_arg(&args, "--help") == 0);
-    //     args.argv[0] = (char*) "";
-    // }
-
-
-    // return fuse_main(argc, argv, &client_oper, &options);
 
     //cache path and actual path
     strncpy(cache_path, realpath(argv[argc-1], NULL), MAX_PATH_LENGTH);
@@ -259,6 +172,16 @@ int main(int argc, char* argv[]){
     argv[argc-1] = NULL;
     argc--;
     printf("File System Cache Path on Client: %s\n", cache_path);
+    //initialize the hash table to store modified time
+    char client_path[MAX_PATH_LENGTH];
+    char * path = "/database.txt";
+    getLocalPath(path, cache_path, client_path);
+    int fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
+    close(fd);
+    init_ht();
+
+    //read stored k,v
+    read_from_database(cache_path);
 
 
     return fuse_main(argc, argv, &client_oper, NULL);
