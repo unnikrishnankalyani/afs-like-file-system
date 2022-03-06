@@ -257,7 +257,7 @@ class AfsClient {
             }
             is_ok = false;
         } while (retry_req(is_ok));
-        return -reply.error();
+        return -errno;
     }
 
     int afs_TRUNCATE(const char *path, off_t size, char cache_path[])
