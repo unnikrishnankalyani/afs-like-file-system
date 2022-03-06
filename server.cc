@@ -94,7 +94,9 @@ class AfsServiceImplementation final : public AFS:: Service{
         close(fd);
 
         reply->set_error(0);
-        reply->set_time((long int) stats.st_mtime.tv_nsec);
+        struct  timespec ts =  stats.st_mtim;  /* time of last data modification */
+
+        reply->set_time(ts.tv_nsec);
         return Status::OK;
     }
 
