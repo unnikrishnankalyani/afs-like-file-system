@@ -183,9 +183,10 @@ getLocalPath(path, cache_path, client_path);
 printf("path: %s\n", client_path);
   FILE *fptr; 
   printf("dumping... \n");
-  fptr = fopen(client_path,"w"); //do I need a backup?
-  if(fptr == NULL)
-    printf("fptr is null\n");
+//   fptr = fopen(client_path,"w"); //do I need a backup?
+ int fd = open(path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
+//   if(fptr == NULL)
+//     printf("fptr is null\n");
   int i;
 
   for (i=0; i<HTABLESIZE; i++){
@@ -194,7 +195,11 @@ printf("path: %s\n", client_path);
       hash_node *temp_hn = ht[i];
       while (temp_hn!=NULL){
         printf("%d,%s\n", temp_hn->key, temp_hn->value);
-        fprintf(fptr,"%d,%s\n", temp_hn->key, temp_hn->value);
+        // fprintf(fptr,"%d,%s\n", temp_hn->key, temp_hn->value);
+        write(fd, (char*) temp_hn->key, sizeof(temp_hn->key));
+        write(fd, ",", sizeof(","));
+        write(fd, (char*) temp_hn->key, sizeof(temp_hn->key));
+        write(fd, "\n", sizeof("\n"));
         temp_hn = temp_hn->next;
       }
     }
