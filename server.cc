@@ -62,6 +62,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         }
         else{
             reply->set_ack(0);
+            reply->set_time(get_time());
             close(fd);
         }
         return Status::OK;
@@ -88,9 +89,12 @@ class AfsServiceImplementation final : public AFS:: Service{
         printf("Received String: %s\n", (request->buf()).c_str());
         printf("Size: %d\n", request->size());
         write(fd, (request->buf()).data(), request->size());
+        struct stat stats;
+        int res = lstat(path, &stats);
         close(fd);
 
         reply->set_error(0);
+        reply->set_time(stats.st_mtime.tv_nsec);
         return Status::OK;
     }
 
@@ -120,7 +124,7 @@ class AfsServiceImplementation final : public AFS:: Service{
             reply->set_blksize(stats.st_blksize);
             reply->set_blocks(stats.st_blocks);
             reply->set_atime(stats.st_atime);
-            reply->set_mtime(stats.st_mtime);
+            reply->set_mtime(stats.st_mtime.tv_nsec);
             reply->set_ctime(stats.st_ctime);
 			
 		    reply->set_err(0);
@@ -218,6 +222,8 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         lseek(fd, 0, SEEK_SET);
         read(fd, buf, info.st_size);
+        struct stat stats;
+        int res = fstat(fd, &stats);
         close(fd);
 
         printf("Read string: %s\n", buf);
@@ -225,6 +231,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         reply->set_error(0);
         reply->set_buf(std::string(buf,info.st_size));
         reply->set_size(info.st_size);
+        reply->set_time(stats.st_mtime.tv_nsec);
         return Status::OK;
     
     }

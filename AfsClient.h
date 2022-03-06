@@ -60,6 +60,12 @@ class AfsClient {
         printf("**************** File handle CREATE ************: %d\n", fd);
         //add Retry
         if(status.ok()){
+            long hashfile = hashfilename(path);
+            // server mtime in nanoseconds
+            put(hashfile, reply.time());
+            std::cout << "reply time create" << reply.time() <<std::endl;
+            //flush to persistent storage
+            dump();
             return reply.ack();
         } else {
             std::cout << status.error_code() << ": " << status.error_message() << std::endl;
@@ -73,7 +79,6 @@ class AfsClient {
         FetchRequest request;
         request.set_path(path);
 
-
         FetchReply *reply = new FetchReply();
 
         ClientContext context;
@@ -81,9 +86,15 @@ class AfsClient {
         Status status = stub_->afs_FETCH(&context, request, reply);
         printf("after fetch\n");
         if (status.ok()) {
-                    std::cout << reply->buf() <<std::endl;
+            std::cout << reply->buf() <<std::endl;
+            long hashfile = hashfilename(path);
+            // server mtime in nanoseconds
+            put(hashfile, reply.time());
+            std::cout << "reply time fetch" << reply.time() <<std::endl;
+            //flush to persistent storage
+            dump();
             *buf = (char *)(reply->buf()).data();
-                    printf("%s\n", *buf);
+            printf("%s\n", *buf);
             *size = reply->size();
             return 0;
         } else {
@@ -357,6 +368,12 @@ class AfsClient {
         Status status = stub_->afs_STORE(&context, request, &reply);
 
         if (status.ok()) {
+            long hashfile = hashfilename(path);
+            // server mtime in nanoseconds
+            put(hashfile, reply.time());
+            std::cout << "reply time store" << reply.time() <<std::endl;
+            //flush to persistent storage
+            dump();
             return reply.error();
         } else {
             return -reply.error();
@@ -421,9 +438,7 @@ class AfsClient {
         } else {
             return -errno;
         }
-}
-
-
+    }
 
     int afs_FSYNC(const char *path, int isdatasync, struct fuse_file_info *fi)
     {

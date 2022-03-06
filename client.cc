@@ -231,6 +231,12 @@ int main(int argc, char* argv[]){
 
 	options.afsclient = new AfsClient(grpc::CreateChannel(
   "0.0.0.0:50051", grpc::InsecureChannelCredentials()));
+  
+    //initialize the hash table to store modified time
+    init_ht();
+
+    //read stored k,v
+    read_from_database();
 
 
     // if (fuse_opt_parse(&args, &options, option_spec, NULL) == -1)
