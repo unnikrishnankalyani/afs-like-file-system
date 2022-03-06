@@ -195,8 +195,8 @@ printf(" tablesize %d ", HTABLESIZE);
     if(ht[i] != NULL){
       hash_node *temp_hn = ht[i];
       while (temp_hn!=NULL){
-        printf("%d,%s\n", temp_hn->key, temp_hn->value);
-        fprintf(fptr,"%d,%s\n", temp_hn->key, temp_hn->value);
+        printf("%d,%d\n", temp_hn->key, temp_hn->value);
+        fprintf(fptr,"%d,%d\n", temp_hn->key, temp_hn->value);
         temp_hn = temp_hn->next;
       }
     }
