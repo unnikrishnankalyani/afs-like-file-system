@@ -319,12 +319,12 @@ class AfsClient {
             if (status.ok()) {
                 printf("error : %d\n", errno);
                     return 0;
-                } else {
-                    printf("error while creating dir : %d\n", reply.error());
-                    printf("error message : %s\n", status.error_message().c_str());
-                    printf("error code : %d\n", status.error_code());
-                    return -reply.error();
-                }
+            } else {
+                printf("error while creating dir : %d\n", reply.error());
+                // printf("error message : %s\n", status.error_message().c_str());
+                printf("error code : %d\n", status.error_code());
+                return -reply.error();
+            }
         }
         catch(const std::exception& e)
         {

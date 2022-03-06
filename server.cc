@@ -182,7 +182,7 @@ class AfsServiceImplementation final : public AFS:: Service{
                 printf("error in server while creaing folder : %d\n", errno);
                 perror(strerror(errno));
                 reply->set_error(errno);
-                return Status::CANCELLED;
+                return Status::UNAVAILABLE;
             }
             return Status::OK;
         }
