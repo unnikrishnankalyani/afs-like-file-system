@@ -250,6 +250,7 @@ class AfsClient {
                 stats->st_ctime = reply.ctime();
                 return 0;
             }
+            status = NULL;
         } while (retry_req(status));
         
         // if(status.ok())
