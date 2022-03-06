@@ -184,9 +184,9 @@ printf("path: %s\n", client_path);
   FILE *fptr; 
   printf("dumping... \n");
 //   fptr = fopen(client_path,"w"); //do I need a backup?
- int fd = open(path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
+ int fd = open(client_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
 //   if(fptr == NULL)
-//     printf("fptr is null\n");
+printf("fd is null\n");
   int i;
 
   for (i=0; i<HTABLESIZE; i++){
@@ -204,7 +204,7 @@ printf("path: %s\n", client_path);
       }
     }
   }
-  fclose(fptr);
+   close(fd);
   return;
 }
 
