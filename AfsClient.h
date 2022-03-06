@@ -89,6 +89,9 @@ class AfsClient {
             Status status = stub_->afs_FETCH(&context, request, reply);
             printf("after fetch\n");
             if (status.ok()) {
+                is_ok = true;
+                retries = 1;
+                interval = 2500;
                         std::cout << reply->buf() <<std::endl;
                 *buf = (char *)(reply->buf()).data();
                         printf("%s\n", *buf);
