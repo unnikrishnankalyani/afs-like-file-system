@@ -111,8 +111,8 @@ class AfsServiceImplementation final : public AFS:: Service{
         if(res == -1){
 		    perror(strerror(errno));
 		    reply->set_err(errno);
-            printf("error while getattr : %d\n", errno);
-            return Status::CANCELLED;
+            // printf("error while getattr : %d\n", errno);
+            // return Status::CANCELLED;
 		}
 		else{
             reply->set_ino(stats.st_ino);
