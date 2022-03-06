@@ -197,7 +197,7 @@ class AfsClient {
 	    return ret_code;
     }
 
-    bool retry_req(Status status, int retries)
+    bool retry_req(Status status)
     {
         if(status.ok() || retries > 5)
         {
