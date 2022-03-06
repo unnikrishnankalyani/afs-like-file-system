@@ -218,11 +218,12 @@ class AfsClient {
         ClientContext context;
         GetattrRes reply;
         GetattrReq request;
+        Status status;
 
         request.set_path(path);
         do
         {
-            Status status = stub_->afs_GETATTR(&context, request, &reply);
+            status = stub_->afs_GETATTR(&context, request, &reply);
             if(status.ok())
             {
                 printf("getattr success\n");
