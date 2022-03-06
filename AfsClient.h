@@ -221,12 +221,12 @@ class AfsClient {
     int afs_GETATTR(const char *path, struct stat *stats){
         
         bool is_ok = false;
+        GetattrRes reply;
+        GetattrReq request;
+        request.set_path(path);
         do
         {
             ClientContext context;
-            GetattrRes reply;
-            GetattrReq request;
-            request.set_path(path);
             printf("do-while starting\n");
             Status status = stub_->afs_GETATTR(&context, request, &reply);
             printf("stub called\n");
@@ -257,6 +257,7 @@ class AfsClient {
             }
             is_ok = false;
         } while (retry_req(is_ok));
+        return -reply.error();
     }
 
     int afs_TRUNCATE(const char *path, off_t size, char cache_path[])
