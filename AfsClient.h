@@ -221,19 +221,20 @@ class AfsClient {
     int afs_GETATTR(const char *path, struct stat *stats){
         
         bool is_ok = false;
-        
+        GetattrRes reply;
+        GetattrReq request;
+        request.set_path(path);
         do
         {
             ClientContext context;
-            GetattrRes reply;
-            GetattrReq request;
-            request.set_path(path);
             printf("do-while starting\n");
             Status status = stub_->afs_GETATTR(&context, request, &reply);
             printf("stub called\n");
             if(status.ok())
             {
                 is_ok = true;
+                retries = 1;
+                interval = 2500;
                 printf("getattr success\n");
                 if(reply.err() != 0){
                     std::cout << " getattr errno: " << reply.err() << std::endl;
@@ -256,34 +257,6 @@ class AfsClient {
             }
             is_ok = false;
         } while (retry_req(is_ok));
-        
-        // if(status.ok())
-        // {
-        //     printf("getattr success\n");
-        //     if(reply.err() != 0){
-        //         std::cout << " getattr errno: " << reply.err() << std::endl;
-        //         return -reply.err();
-        //     }
-        //     memset(stats, 0, sizeof(struct stat));
-
-        //     stats->st_ino = reply.ino();
-        //     stats->st_mode = reply.mode();
-        //     stats->st_nlink = reply.nlink();
-        //     stats->st_uid = reply.uid();
-        //     stats->st_gid = reply.gid();
-        //     stats->st_size = reply.size();
-        //     stats->st_blksize = reply.blksize();
-        //     stats->st_blocks = reply.blocks();
-        //     stats->st_atime = reply.atime();
-        //     stats->st_mtime = reply.mtime();
-        //     stats->st_ctime = reply.ctime();
-        //     return 0;
-        // }
-        // else{
-        //     printf("getattr failed\n");
-
-        // }
-        
     }
 
     int afs_TRUNCATE(const char *path, off_t size, char cache_path[])
