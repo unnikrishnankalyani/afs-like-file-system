@@ -209,9 +209,10 @@ class AfsClient {
         else{
             printf("retrying for the %d time\n", retries);
             retries += 1;
+            printf("sleeping now for : %d milliseconds\n", interval);
             std::this_thread::sleep_for(std::chrono::milliseconds(interval));
             interval *= interval;
-            printf("returning from retry_req\n");
+            printf("returning from retry_req. next interval : %d\n", interval);
             return true;
         }
     }
