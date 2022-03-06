@@ -211,6 +211,7 @@ class AfsClient {
             retries += 1;
             std::this_thread::sleep_for(std::chrono::milliseconds(interval));
             interval *= interval;
+            printf("returning from retry_req\n");
             return true;
         }
     }
@@ -224,7 +225,9 @@ class AfsClient {
         request.set_path(path);
         do
         {
+            printf("do-while starting\n");
             status = stub_->afs_GETATTR(&context, request, &reply);
+            printf("stub called\n");
             if(status.ok())
             {
                 printf("getattr success\n");
