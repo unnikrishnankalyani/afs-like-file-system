@@ -230,7 +230,7 @@ int main(int argc, char* argv[]){
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 
 	options.afsclient = new AfsClient(grpc::CreateChannel(
-  "0.0.0.0:50051", grpc::InsecureChannelCredentials()));
+  "128.105.144.145:50051", grpc::InsecureChannelCredentials()));
 
 
     // if (fuse_opt_parse(&args, &options, option_spec, NULL) == -1)

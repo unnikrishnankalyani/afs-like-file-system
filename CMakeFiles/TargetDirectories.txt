@@ -1,0 +1,5 @@
+/users/monshiva/wi-AFS/CMakeFiles/rebuild_cache.dir
+/users/monshiva/wi-AFS/CMakeFiles/afs_grpc_proto.dir
+/users/monshiva/wi-AFS/CMakeFiles/edit_cache.dir
+/users/monshiva/wi-AFS/CMakeFiles/client.dir
+/users/monshiva/wi-AFS/CMakeFiles/server.dir
