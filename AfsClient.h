@@ -493,6 +493,8 @@ class AfsClient {
         //    std::cout << offset <<std::endl;
 
             ret_code = pwrite(fd, buffer, size, offset); 
+            fsync(fd);
+            close(fd);
             remove(client_path);
             rename(client_tmp_path, client_path);  
             long hashfile = hashfilename(path);
