@@ -176,6 +176,7 @@ class AfsServiceImplementation final : public AFS:: Service{
             printf("AFS server PATH, mkdir: %s\n", path);
 
             int res = mkdir(path, request->mode());
+            printf("res after mkdir : %d\n", res);
             if(res == -1)
             { 
                 printf("error in server while creaing folder : %d\n", errno);
