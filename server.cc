@@ -107,11 +107,11 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         struct stat stats;
 		int res = lstat(path, &stats);
-
+        printf("res after getattr :  %d\n", res);
         if(res == -1){
 		    perror(strerror(errno));
 		    reply->set_err(errno);
-            // printf("error while getattr : %d\n", errno);
+            printf("error while getattr : %d\n", errno);
             // return Status::CANCELLED;
 		}
 		else{
