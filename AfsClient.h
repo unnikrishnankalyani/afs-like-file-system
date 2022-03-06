@@ -63,7 +63,7 @@ class AfsClient {
             long hashfile = hashfilename(path);
             // server mtime in nanoseconds
             put(hashfile, reply.time());
-            std::cout << "reply time create" << reply.time() <<std::endl;
+            std::cout << "reply time create " << reply.time() <<std::endl;
             //flush to persistent storage
             dump();
             return reply.ack();

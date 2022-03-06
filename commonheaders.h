@@ -151,9 +151,12 @@ void put(long hashfilename, long timestamp){
   return;
 }
 
-void read_from_database(){
+void read_from_database(char * cache_path){
   FILE *fptr;
-  if(fptr = fopen("database.txt","r")){
+  char client_path[MAX_PATH_LENGTH];
+    char * path = "database.txt";
+    getLocalPath(path, cache_path, client_path);
+  if(fptr = fopen(client_path,"r")){
     char *line;
     size_t len = 0;
     ssize_t read;
@@ -172,9 +175,15 @@ void read_from_database(){
   return;
 }
 
-void dump(){
+void dump(char* cache_path){
+char client_path[MAX_PATH_LENGTH];
+char * path = "database.txt";
+getLocalPath(path, cache_path, client_path);
+
+printf("path: %s\n", client_path);
   FILE *fptr; 
-  fptr = fopen("database.txt","w"); //do I need a backup?
+  printf("dumping... \n");
+  fptr = fopen(client_path,"w"); //do I need a backup?
   int i;
 
   for (i=0; i<HTABLESIZE; i++){

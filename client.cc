@@ -231,12 +231,8 @@ int main(int argc, char* argv[]){
 
 	options.afsclient = new AfsClient(grpc::CreateChannel(
   "0.0.0.0:50051", grpc::InsecureChannelCredentials()));
-  
-    //initialize the hash table to store modified time
-    init_ht();
 
-    //read stored k,v
-    read_from_database();
+
 
 
     // if (fuse_opt_parse(&args, &options, option_spec, NULL) == -1)
@@ -258,6 +254,11 @@ int main(int argc, char* argv[]){
     argv[argc-1] = NULL;
     argc--;
     printf("File System Cache Path on Client: %s\n", cache_path);
+    //initialize the hash table to store modified time
+    init_ht(cache_path);
+
+    //read stored k,v
+    read_from_database(cache_path);
 
 
     return fuse_main(argc, argv, &client_oper, NULL);
