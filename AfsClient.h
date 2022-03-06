@@ -81,7 +81,7 @@ class AfsClient {
         FetchRequest request;
         request.set_path(path);
         FetchReply *reply = new FetchReply();
-
+        bool is_ok = false;
         do
         {
             ClientContext context;
