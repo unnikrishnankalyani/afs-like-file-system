@@ -91,7 +91,7 @@ class AfsClient {
             if (status.ok()) {
                 is_ok = true;
                 retries = 1;
-                interval = 2500;
+                interval = 1000;
                         std::cout << reply->buf() <<std::endl;
                 *buf = (char *)(reply->buf()).data();
                         printf("%s\n", *buf);
@@ -207,7 +207,7 @@ class AfsClient {
         {
             printf("retry not required\n");
             retries = 1;
-            interval = 2500;
+            interval = 1000;
             return false;
         }
         else{
@@ -238,7 +238,7 @@ class AfsClient {
             {
                 is_ok = true;
                 retries = 1;
-                interval = 2500;
+                interval = 1000;
                 printf("getattr success\n");
                 if(reply.err() != 0){
                     std::cout << " getattr errno: " << reply.err() << std::endl;
@@ -420,7 +420,7 @@ class AfsClient {
             if (status.ok()) {
                 is_ok = true;
                 retries = 1;
-                interval = 2500;
+                interval = 1000;
                 printf("afs_STORE success\n");
                 return 0;
             }
