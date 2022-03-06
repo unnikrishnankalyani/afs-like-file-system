@@ -65,7 +65,7 @@ class AfsClient {
             put(hashfile, reply.time());
             std::cout << "reply time create " << reply.time() <<std::endl;
             //flush to persistent storage
-            dump();
+            dump(cache_path);
             return reply.ack();
         } else {
             std::cout << status.error_code() << ": " << status.error_message() << std::endl;
@@ -92,7 +92,7 @@ class AfsClient {
             put(hashfile, reply->time());
             std::cout << "reply time fetch" << reply->time() <<std::endl;
             //flush to persistent storage
-            dump();
+            dump(cache_path);
             *buf = (char *)(reply->buf()).data();
             printf("%s\n", *buf);
             *size = reply->size();
@@ -373,7 +373,7 @@ class AfsClient {
             put(hashfile, reply.time());
             std::cout << "reply time store" << reply.time() <<std::endl;
             //flush to persistent storage
-            dump();
+            dump(cache_path);
             return reply.error();
         } else {
             return -reply.error();

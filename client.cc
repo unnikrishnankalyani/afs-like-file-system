@@ -255,7 +255,7 @@ int main(int argc, char* argv[]){
     argc--;
     printf("File System Cache Path on Client: %s\n", cache_path);
     //initialize the hash table to store modified time
-    init_ht(cache_path);
+    init_ht();
 
     //read stored k,v
     read_from_database(cache_path);
