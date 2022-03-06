@@ -317,6 +317,8 @@ class AfsClient {
             return 0;
         } else {
             printf("error while creating dir : %d\n", reply.error());
+            printf("error message : %s\n", status.error_message());
+            printf("error code : %s\n", status.error_code());
             return -reply.error();
         }
     }
