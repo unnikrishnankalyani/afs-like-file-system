@@ -154,7 +154,7 @@ void put(long hashfilename, long timestamp){
 void read_from_database(char * cache_path){
   FILE *fptr;
   char client_path[MAX_PATH_LENGTH];
-    char * path = "database.txt";
+    char * path = "/database.txt";
     getLocalPath(path, cache_path, client_path);
   if(fptr = fopen(client_path,"r")){
     char *line;
@@ -177,7 +177,7 @@ void read_from_database(char * cache_path){
 
 void dump(char* cache_path){
 char client_path[MAX_PATH_LENGTH];
-char * path = "database.txt";
+char * path = "/database.txt";
 getLocalPath(path, cache_path, client_path);
 
 printf("path: %s\n", client_path);
