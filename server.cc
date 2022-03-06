@@ -231,7 +231,9 @@ class AfsServiceImplementation final : public AFS:: Service{
         reply->set_error(0);
         reply->set_buf(std::string(buf,info.st_size));
         reply->set_size(info.st_size);
-        reply->set_time(stats.st_mtime.tv_nsec);
+	    struct  timespec ts =  stats.st_mtimespec;  /* time of last data modification */
+
+        reply->set_time(ts.tv_nsec);
         return Status::OK;
     
     }
