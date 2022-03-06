@@ -376,7 +376,7 @@ class AfsClient {
 
         if (modified==0){
             rc = close(fi->fh);
-            remove(client_path);
+            
             
             lstat(client_tmp_path, &info);
 
@@ -384,7 +384,8 @@ class AfsClient {
             int fd = open(client_tmp_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
             read(fd, buffer, info.st_size);
             afs_STORE(path, buffer, info.st_size);
-
+            
+            remove(client_path);
             rename(client_tmp_path, client_path);
 
             printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buffer);
