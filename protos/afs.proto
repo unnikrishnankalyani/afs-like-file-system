@@ -25,7 +25,7 @@ service AFS {
 
 message MkdirReq {
   string path = 1;
-  uint32 mode = 2; 
+  uint32 mode = 2;
 }
 
 message MkdirRes {
@@ -73,7 +73,7 @@ message UnlinkRes {
 
 message ChmodReq {
   string path = 1;
-  uint32 mode = 2; 
+  uint32 mode = 2;
 }
 
 message ChmodRes {
@@ -124,7 +124,7 @@ message ReadRes {
 }
 
 message WriteReq {
-  
+
 }
 
 message WriteRes {
@@ -136,19 +136,19 @@ message GetattrReq {
 }
 
 message GetattrRes {
-  uint32   dev = 1;    // ID of device containing file 
-  uint32   ino = 2;     // inode number 
-  int32   mode = 3;   // protection 
-  uint32   nlink = 4;    // number of hard links 
-  uint32     uid = 5;     // user ID of owner 
-  uint32     gid = 6;     // group ID of owner 
-  sint64     size = 7;    // total size, in bytes 
-  sint64 blksize = 8; // blocksize for file system I/O 
-  sint64  blocks = 9;  // number of 512B blocks allocated 
-  int32    atime = 10;   // time of last access 
+  uint32   dev = 1;    // ID of device containing file
+  uint32   ino = 2;     // inode number
+  int32   mode = 3;   // protection
+  uint32   nlink = 4;    // number of hard links
+  uint32     uid = 5;     // user ID of owner
+  uint32     gid = 6;     // group ID of owner
+  sint64     size = 7;    // total size, in bytes
+  sint64 blksize = 8; // blocksize for file system I/O
+  sint64  blocks = 9;  // number of 512B blocks allocated
+  int32    atime = 10;   // time of last access
   int32    mtime = 11;   // time of last modification
   int32    ctime = 12;   // time of last status change
-  int32    err = 13; 
+  int32    err = 13;
 }
 
 message SetattrReq {
@@ -166,16 +166,16 @@ message CommitReq {
 }
 
 message CommitRes {
- 
+
 }
 
 message RemoveReq {
-  
+
 }
 
 
 message RemoveRes {
-  
+
 }
 
 message CreateReq {
@@ -187,10 +187,14 @@ message CreateRes {
 }
 
 message LookupReq {
-	
+
 }
 
 
 message LookupRes {
-  
+
+}
+
+message Show {
+  string name = 1;
 }

@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
     int fd, fd1, fd2;
 
     struct stat info;
-    char arg[100] = "../cmake/build/temp_yu/fuse/test4";
+    char arg[100] = "../cmake/build/temp_yu/fuse/test5";
     getServerPath("", arg, path);
 
     printf("filepath : %s\n", path);
@@ -19,14 +19,12 @@ int main(int argc, char* argv[]) {
 
     printf("Last Mod: %ld\n", info.st_mtime);
 
-    fd = open(path, O_RDWR | O_APPEND);
+    fd = creat(path, O_RDWR | O_APPEND |O_CREAT);
 
     if(fd < 0) {
         std::cout << "Error: File does not exist!" << std::endl;
     }
 
     write(fd, "append", strlen("append")+1);
-    fsync(fd);
-    close(fd);
-    return 0;
+    abort();
 }
