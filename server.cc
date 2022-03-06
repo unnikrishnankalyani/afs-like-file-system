@@ -15,12 +15,15 @@
 #include <grpcpp/grpcpp.h>
 #include "afs.grpc.pb.h"
 #include "commonheaders.h"
+#include <grpc/impl/codegen/status.h>
+#include <grpcpp/impl/codegen/status_code_enum.h>
 
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::ServerWriter;
 using grpc::Status;
+using grpc::StatusCode;
 
 using afs::AFS;
 using afs::CreateReq;
@@ -103,8 +106,6 @@ class AfsServiceImplementation final : public AFS:: Service{
         return Status::OK;
     }
 
-
-
     Status afs_GETATTR(ServerContext* context, const GetattrReq* request, 
 					 GetattrRes* reply) override {
         char path[MAX_PATH_LENGTH];
@@ -113,10 +114,11 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         struct stat stats;
 		int res = lstat(path, &stats);
-
+        printf("res after getattr :  %d\n", res);
         if(res == -1){
 		    perror(strerror(errno));
 		    reply->set_err(errno);
+            printf("error while getattr : %d\n", errno);
 		}
 		else{
             reply->set_ino(stats.st_ino);
@@ -174,18 +176,29 @@ class AfsServiceImplementation final : public AFS:: Service{
 
     Status afs_MKDIR(ServerContext* context, const MkdirReq* request, 
 					 MkdirRes* reply) override {
-        char path[MAX_PATH_LENGTH];
-        getServerPath(request->path().c_str(), root_path, path);
-        printf("AFS server PATH, mkdir: %s\n", path);
 
-        int res = mkdir(path, request->mode());
-        if(res == -1)
-        { 
-            perror(strerror(errno));
-            reply->set_error(errno);
+        try{
+            char path[MAX_PATH_LENGTH];
+            getServerPath(request->path().c_str(), root_path, path);
+            printf("AFS server PATH, mkdir: %s\n", path);
+
+            int res = mkdir(path, request->mode());
+            printf("res after mkdir : %d\n", res);
+            if(res == -1)
+            { 
+                printf("error in server while creaing folder : %d\n", errno);
+                perror(strerror(errno));
+                reply->set_error(errno);
+                return Status(StatusCode::UNAVAILABLE, "unavailable message returned");
+            }
+            return Status::OK;
         }
-        return Status::OK;
-	
+        catch (const std::exception& e)
+        {
+            reply->set_error(errno);
+            // return Status(StatusCode::INTERNAL, e.what());
+            throw;
+        }
 	}
 
     Status afs_RMDIR(ServerContext* context, const RmdirReq* request, 

@@ -1,9 +1,14 @@
 #include <grpc++/grpc++.h>
 #include "afs.grpc.pb.h"
 #include "commonheaders.h"
+#include <grpc/impl/codegen/status.h>
+#include <grpcpp/impl/codegen/status_code_enum.h>
+#include <chrono>
+#include <thread>
 
 using grpc::Channel;
 using grpc::Status;
+using grpc::StatusCode;
 using grpc::ClientContext;
 using grpc::ClientReader;
 
@@ -30,6 +35,9 @@ using afs::RmdirRes;
 class AfsClient {
     public:
         AfsClient(std::shared_ptr<Channel> channel) : stub_(AFS::NewStub(channel)) {}
+
+    int interval = 1000;
+    int retries = 1;
 
     int afs_CREATE(const char* path, char cache_path[],struct fuse_file_info *fi) {
         CreateReq request;
@@ -78,28 +86,33 @@ class AfsClient {
     {
         FetchRequest request;
         request.set_path(path);
-
         FetchReply *reply = new FetchReply();
-
-        ClientContext context;
-        printf("before fetch\n");
-        Status status = stub_->afs_FETCH(&context, request, reply);
-        printf("after fetch\n");
-        if (status.ok()) {
-            std::cout << reply->buf() <<std::endl;
-            long hashfile = hashfilename(path);
-            // server mtime in nanoseconds
-            put(hashfile, reply->time());
-            std::cout << "reply time fetch" << reply->time() <<std::endl;
-            //flush to persistent storage
-            dump(cache_path);
-            *buf = (char *)(reply->buf()).data();
-            printf("%s\n", *buf);
-            *size = reply->size();
-            return 0;
-        } else {
-            return -errno;
-        }
+        bool is_ok = false;
+        do
+        {
+            ClientContext context;
+            printf("before fetch\n");
+            Status status = stub_->afs_FETCH(&context, request, reply);
+            printf("after fetch\n");
+            if (status.ok()) {
+                is_ok = true;
+                retries = 1;
+                interval = 1000;
+                std::cout << reply->buf() <<std::endl;
+                long hashfile = hashfilename(path);
+                // server mtime in nanoseconds
+                put(hashfile, reply->time());
+                std::cout << "reply time fetch" << reply->time() <<std::endl;
+                //flush to persistent storage
+                dump(cache_path);
+                *buf = (char *)(reply->buf()).data();
+                printf("%s\n", *buf);
+                *size = reply->size();
+                return 0;
+            }
+            is_ok = false;
+        } while (retry_req(is_ok));
+        return -errno;
     }
 
     int afs_OPEN(const char *path, struct fuse_file_info *file_info, char cache_path[])
@@ -197,32 +210,67 @@ class AfsClient {
 	    return ret_code;
     }
 
+    bool retry_req(bool is_ok)
+    {
+        if(is_ok || retries > 5)
+        {
+            printf("retry not required\n");
+            retries = 1;
+            interval = 1000;
+            return false;
+        }
+        else{
+            printf("retrying for the %d time\n", retries);
+            retries += 1;
+            int sleep_time = interval*retries;
+            printf("sleeping now for : %d milliseconds\n", sleep_time);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+            // interval *= interval;
+            printf("returning from retry_req.");
+            return true;
+        }
+    }
+
     int afs_GETATTR(const char *path, struct stat *stats){
-        ClientContext context;
+        
+        bool is_ok = false;
         GetattrRes reply;
         GetattrReq request;
-
         request.set_path(path);
+        do
+        {
+            ClientContext context;
+            printf("do-while starting\n");
+            Status status = stub_->afs_GETATTR(&context, request, &reply);
+            printf("stub called\n");
+            if(status.ok())
+            {
+                is_ok = true;
+                retries = 1;
+                interval = 1000;
+                printf("getattr success\n");
+                if(reply.err() != 0){
+                    std::cout << " getattr errno: " << reply.err() << std::endl;
+                    return -reply.err();
+                }
+                memset(stats, 0, sizeof(struct stat));
 
-        Status status = stub_->afs_GETATTR(&context, request, &reply);
-        if(reply.err() != 0){
-            std::cout << " getattr errno: " << reply.err() << std::endl;
-            return -reply.err();
-        }
-        memset(stats, 0, sizeof(struct stat));
-
-        stats->st_ino = reply.ino();
-        stats->st_mode = reply.mode();
-        stats->st_nlink = reply.nlink();
-        stats->st_uid = reply.uid();
-        stats->st_gid = reply.gid();
-        stats->st_size = reply.size();
-        stats->st_blksize = reply.blksize();
-        stats->st_blocks = reply.blocks();
-        stats->st_atime = reply.atime();
-        stats->st_mtime = reply.mtime();
-        stats->st_ctime = reply.ctime();
-        return 0;
+                stats->st_ino = reply.ino();
+                stats->st_mode = reply.mode();
+                stats->st_nlink = reply.nlink();
+                stats->st_uid = reply.uid();
+                stats->st_gid = reply.gid();
+                stats->st_size = reply.size();
+                stats->st_blksize = reply.blksize();
+                stats->st_blocks = reply.blocks();
+                stats->st_atime = reply.atime();
+                stats->st_mtime = reply.mtime();
+                stats->st_ctime = reply.ctime();
+                return 0;
+            }
+            is_ok = false;
+        } while (retry_req(is_ok));
+        return -errno;
     }
 
     int afs_TRUNCATE(const char *path, off_t size, char cache_path[])
@@ -306,26 +354,41 @@ class AfsClient {
 
     int afs_MKDIR(const char *path, mode_t mode, char cache_path[])
     {
-        char client_path[MAX_PATH_LENGTH];
-        getLocalPath(path, cache_path, client_path);
-        printf("creating directory: %s\n", client_path);
-        int res = mkdir(client_path, mode);
-        // if(res == -1)
-        //     return -errno;
-        // return 0;
-        ClientContext context;
-        MkdirReq req;
-        req.set_path(path);
-        req.set_mode(mode);
-        MkdirRes reply;
+        try{
+            char client_path[MAX_PATH_LENGTH];
+            getLocalPath(path, cache_path, client_path);
+            printf("creating directory: %s\n", client_path);
 
-        Status status = stub_->afs_MKDIR(&context, req, &reply);
-        if (status.ok()) {
-            return 0;
-        } else {
-            printf("error while creating dir : %d\n", reply.error());
-            return -reply.error();
+            ClientContext context;
+            MkdirReq req;
+            req.set_path(path);
+            req.set_mode(mode);
+            MkdirRes reply;
+            Status status = stub_->afs_MKDIR(&context, req, &reply);
+            if (status.ok()) {
+                printf("error : %d\n", errno);
+                    return 0;
+            } else {
+                printf("error while creating dir : %d\n", reply.error());
+                // printf("error message : %s\n", status.error_message().c_str());
+                printf("error code : %d\n", status.error_code());
+                return -reply.error();
+            }
+
+            int res = mkdir(client_path, mode);
+            // if(res == -1)
+            //     return -errno;
+            // return 0;
+   
+
+            
         }
+        catch(const std::exception& e)
+        {
+            printf("caught in client \n");
+            throw;
+        }
+        
     }
 
     int afs_RMDIR(const char *path, char cache_path[])
@@ -357,24 +420,27 @@ class AfsClient {
         request.set_size(size);
         printf("Store request: Path = %s Size = %d \n", path, size);
         request.set_buf(std::string(buf, size));
-
         StoreRes reply;
-
-        ClientContext context;
-
-        Status status = stub_->afs_STORE(&context, request, &reply);
-
-        if (status.ok()) {
-            long hashfile = hashfilename(path);
-            // server mtime in nanoseconds
-            put(hashfile, reply.time());
-            std::cout << "reply time store" << reply.time() <<std::endl;
-            //flush to persistent storage
-            dump(cache_path);
-            return reply.error();
-        } else {
-            return -reply.error();
-        }
+        bool is_ok = false;
+        do
+        {
+            ClientContext context;
+            Status status = stub_->afs_STORE(&context, request, &reply);
+            if (status.ok()) {
+                is_ok = true;
+                retries = 1;
+                interval = 1000;
+                long hashfile = hashfilename(path);
+                // server mtime in nanoseconds
+                put(hashfile, reply.time());
+                std::cout << "reply time store" << reply.time() <<std::endl;
+                //flush to persistent storage
+                dump(cache_path);
+                return reply.error();
+            }
+            is_ok = false;
+        } while (retry_req(is_ok));
+        return -reply.error();
     }
     
     int afs_RELEASE(const char *path, struct fuse_file_info *fi, char cache_path[])
