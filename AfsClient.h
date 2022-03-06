@@ -62,8 +62,8 @@ class AfsClient {
         if(status.ok()){
             long hashfile = hashfilename(path);
             // server mtime in nanoseconds
-            put(hashfile, reply->time());
-            std::cout << "reply time create" << reply->time() <<std::endl;
+            put(hashfile, reply.time());
+            std::cout << "reply time create" << reply.time() <<std::endl;
             //flush to persistent storage
             dump();
             return reply.ack();
@@ -89,8 +89,8 @@ class AfsClient {
             std::cout << reply->buf() <<std::endl;
             long hashfile = hashfilename(path);
             // server mtime in nanoseconds
-            put(hashfile, reply->time());
-            std::cout << "reply time fetch" << reply->time() <<std::endl;
+            put(hashfile, reply.time());
+            std::cout << "reply time fetch" << reply.time() <<std::endl;
             //flush to persistent storage
             dump();
             *buf = (char *)(reply->buf()).data();
@@ -370,8 +370,8 @@ class AfsClient {
         if (status.ok()) {
             long hashfile = hashfilename(path);
             // server mtime in nanoseconds
-            put(hashfile, reply->time());
-            std::cout << "reply time store" << reply->time() <<std::endl;
+            put(hashfile, reply.time());
+            std::cout << "reply time store" << reply.time() <<std::endl;
             //flush to persistent storage
             dump();
             return reply.error();
