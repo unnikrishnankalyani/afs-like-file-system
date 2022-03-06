@@ -454,6 +454,8 @@ class AfsClient {
         if (size>0){
             char client_tmp_path[MAX_PATH_LENGTH];
             getLocalTmpPath(path, cache_path, client_tmp_path);
+            char client_path[MAX_PATH_LENGTH];
+            getLocalPath(path, cache_path, client_path);
             int fd = open(client_tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
             // Copy from file to tmp file
         //     struct stat stat;
