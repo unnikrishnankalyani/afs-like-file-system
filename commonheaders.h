@@ -186,10 +186,9 @@ printf("path: %s\n", client_path);
   fptr = fopen(client_path,"w"); //do I need a backup?
 printf("fptr ..\n");
 
-  if(fptr == NULL)
-    printf("fptr is null\n");
-
   int i;
+printf("i ..\n");
+printf(" tablesize %d ", HTABLESIZE);
 
   for (i=0; i<HTABLESIZE; i++){
       printf("i %d" , i);
