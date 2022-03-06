@@ -62,7 +62,10 @@ class AfsServiceImplementation final : public AFS:: Service{
         }
         else{
             reply->set_ack(0);
-            reply->set_time(get_time());
+            struct stat stats;
+            int res = lstat(path, &stats);
+            struct  timespec ts =  stats.st_mtim;  /* time of last data modification */
+            reply->set_time(ts.tv_nsec);
             close(fd);
         }
         return Status::OK;
