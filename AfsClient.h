@@ -119,7 +119,7 @@ class AfsClient {
             } else {
                 lstat(client_path, &cacheFileInfo);
                 printf("4. Get stats to compare time stamps\n");
-                afs_GETATTR(path, &remoteFileInfo); 
+                afs_GETATTR(path, &remoteFileInfo);
                 if(remoteFileInfo.st_mtime > cacheFileInfo.st_mtime) {
                     fetchNewCopy = 1;
                     printf("5. Stale copy - fetch new \n");
