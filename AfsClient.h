@@ -197,9 +197,9 @@ class AfsClient {
 	    return ret_code;
     }
 
-    bool retry_req(Status status)
+    bool retry_req(bool is_ok)
     {
-        if(status.ok() || retries > 5)
+        if(is_ok || retries > 5)
         {
             printf("retry not required\n");
             retries = 1;
@@ -220,16 +220,16 @@ class AfsClient {
         ClientContext context;
         GetattrRes reply;
         GetattrReq request;
-        Status status = new Status();
-
+        bool is_ok = false;
         request.set_path(path);
         do
         {
             printf("do-while starting\n");
-            status = stub_->afs_GETATTR(&context, request, &reply);
+            Status status = stub_->afs_GETATTR(&context, request, &reply);
             printf("stub called\n");
             if(status.ok())
             {
+                is_ok = true;
                 printf("getattr success\n");
                 if(reply.err() != 0){
                     std::cout << " getattr errno: " << reply.err() << std::endl;
@@ -250,8 +250,8 @@ class AfsClient {
                 stats->st_ctime = reply.ctime();
                 return 0;
             }
-            status = new Status();
-        } while (retry_req(status));
+            is_ok = false;
+        } while (retry_req(is_ok));
         
         // if(status.ok())
         // {
