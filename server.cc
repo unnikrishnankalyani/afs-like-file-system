@@ -173,6 +173,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         { 
             perror(strerror(errno));
             reply->set_error(errno);
+            return Status::CANCELLED;
         }
         return Status::OK;
 	
