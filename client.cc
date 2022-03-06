@@ -255,6 +255,11 @@ int main(int argc, char* argv[]){
     argc--;
     printf("File System Cache Path on Client: %s\n", cache_path);
     //initialize the hash table to store modified time
+    char client_path[MAX_PATH_LENGTH];
+    char * path = "/database.txt";
+    getLocalPath(path, cache_path, client_path);
+    fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
+    close(fd);
     init_ht();
 
     //read stored k,v
