@@ -10,7 +10,7 @@
 #include "afs.grpc.pb.h"
 #include "AfsClient.h"
 
-static struct options {	
+static struct options {
 	AfsClient* afsclient;
 	int show_help;
 } options;
@@ -26,12 +26,12 @@ static const struct fuse_opt option_spec[] = {
 };
 
 static int client_create(const char* path, mode_t mode, struct fuse_file_info *fi)
-{   
+{
     std::cout <<"calling client create" <<std::endl;
     return options.afsclient->afs_CREATE(path, cache_path, fi);
 }
 static int client_mknod(const char* path, mode_t mode, dev_t dev)
-{   
+{
     std::cout <<"dummy mknod" <<std::endl;
     return 0;
 }
@@ -163,7 +163,7 @@ int main(int argc, char* argv[]){
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 
 	options.afsclient = new AfsClient(grpc::CreateChannel(
-  "0.0.0.0:50051", grpc::InsecureChannelCredentials()));
+  "10.10.1.1:50051", grpc::InsecureChannelCredentials()));
 
     //cache path and actual path
     strncpy(cache_path, realpath(argv[argc-1], NULL), MAX_PATH_LENGTH);

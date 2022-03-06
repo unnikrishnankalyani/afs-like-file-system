@@ -1,0 +1,2 @@
+/usr/bin/ar qc libafs_grpc_proto.a CMakeFiles/afs_grpc_proto.dir/afs.grpc.pb.cc.o CMakeFiles/afs_grpc_proto.dir/afs.pb.cc.o
+/usr/bin/ranlib libafs_grpc_proto.a

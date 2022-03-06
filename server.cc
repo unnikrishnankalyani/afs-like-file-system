@@ -295,7 +295,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 
 void RunAfsServer(std::string ipadd) {
     //create port on localhost 5000
-    std::string address("0.0.0.0:50051");
+    std::string address("10.10.1.1:50051");
     AfsServiceImplementation service;
     std::cout << "1" << std::endl;
     ServerBuilder afsServer; //server name
@@ -312,7 +312,7 @@ void RunAfsServer(std::string ipadd) {
 
 
 int main(int argc, char** argv) {
-    std::string ipadd = "0.0.0.0";
+    std::string ipadd = "10.10.1.1";
 
     strncpy(root_path, argv[1], MAX_PATH_LENGTH);
     std::cout << "afs path : " << root_path << std::endl;
