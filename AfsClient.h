@@ -1,9 +1,11 @@
 #include <grpc++/grpc++.h>
 #include "afs.grpc.pb.h"
 #include "commonheaders.h"
+#include <status.h>
 
 using grpc::Channel;
 using grpc::Status;
+using grpc::StatusCode
 using grpc::ClientContext;
 using grpc::ClientReader;
 
@@ -317,8 +319,8 @@ class AfsClient {
             return 0;
         } else {
             printf("error while creating dir : %d\n", reply.error());
-            printf("error message : %s\n", status.error_message());
-            printf("error code : %s\n", status.error_code());
+            printf("error message : %s\n", status.error_message().c_str());
+            printf("error code : %d\n", status.error_code());
             return -reply.error();
         }
     }
