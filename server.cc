@@ -54,7 +54,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         const CreateReq* request,
         CreateRes* reply
     ) override { //returns a status by default
-        std::cout << "server create" <<std::endl;
+        // std::cout << "server create" <<std::endl;
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
         int fd = open(path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create. changed last 1
@@ -82,7 +82,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
 
-        printf("AFS PATH STORE: %s\n", path);
+        // printf("AFS PATH STORE: %s\n", path);
 
         fd = open(path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
 
@@ -92,8 +92,8 @@ class AfsServiceImplementation final : public AFS:: Service{
             return Status::OK;
         }
 
-        printf("Received String: %s\n", (request->buf()).c_str());
-        printf("Size: %d\n", request->size());
+        // printf("Received String: %s\n", (request->buf()).c_str());
+        // printf("Size: %d\n", request->size());
         write(fd, (request->buf()).data(), request->size());
         struct stat stats;
         int res = lstat(path, &stats);
@@ -110,11 +110,11 @@ class AfsServiceImplementation final : public AFS:: Service{
 					 GetattrRes* reply) override {
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
-        printf("AFS server PATH, GETATTR: %s\n", path);
+        // printf("AFS server PATH, GETATTR: %s\n", path);
 
         struct stat stats;
 		int res = lstat(path, &stats);
-        printf("res after getattr :  %d\n", res);
+        // printf("res after getattr :  %d\n", res);
         if(res == -1){
 		    perror(strerror(errno));
 		    reply->set_err(errno);
@@ -146,7 +146,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 					 UnlinkRes* reply) override {
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
-        printf("AFS server PATH, unlink: %s\n", path);
+        // printf("AFS server PATH, unlink: %s\n", path);
 
         int res = unlink(path);
         if(res == -1)
@@ -162,7 +162,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 					 ChmodRes* reply) override {
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
-        printf("AFS server PATH, Chmod: %s\n", path);
+        // printf("AFS server PATH, Chmod: %s\n", path);
 
         int res = chmod(path, request->mode());
         if(res == -1)
@@ -180,10 +180,10 @@ class AfsServiceImplementation final : public AFS:: Service{
         try{
             char path[MAX_PATH_LENGTH];
             getServerPath(request->path().c_str(), root_path, path);
-            printf("AFS server PATH, mkdir: %s\n", path);
+            // printf("AFS server PATH, mkdir: %s\n", path);
 
             int res = mkdir(path, request->mode());
-            printf("res after mkdir : %d\n", res);
+            // printf("res after mkdir : %d\n", res);
             if(res == -1)
             { 
                 printf("error in server while creaing folder : %d\n", errno);
@@ -205,7 +205,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 					 RmdirRes* reply) override {
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
-        printf("AFS server PATH, rmdir: %s\n", path);
+        // printf("AFS server PATH, rmdir: %s\n", path);
 
         int res = rmdir(path);
         if(res == -1)
@@ -226,7 +226,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
 
-        printf("AFS server PATH FETCH: %s\n", path);
+        // printf("AFS server PATH FETCH: %s\n", path);
 
         fd = open(path, O_RDWR);
 
@@ -245,7 +245,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         int res = fstat(fd, &stats);
         close(fd);
 
-        printf("Read string: %s\n", buf);
+        // printf("Read string: %s\n", buf);
 
         reply->set_error(0);
         reply->set_buf(std::string(buf,info.st_size));
@@ -263,7 +263,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 
       char path[MAX_PATH_LENGTH];
       getServerPath(request->path().c_str(), root_path, path);
-      printf("AFS server PATH, LS: %s\n", path);
+    //   printf("AFS server PATH, LS: %s\n", path);
       DIR *dp;
       struct dirent *de;
       LsRes reply;
