@@ -451,6 +451,8 @@ class AfsClient {
             }
             is_ok = false;
         } while (retry_req(is_ok));
+        printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buf);
+        free(buf);
         return -reply.error();
     }
     
@@ -463,8 +465,6 @@ class AfsClient {
         if (modified == -12345678){ //write modification
             rc = close(fi->fh);
             afs_STORE(path, cache_path);
-            printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buffer);
-            free(buffer);
         }
         
         return rc;
