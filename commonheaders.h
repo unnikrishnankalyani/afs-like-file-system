@@ -79,14 +79,21 @@ unsigned int hashtableindex(unsigned int x) {
 }
 
 typedef struct hash_node{
-  const char* key;
+  long key;
   long value;
   struct hash_node *next;
 }hash_node;
 
 hash_node *ht[HTABLESIZE];
 
-hash_node *create_hash_node(const char* key, long value){
+void init_ht(){
+  int i;
+  for (i=0; i<HTABLESIZE; i++){
+    ht[i] = 0;
+  }
+}
+
+hash_node *create_hash_node(long key, long value){
   //printf("----trying to insert %d %s------\n", key, value);
   hash_node *new_hn = (hash_node *) malloc(sizeof(hash_node));
   new_hn->key = key;
@@ -103,7 +110,7 @@ long get(const char* filename){
   hash_node *temp_hn = ht[hash_index];
 
   while (temp_hn!=NULL){
-    if (filename == temp_hn->key){
+    if (hashfile == temp_hn->key){
         return temp_hn->value;
     }
     temp_hn = temp_hn->next;
@@ -112,16 +119,16 @@ long get(const char* filename){
   return -1; //not found
 }
 
-void put(const char* filename, long timestamp){
+void put(long hashfilename, long timestamp){
   
-  long hashfile = hashfilename(filename);
-  long hash_key = hashtableindex(hashfile);
+//   long hashfile = hashfilename(filename);
+  long hash_key = hashtableindex(hashfilename);
   
   hash_node *h = ht[hash_key];
   //printf("hash_key = %d\n", hash_key);
   //if no entry, store and return
   if ( h == NULL){
-    ht[hash_key] = create_hash_node(filename,timestamp);
+    ht[hash_key] = create_hash_node(hashfilename,timestamp);
     //printf("created new key: %d, %s\n", x, v);
     return;
   } 
@@ -130,7 +137,7 @@ void put(const char* filename, long timestamp){
   hash_node *temp_hn = ht[hash_key];
   hash_node *prev = NULL;
   while (temp_hn!=NULL){
-    if (filename == temp_hn->key){
+    if (hashfilename == temp_hn->key){
         temp_hn->value = timestamp;
         return;
     }
@@ -138,20 +145,35 @@ void put(const char* filename, long timestamp){
     temp_hn = temp_hn->next;
   }
   //key does not exist, append to end of list (temp_hn is NULL, use prev)
-  prev->next = create_hash_node(filename,timestamp);
+  prev->next = create_hash_node(hashfilename,timestamp);
   //printf("created new key: %d, %s\n", x, v);
   
   return;
 }
 
-void init_ht(){
-  int i;
-  for (i=0; i<HTABLESIZE; i++){
-    ht[i] = 0;
+void read_from_database(char * cache_path){
+  FILE *fptr;
+  char client_path[MAX_PATH_LENGTH];
+    char * path = "/database.txt";
+    getLocalPath(path, cache_path, client_path);
+  if(fptr = fopen(client_path,"r")){
+    char *line;
+    size_t len = 0;
+    ssize_t read;
+    while ((read = getline(&line, &len, fptr)) != -1) {
+        char *tempstr = strdup(line);
+        char *k  = strsep(&tempstr, ",");
+        char *v = strsep(&tempstr, ",");
+
+        free(tempstr);
+        put(atol(k), atol(v));
+    }
+    if(line)
+      free(line);
+    fclose(fptr);
   }
+  return;
 }
-
-
 
 void dump(char* cache_path){
 char client_path[MAX_PATH_LENGTH];
@@ -170,8 +192,8 @@ printf("path: %s\n", client_path);
     if(ht[i] != NULL){
       hash_node *temp_hn = ht[i];
       while (temp_hn!=NULL){
-        printf("%s,%ld\n", temp_hn->key, temp_hn->value);
-        fprintf(fptr,"%s,%ld\n", temp_hn->key, temp_hn->value);
+        printf("%ld,%ld\n", temp_hn->key, temp_hn->value);
+        fprintf(fptr,"%ld,%ld\n", temp_hn->key, temp_hn->value);
         temp_hn = temp_hn->next;
       }
     }

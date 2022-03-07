@@ -68,9 +68,9 @@ class AfsClient {
         printf("**************** File handle CREATE ************: %d\n", fd);
         //add Retry
         if(status.ok()){
-            //long hashfile = hashfilename(path);
+            long hashfile = hashfilename(path);
             // server mtime in nanoseconds
-            put(path, reply.time());
+            put(hashfile, reply.time());
             std::cout << "reply time create " << reply.time() <<std::endl;
             //flush to persistent storage
             dump(cache_path);
@@ -99,9 +99,9 @@ class AfsClient {
                 retries = 1;
                 interval = 1000;
                 std::cout << reply->buf() <<std::endl;
-                //long hashfile = hashfilename(path);
+                long hashfile = hashfilename(path);
                 // server mtime in nanoseconds
-                put(path, reply->time());
+                put(hashfile, reply->time());
                 std::cout << "reply time fetch" << reply->time() <<std::endl;
                 //flush to persistent storage
                 dump(cache_path);
@@ -413,19 +413,8 @@ class AfsClient {
         }
     }
 
-    int afs_STORE(const char *path, char* cache_path)
+    int afs_STORE(const char *path, char *buf, int size, char* cache_path)
     {
-        char *buf;
-        struct stat info;
-        char client_path[MAX_PATH_LENGTH];
-        int size = info.st_size;
-        getLocalPath(path, cache_path, client_path);
-        lstat(client_path, &info);
-        buf = (char *)malloc(size);
-        int fd = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
-        read(fd, buf, size);
-        close(fd);
-
         StoreReq request;
         request.set_path(path);
         request.set_size(size);
@@ -441,9 +430,9 @@ class AfsClient {
                 is_ok = true;
                 retries = 1;
                 interval = 1000;
-                //long hashfile = hashfilename(path);
+                long hashfile = hashfilename(path);
                 // server mtime in nanoseconds
-                put(path, reply.time());
+                put(hashfile, reply.time());
                 std::cout << "reply time store" << reply.time() <<std::endl;
                 //flush to persistent storage
                 dump(cache_path);
@@ -451,20 +440,29 @@ class AfsClient {
             }
             is_ok = false;
         } while (retry_req(is_ok));
-        printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buf);
-        free(buf);
         return -reply.error();
     }
     
     int afs_RELEASE(const char *path, struct fuse_file_info *fi, char cache_path[])
     {
         int rc = 0;
+        char *buffer;
+        struct stat info, remoteFileInfo;
+        char client_path[MAX_PATH_LENGTH];
+        getLocalPath(path, cache_path, client_path);
+        lstat(client_path, &info);
         long modified = get(path) ;
         //SEMANTICS: ALWAYS FLUSH IF MODIFIED, IRRESPECTIVE OF SERVER ATTRIBUTES
         std::cout << "Modified? time elapsed - " << modified << std::endl;
         if (modified == -12345678){ //write modification
             rc = close(fi->fh);
-            afs_STORE(path, cache_path);
+            buffer = (char *)malloc(info.st_size);
+            int fd = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
+            read(fd, buffer, info.st_size);
+            afs_STORE(path, buffer, info.st_size, cache_path);
+            printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buffer);
+            free(buffer);
+            
         }
         
         return rc;
@@ -565,9 +563,9 @@ class AfsClient {
             close(fd);
             remove(client_path);
             rename(client_tmp_path, client_path);  
-            //long hashfile = hashfilename(path);
+            long hashfile = hashfilename(path);
             // server mtime in nanoseconds
-            put(path, -12345678); //-12345678 is dummy flag indicating a modification
+            put(hashfile, -12345678); //-12345678 is dummy flag indicating a modification
             std::cout << "updating write time  " << -12345678 <<std::endl;
             //flush to persistent storage
             dump(cache_path);  
