@@ -297,16 +297,11 @@ void RunAfsServer(std::string ipadd) {
     //create port on localhost 5000
     std::string address("10.10.1.1:50051");
     AfsServiceImplementation service;
-    std::cout << "1" << std::endl;
     ServerBuilder afsServer; //server name
-    std::cout << "2" << std::endl;
     afsServer.AddListeningPort(address, grpc::InsecureServerCredentials());
-    std::cout << "3" << std::endl;
     afsServer.RegisterService(&service);
-    std::cout << "4" << std::endl;
     std::unique_ptr<Server> server(afsServer.BuildAndStart());
     std::cout << "Server listening on port: " << address << std::endl;
-
     server->Wait();
 }
 
@@ -315,7 +310,7 @@ int main(int argc, char** argv) {
     std::string ipadd = "10.10.1.1";
 
     strncpy(root_path, argv[1], MAX_PATH_LENGTH);
-    std::cout << "afs path : " << root_path << std::endl;
+    // std::cout << "afs path : " << root_path << std::endl;
     RunAfsServer(ipadd);
     
     return 0;

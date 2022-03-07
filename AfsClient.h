@@ -53,10 +53,10 @@ class AfsClient {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
     
-        printf("path: %s\n", client_path);
+        // printf("path: %s\n", client_path);
 
         fd = open(client_path, O_CREAT | O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
-        printf("Creating file in local cache\n");
+        // printf("Creating file in local cache\n");
         if (fd == -1) {
                 printf("Create Error in local cache.. \n");
                 return -errno;
@@ -65,13 +65,13 @@ class AfsClient {
         Status status = stub_->afs_CREATE(&context, request, &reply);
         //Set file handler
         fi->fh = fd; 
-        printf("**************** File handle CREATE ************: %d\n", fd);
+        // printf("**************** File handle CREATE ************: %d\n", fd);
         //add Retry
         if(status.ok()){
             long hashfile = hashfilename(path);
             // server mtime in nanoseconds
             put(hashfile, reply.time());
-            std::cout << "reply time create " << reply.time() <<std::endl;
+            // std::cout << "reply time create " << reply.time() <<std::endl;
             //flush to persistent storage
             dump(cache_path);
             return reply.ack();
@@ -98,7 +98,7 @@ class AfsClient {
                 is_ok = true;
                 retries = 1;
                 interval = 1000;
-                std::cout << reply->buf() <<std::endl;
+                // std::cout << reply->buf() <<std::endl;
                 long hashfile = hashfilename(path);
                 // server mtime in nanoseconds
                 put(hashfile, reply->time());
@@ -224,7 +224,7 @@ class AfsClient {
             printf("retrying for the %d time\n", retries);
             retries += 1;
             int sleep_time = interval*retries;
-            printf("sleeping now for : %d milliseconds\n", sleep_time);
+            printf("backing off for : %d milliseconds\n", sleep_time);
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
             // interval *= interval;
             // printf("returning from retry_req.");

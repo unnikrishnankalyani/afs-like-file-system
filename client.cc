@@ -27,12 +27,12 @@ static const struct fuse_opt option_spec[] = {
 
 static int client_create(const char* path, mode_t mode, struct fuse_file_info *fi)
 {
-    std::cout <<"calling client create" <<std::endl;
+    // std::cout <<"calling client create" <<std::endl;
     return options.afsclient->afs_CREATE(path, cache_path, fi);
 }
 static int client_mknod(const char* path, mode_t mode, dev_t dev)
 {
-    std::cout <<"dummy mknod" <<std::endl;
+    // std::cout <<"dummy mknod" <<std::endl;
     return 0;
 }
 static int client_getattr(const char *path, struct stat *stats,
@@ -65,7 +65,7 @@ static int client_read(const char *path, char *buffer, size_t size, off_t offset
 static int client_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 			 off_t offset, struct fuse_file_info *fi, enum fuse_readdir_flags flags)
 {
-    std::cout <<"readdir " <<std::endl;
+    // std::cout <<"readdir " <<std::endl;
     return options.afsclient->afs_LS(path, buf, filler);
 }
 
