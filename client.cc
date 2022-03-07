@@ -126,6 +126,47 @@ static int client_mkdir(const char *path, mode_t mode)
     
 }
 
+static void read_from_database(char * cache_path){
+  FILE *fptr;
+  char client_path[MAX_PATH_LENGTH];
+    char * path = "/database.txt";
+    getLocalPath(path, cache_path, client_path);
+  if(fptr = fopen(client_path,"r")){
+    char *line;
+    size_t len = 0;
+    ssize_t read;
+    while ((read = getline(&line, &len, fptr)) != -1) {
+        char *tempstr = strdup(line);
+        const char *k  = strsep(&tempstr, ",");
+        char *v = strsep(&tempstr, ",");
+        long value = atol(v)
+        if(value == -5678)
+        {
+            struct stat info;
+            char client_path[MAX_PATH_LENGTH];
+            getLocalPath(k, cache_path, client_path);
+            lstat(client_path, &info);
+            buffer = (char *)malloc(info.st_size);
+            int fd = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
+            read(fd, buffer, info.st_size);
+            options.afsclient->afs_STORE(k, buffer, info.st_size, cache_path);
+        }
+        free(tempstr);
+        
+        put(k, value);
+    }
+    if(line)
+      free(line);
+    fclose(fptr);
+  }
+  return;
+}
+
+static void call_afs_store()
+{
+    options.afsclient->afs_RELEASE(path, cache_path);
+}
+
 static int client_rmdir(const char *path)
 {
     return options.afsclient->afs_RMDIR(path, cache_path);

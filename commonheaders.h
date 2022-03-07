@@ -144,29 +144,14 @@ void put(const char* filename, long timestamp){
   return;
 }
 
-void read_from_database(char * cache_path){
-  FILE *fptr;
-  char client_path[MAX_PATH_LENGTH];
-    char * path = "/database.txt";
-    getLocalPath(path, cache_path, client_path);
-  if(fptr = fopen(client_path,"r")){
-    char *line;
-    size_t len = 0;
-    ssize_t read;
-    while ((read = getline(&line, &len, fptr)) != -1) {
-        char *tempstr = strdup(line);
-        const char *k  = strsep(&tempstr, ",");
-        char *v = strsep(&tempstr, ",");
-
-        free(tempstr);
-        put(k, atol(v));
-    }
-    if(line)
-      free(line);
-    fclose(fptr);
+void init_ht(){
+  int i;
+  for (i=0; i<HTABLESIZE; i++){
+    ht[i] = 0;
   }
-  return;
 }
+
+
 
 void dump(char* cache_path){
 char client_path[MAX_PATH_LENGTH];
