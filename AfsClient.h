@@ -413,8 +413,19 @@ class AfsClient {
         }
     }
 
-    int afs_STORE(const char *path, char *buf, int size, char* cache_path)
+    int afs_STORE(const char *path, char* cache_path)
     {
+        char *buf;
+        struct stat info;
+        char client_path[MAX_PATH_LENGTH];
+        int size = info.st_size;
+        getLocalPath(path, cache_path, client_path);
+        lstat(client_path, &info);
+        buf = (char *)malloc(size);
+        int fd = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
+        read(fd, buf, size);
+        close(fd);
+
         StoreReq request;
         request.set_path(path);
         request.set_size(size);
@@ -446,23 +457,14 @@ class AfsClient {
     int afs_RELEASE(const char *path, struct fuse_file_info *fi, char cache_path[])
     {
         int rc = 0;
-        char *buffer;
-        struct stat info, remoteFileInfo;
-        char client_path[MAX_PATH_LENGTH];
-        getLocalPath(path, cache_path, client_path);
-        lstat(client_path, &info);
         long modified = get(path) ;
         //SEMANTICS: ALWAYS FLUSH IF MODIFIED, IRRESPECTIVE OF SERVER ATTRIBUTES
         std::cout << "Modified? time elapsed - " << modified << std::endl;
         if (modified == -12345678){ //write modification
             rc = close(fi->fh);
-            buffer = (char *)malloc(info.st_size);
-            int fd = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
-            read(fd, buffer, info.st_size);
-            afs_STORE(path, buffer, info.st_size, cache_path);
+            afs_STORE(path, cache_path);
             printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buffer);
             free(buffer);
-            
         }
         
         return rc;
