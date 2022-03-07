@@ -231,17 +231,40 @@ class AfsClient {
         }
     }
 
+    bool retry_req(bool is_ok, Status status)
+    {
+        if(is_ok || retries > 5)
+        {
+            printf("retry not required\n");
+            retries = 1;
+            interval = 1000;
+            return false;
+        }
+        else{
+            printf("error_code : %s\n", status.error_code());
+            printf("retrying for the %d time\n", retries);
+            retries += 1;
+            int sleep_time = interval*retries;
+            printf("sleeping now for : %d milliseconds\n", sleep_time);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+            // interval *= interval;
+            printf("returning from retry_req.");
+            return true;
+        }
+    }
+
     int afs_GETATTR(const char *path, struct stat *stats){
         
         bool is_ok = false;
         GetattrRes reply;
         GetattrReq request;
         request.set_path(path);
+        Status status;
         do
         {
             ClientContext context;
             printf("do-while starting\n");
-            Status status = stub_->afs_GETATTR(&context, request, &reply);
+            status = stub_->afs_GETATTR(&context, request, &reply);
             printf("stub called\n");
             if(status.ok())
             {
@@ -269,7 +292,7 @@ class AfsClient {
                 return 0;
             }
             is_ok = false;
-        } while (retry_req(is_ok));
+        } while (retry_req(is_ok, Status status));
         return -errno;
     }
 
