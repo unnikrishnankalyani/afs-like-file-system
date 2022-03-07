@@ -241,7 +241,7 @@ class AfsClient {
             return false;
         }
         else{
-            printf("error_code : %s\n", status.error_code());
+            printf("error_code : %d\n", status.error_code());
             printf("retrying for the %d time\n", retries);
             retries += 1;
             int sleep_time = interval*retries;
@@ -292,7 +292,7 @@ class AfsClient {
                 return 0;
             }
             is_ok = false;
-        } while (retry_req(is_ok, Status status));
+        } while (retry_req(is_ok, status));
         return -errno;
     }
 
