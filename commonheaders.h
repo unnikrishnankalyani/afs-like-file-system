@@ -115,7 +115,7 @@ long get(const char* filename){
 void put(const char* filename, long timestamp){
   
   long hashfile = hashfilename(filename);
-  long hash_key = hashtableindex(hashfilename);
+  long hash_key = hashtableindex(hashfile);
   
   hash_node *h = ht[hash_key];
   //printf("hash_key = %d\n", hash_key);
@@ -155,11 +155,11 @@ void read_from_database(char * cache_path){
     ssize_t read;
     while ((read = getline(&line, &len, fptr)) != -1) {
         char *tempstr = strdup(line);
-        char *k  = strsep(&tempstr, ",");
+        const char *k  = strsep(&tempstr, ",");
         char *v = strsep(&tempstr, ",");
 
         free(tempstr);
-        put(atol(k), atol(v));
+        put(k, atol(v));
     }
     if(line)
       free(line);
