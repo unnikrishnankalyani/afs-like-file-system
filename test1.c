@@ -41,12 +41,13 @@ void testCreateWriteAndRead(char* path){
     strcat(path2, "test2.txt");
     int fd = open(path2, O_CREAT | O_RDWR);
     char* writebuf = "test2";
-    char* readbuf = (char*) malloc(5);
+    
     lseek(fd, 0, SEEK_SET);
     write(fd, writebuf, 5);
     fsync(fd);
     close(fd);
     fd = open(path2, O_RDONLY);
+    char* readbuf = (char*) malloc(5);
     read(fd,readbuf, 5);
     if (strcmp(writebuf, readbuf) == 0){
         printf("Test 2 Write and Read : PASSED\n");

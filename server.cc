@@ -80,11 +80,13 @@ class AfsServiceImplementation final : public AFS:: Service{
         int fd;
 
         char path[MAX_PATH_LENGTH];
+        char tmp_path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
+        getServerTmpPath(request->path().c_str(), root_path, tmp_path)
 
         printf("AFS PATH STORE: %s\n", path);
 
-        fd = open(path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
+        fd = open(tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
 
         if(fd == -1) {
             perror(strerror(errno));
@@ -97,7 +99,10 @@ class AfsServiceImplementation final : public AFS:: Service{
         write(fd, (request->buf()).data(), request->size());
         struct stat stats;
         int res = lstat(path, &stats);
+        fsync(fd);
         close(fd);
+        remove(path);
+        rename(tmp_path, path);
 
         reply->set_error(0);
         struct  timespec ts =  stats.st_mtim;  /* time of last data modification */

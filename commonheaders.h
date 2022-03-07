@@ -56,6 +56,14 @@ void getLocalTmpPath(const char* file_path, const char*  cache_path, char* clien
     strncat(client_path, "_tmp", MAX_PATH_LENGTH);
 
 }
+void getServerTmpPath(const char* clientpath, const char*  root_path, char* server_path)
+{
+    server_path[0] = '\0';
+    strncat(server_path, root_path, MAX_PATH_LENGTH);
+    strncat(server_path, clientpath, MAX_PATH_LENGTH);
+    strncat(server_path, "_tmp", MAX_PATH_LENGTH);
+}
+
 
 unsigned long hashfilename(const char* str)
 {   
