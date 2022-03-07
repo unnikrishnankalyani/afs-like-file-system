@@ -91,9 +91,9 @@ class AfsClient {
         do
         {
             ClientContext context;
-            printf("before fetch\n");
+            // printf("before fetch\n");
             Status status = stub_->afs_FETCH(&context, request, reply);
-            printf("after fetch\n");
+            // printf("after fetch\n");
             if (status.ok()) {
                 is_ok = true;
                 retries = 1;
@@ -102,11 +102,11 @@ class AfsClient {
                 long hashfile = hashfilename(path);
                 // server mtime in nanoseconds
                 put(hashfile, reply->time());
-                std::cout << "reply time fetch" << reply->time() <<std::endl;
+                // std::cout << "reply time fetch" << reply->time() <<std::endl;
                 //flush to persistent storage
                 dump(cache_path);
                 *buf = (char *)(reply->buf()).data();
-                printf("%s\n", *buf);
+                // printf("%s\n", *buf);
                 *size = reply->size();
                 return 0;
             }
@@ -128,52 +128,53 @@ class AfsClient {
 
             char client_path[MAX_PATH_LENGTH];
             getLocalPath(path, cache_path, client_path);
-            printf("path: %s\n", client_path);
+            // printf("path: %s\n", client_path);
 
             fd = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3 removed O_CREAT because it has to fetch if not there
             
             if(fd == -1) {
-                printf("1. file does not exist: %d\n", fd);
+                // printf("1. file does not exist: %d\n", fd);
                 fetchNewCopy = 1;
-                printf("2. Open in CREAT mode (will be fetched): %d\n", fd);
+                // printf("2. Open in CREAT mode (will be fetched): %d\n", fd);
                 fd = open(client_path, O_CREAT |  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); //changed last 3
 
-                if(fd==-1) printf("Reopen Error - Probable PERMISSION issues\n"); 
+                if(fd==-1) 
+                    printf("Reopen Error - Probable PERMISSION issues\n"); 
 
             } else {
-                printf("4. Get stats to compare time stamps\n");
+                // printf("4. Get stats to compare time stamps\n");
                 afs_GETATTR(path, &remoteFileInfo); 
                 if(remoteFileInfo.st_mtime > get(path)) {
                     fetchNewCopy = 1;
-                    printf("5. Stale copy - fetch new \n");
+                    // printf("5. Stale copy - fetch new \n");
                 }
             }
 
             if(fetchNewCopy) {
                 rc = ftruncate(fd, 0);
-                printf("6. ftruncate: rc: %d\n", rc);
+                // printf("6. ftruncate: rc: %d\n", rc);
                 if(rc<0) {
                     return -errno;
                 }
                 rc = afs_FETCH(path, &buf, &size, cache_path);
-                printf("8. Fetching new copy. rc: %d\n", rc);
+                // printf("8. Fetching new copy. rc: %d\n", rc);
                 
                 if (rc<0) {
                     return -ENOENT;
                 }
-                printf("9. Write to file: %s\n", buf);
+                // printf("9. Write to file: %s\n", buf);
                 write(fd, buf, size);
-                printf("10. fsync\n");
+                // printf("10. fsync\n");
                 fsync(fd);
-                printf("9. File Size (as fetched from server and written into cache): %d\n", size);
+                // printf("9. File Size (as fetched from server and written into cache): %d\n", size);
             }
             //This is just for debug:
             lstat(client_path, &cacheFileInfo);
-            printf("10. Final Size: %d\n", cacheFileInfo.st_size);
+            // printf("10. Final Size: %d\n", cacheFileInfo.st_size);
             
             //Set file handler
             file_info->fh = fd; 
-            printf("**************** File handle OPEN ************: %d\n", fd);
+            // printf("**************** File handle OPEN ************: %d\n", fd);
 
 
 
@@ -191,14 +192,14 @@ class AfsClient {
         struct stat info;
         lstat(client_path, &info);
 
-        printf("reading from : %s\n", client_path);
-        printf("**************** File handle READ ************: %d\n", file_info->fh);
-        printf("**************** File size, offset READ ************: %d, %d\n", size, offset);
+        // printf("reading from : %s\n", client_path);
+        // printf("**************** File handle READ ************: %d\n", file_info->fh);
+        // printf("**************** File size, offset READ ************: %d, %d\n", size, offset);
 
         int fd = open(client_path, O_RDONLY);
         file_info->fh = fd;
         ret_code = pread(file_info->fh, buffer, size, offset);
-        printf("READ buffer from : %s\n", buffer);
+        // printf("READ buffer from : %s\n", buffer);
 
 
         //Just to debug - 
@@ -214,7 +215,7 @@ class AfsClient {
     {
         if(is_ok || retries > 5)
         {
-            printf("retry not required\n");
+            // printf("retry not required\n");
             retries = 1;
             interval = 1000;
             return false;
@@ -226,7 +227,7 @@ class AfsClient {
             printf("sleeping now for : %d milliseconds\n", sleep_time);
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
             // interval *= interval;
-            printf("returning from retry_req.");
+            // printf("returning from retry_req.");
             return true;
         }
     }
@@ -240,17 +241,17 @@ class AfsClient {
         do
         {
             ClientContext context;
-            printf("do-while starting\n");
+            // printf("do-while starting\n");
             Status status = stub_->afs_GETATTR(&context, request, &reply);
-            printf("stub called\n");
+            // printf("stub called\n");
             if(status.ok())
             {
                 is_ok = true;
                 retries = 1;
                 interval = 1000;
-                printf("getattr success\n");
+                // printf("getattr success\n");
                 if(reply.err() != 0){
-                    std::cout << " getattr errno: " << reply.err() << std::endl;
+                    // std::cout << " getattr errno: " << reply.err() << std::endl;
                     return -reply.err();
                 }
                 memset(stats, 0, sizeof(struct stat));
@@ -277,7 +278,7 @@ class AfsClient {
     {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
-        printf("truncating: %s\n", client_path);
+        // printf("truncating: %s\n", client_path);
         int res = truncate(client_path, size);
         if(res == -1)
             return -errno;
@@ -288,7 +289,7 @@ class AfsClient {
     {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
-        printf("changing ownership of: %s\n", client_path);
+        // printf("changing ownership of: %s\n", client_path);
         int res = lchown(client_path, uid, gid);
         if(res == -1)
             return -errno;
@@ -299,7 +300,7 @@ class AfsClient {
     {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
-        printf("unlinking: %s\n", client_path);
+        // printf("unlinking: %s\n", client_path);
         int res = unlink(client_path);
         // if(res == -1)
         //     return -errno;
@@ -321,7 +322,7 @@ class AfsClient {
     {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
-        printf("utimens: %s\n", client_path);
+        // printf("utimens: %s\n", client_path);
         int res = utimensat(0, client_path, ts, AT_SYMLINK_NOFOLLOW);
         if(res == -1)
             return -errno;
@@ -332,7 +333,7 @@ class AfsClient {
     {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
-        printf("changing permissions of: %s\n", client_path);
+        // printf("changing permissions of: %s\n", client_path);
         int res = chmod(client_path, mode);
         // if(res == -1)
         //     return -errno;
@@ -357,7 +358,7 @@ class AfsClient {
         try{
             char client_path[MAX_PATH_LENGTH];
             getLocalPath(path, cache_path, client_path);
-            printf("creating directory: %s\n", client_path);
+            // printf("creating directory: %s\n", client_path);
 
             ClientContext context;
             MkdirReq req;
@@ -369,9 +370,9 @@ class AfsClient {
                 printf("error : %d\n", errno);
                     return 0;
             } else {
-                printf("error while creating dir : %d\n", reply.error());
+                // printf("error while creating dir : %d\n", reply.error());
                 // printf("error message : %s\n", status.error_message().c_str());
-                printf("error code : %d\n", status.error_code());
+                // printf("error code : %d\n", status.error_code());
                 return -reply.error();
             }
 
@@ -395,7 +396,7 @@ class AfsClient {
     {
         char client_path[MAX_PATH_LENGTH];
         getLocalPath(path, cache_path, client_path);
-        printf("removing directory: %s\n", client_path);
+        // printf("removing directory: %s\n", client_path);
         int res = rmdir(client_path);
         // if(res == -1)
         //     return -errno;
@@ -418,7 +419,7 @@ class AfsClient {
         StoreReq request;
         request.set_path(path);
         request.set_size(size);
-        printf("Store request: Path = %s Size = %d \n", path, size);
+        // printf("Store request: Path = %s Size = %d \n", path, size);
         request.set_buf(std::string(buf, size));
         StoreRes reply;
         bool is_ok = false;
@@ -433,7 +434,7 @@ class AfsClient {
                 long hashfile = hashfilename(path);
                 // server mtime in nanoseconds
                 put(hashfile, reply.time());
-                std::cout << "reply time store" << reply.time() <<std::endl;
+                // std::cout << "reply time store" << reply.time() <<std::endl;
                 //flush to persistent storage
                 dump(cache_path);
                 return reply.error();
@@ -453,14 +454,14 @@ class AfsClient {
         lstat(client_path, &info);
         long modified = get(path) ;
         //SEMANTICS: ALWAYS FLUSH IF MODIFIED, IRRESPECTIVE OF SERVER ATTRIBUTES
-        std::cout << "Modified? time elapsed - " << modified << std::endl;
+        // std::cout << "Modified? time elapsed - " << modified << std::endl;
         if (modified == -12345678){ //write modification
             rc = close(fi->fh);
             buffer = (char *)malloc(info.st_size);
             int fd = open(client_path,  O_APPEND | O_RDWR, S_IRWXU | S_IRWXG); 
             read(fd, buffer, info.st_size);
             afs_STORE(path, buffer, info.st_size, cache_path);
-            printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buffer);
+            // printf("~~~~~~~~Wrote temp to main and flushed:: %s\n", buffer);
             free(buffer);
             
         }
@@ -500,7 +501,7 @@ class AfsClient {
         // char client_path[MAX_PATH_LENGTH];
         // getLocalPath(path, cache_path, client_path);
         // printf("changing permissions of: %s\n", client_path);
-        printf("isdatasync : %d\n", isdatasync);
+        // printf("isdatasync : %d\n", isdatasync);
         if (isdatasync)
             res = fdatasync(fi->fh);
         else
@@ -566,7 +567,7 @@ class AfsClient {
             long hashfile = hashfilename(path);
             // server mtime in nanoseconds
             put(hashfile, -12345678); //-12345678 is dummy flag indicating a modification
-            std::cout << "updating write time  " << -12345678 <<std::endl;
+            // std::cout << "updating write time  " << -12345678 <<std::endl;
             //flush to persistent storage
             dump(cache_path);  
 
