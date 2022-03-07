@@ -68,9 +68,9 @@ class AfsClient {
         printf("**************** File handle CREATE ************: %d\n", fd);
         //add Retry
         if(status.ok()){
-            long hashfile = hashfilename(path);
+            //long hashfile = hashfilename(path);
             // server mtime in nanoseconds
-            put(hashfile, reply.time());
+            put(path, reply.time());
             std::cout << "reply time create " << reply.time() <<std::endl;
             //flush to persistent storage
             dump(cache_path);
@@ -99,9 +99,9 @@ class AfsClient {
                 retries = 1;
                 interval = 1000;
                 std::cout << reply->buf() <<std::endl;
-                long hashfile = hashfilename(path);
+                //long hashfile = hashfilename(path);
                 // server mtime in nanoseconds
-                put(hashfile, reply->time());
+                put(path, reply->time());
                 std::cout << "reply time fetch" << reply->time() <<std::endl;
                 //flush to persistent storage
                 dump(cache_path);
@@ -430,9 +430,9 @@ class AfsClient {
                 is_ok = true;
                 retries = 1;
                 interval = 1000;
-                long hashfile = hashfilename(path);
+                //long hashfile = hashfilename(path);
                 // server mtime in nanoseconds
-                put(hashfile, reply.time());
+                put(path, reply.time());
                 std::cout << "reply time store" << reply.time() <<std::endl;
                 //flush to persistent storage
                 dump(cache_path);
@@ -563,9 +563,9 @@ class AfsClient {
             close(fd);
             remove(client_path);
             rename(client_tmp_path, client_path);  
-            long hashfile = hashfilename(path);
+            //long hashfile = hashfilename(path);
             // server mtime in nanoseconds
-            put(hashfile, -12345678); //-12345678 is dummy flag indicating a modification
+            put(path, -12345678); //-12345678 is dummy flag indicating a modification
             std::cout << "updating write time  " << -12345678 <<std::endl;
             //flush to persistent storage
             dump(cache_path);  

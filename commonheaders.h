@@ -79,21 +79,14 @@ unsigned int hashtableindex(unsigned int x) {
 }
 
 typedef struct hash_node{
-  long key;
+  const char* key;
   long value;
   struct hash_node *next;
 }hash_node;
 
 hash_node *ht[HTABLESIZE];
 
-void init_ht(){
-  int i;
-  for (i=0; i<HTABLESIZE; i++){
-    ht[i] = 0;
-  }
-}
-
-hash_node *create_hash_node(long key, long value){
+hash_node *create_hash_node(const char* key, long value){
   //printf("----trying to insert %d %s------\n", key, value);
   hash_node *new_hn = (hash_node *) malloc(sizeof(hash_node));
   new_hn->key = key;
@@ -110,7 +103,7 @@ long get(const char* filename){
   hash_node *temp_hn = ht[hash_index];
 
   while (temp_hn!=NULL){
-    if (hashfile == temp_hn->key){
+    if (filename == temp_hn->key){
         return temp_hn->value;
     }
     temp_hn = temp_hn->next;
@@ -119,16 +112,16 @@ long get(const char* filename){
   return -1; //not found
 }
 
-void put(long hashfilename, long timestamp){
+void put(const char* filename, long timestamp){
   
-//   long hashfile = hashfilename(filename);
+  long hashfile = hashfilename(filename);
   long hash_key = hashtableindex(hashfilename);
   
   hash_node *h = ht[hash_key];
   //printf("hash_key = %d\n", hash_key);
   //if no entry, store and return
   if ( h == NULL){
-    ht[hash_key] = create_hash_node(hashfilename,timestamp);
+    ht[hash_key] = create_hash_node(filename,timestamp);
     //printf("created new key: %d, %s\n", x, v);
     return;
   } 
@@ -137,7 +130,7 @@ void put(long hashfilename, long timestamp){
   hash_node *temp_hn = ht[hash_key];
   hash_node *prev = NULL;
   while (temp_hn!=NULL){
-    if (hashfilename == temp_hn->key){
+    if (filename == temp_hn->key){
         temp_hn->value = timestamp;
         return;
     }
@@ -145,7 +138,7 @@ void put(long hashfilename, long timestamp){
     temp_hn = temp_hn->next;
   }
   //key does not exist, append to end of list (temp_hn is NULL, use prev)
-  prev->next = create_hash_node(hashfilename,timestamp);
+  prev->next = create_hash_node(filename,timestamp);
   //printf("created new key: %d, %s\n", x, v);
   
   return;
@@ -192,8 +185,8 @@ printf("path: %s\n", client_path);
     if(ht[i] != NULL){
       hash_node *temp_hn = ht[i];
       while (temp_hn!=NULL){
-        printf("%ld,%ld\n", temp_hn->key, temp_hn->value);
-        fprintf(fptr,"%ld,%ld\n", temp_hn->key, temp_hn->value);
+        printf("%s,%ld\n", temp_hn->key, temp_hn->value);
+        fprintf(fptr,"%s,%ld\n", temp_hn->key, temp_hn->value);
         temp_hn = temp_hn->next;
       }
     }
