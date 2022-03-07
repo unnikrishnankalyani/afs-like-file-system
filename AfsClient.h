@@ -88,11 +88,12 @@ class AfsClient {
         request.set_path(path);
         FetchReply *reply = new FetchReply();
         bool is_ok = false;
+        Status status;
         do
         {
             ClientContext context;
             printf("before fetch\n");
-            Status status = stub_->afs_FETCH(&context, request, reply);
+            status = stub_->afs_FETCH(&context, request, reply);
             printf("after fetch\n");
             if (status.ok()) {
                 is_ok = true;
@@ -111,7 +112,7 @@ class AfsClient {
                 return 0;
             }
             is_ok = false;
-        } while (retry_req(is_ok));
+        } while (retry_req(is_ok, status));
         return -errno;
     }
 
@@ -210,46 +211,53 @@ class AfsClient {
 	    return ret_code;
     }
 
-    bool retry_req(bool is_ok)
-    {
-        if(is_ok || retries > 5)
-        {
-            printf("retry not required\n");
-            retries = 1;
-            interval = 1000;
-            return false;
-        }
-        else{
-            printf("retrying for the %d time\n", retries);
-            retries += 1;
-            int sleep_time = interval*retries;
-            printf("sleeping now for : %d milliseconds\n", sleep_time);
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
-            // interval *= interval;
-            printf("returning from retry_req.");
-            return true;
-        }
-    }
+    // bool retry_req(bool is_ok)
+    // {
+    //     if(is_ok || retries > 5)
+    //     {
+    //         printf("retry not required\n");
+    //         retries = 1;
+    //         interval = 1000;
+    //         return false;
+    //     }
+    //     else{
+    //         printf("retrying for the %d time\n", retries);
+    //         retries += 1;
+    //         int sleep_time = interval*retries;
+    //         printf("sleeping now for : %d milliseconds\n", sleep_time);
+    //         std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+    //         // interval *= interval;
+    //         printf("returning from retry_req.");
+    //         return true;
+    //     }
+    // }
 
     bool retry_req(bool is_ok, Status status)
     {
-        if(is_ok || retries > 5)
+        if(is_ok || retries > 5 || status.error_code() != 14)
         {
+            printf("in retry req if. status_code : %d\n", status.error_code());
             printf("retry not required\n");
             retries = 1;
             interval = 1000;
             return false;
         }
         else{
-            printf("error_code : %d\n", status.error_code());
-            printf("retrying for the %d time\n", retries);
-            retries += 1;
-            int sleep_time = interval*retries;
-            printf("sleeping now for : %d milliseconds\n", sleep_time);
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
-            // interval *= interval;
-            printf("returning from retry_req.");
-            return true;
+            if(status.error_code() == 14)
+            {
+                printf("GRPC if error_code : %d\n", status.error_code());
+                printf("retrying for the %d time\n", retries);
+                retries += 1;
+                int sleep_time = interval*retries;
+                printf("sleeping now for : %d milliseconds\n", sleep_time);
+                std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+                // interval *= interval;
+                printf("returning from retry_req.");
+                return true;    
+            }
+            
+            printf("GRPC else error_code : %d\n", status.error_code());
+            return false;
         }
     }
 
@@ -445,10 +453,11 @@ class AfsClient {
         request.set_buf(std::string(buf, size));
         StoreRes reply;
         bool is_ok = false;
+        Status status;
         do
         {
             ClientContext context;
-            Status status = stub_->afs_STORE(&context, request, &reply);
+            status = stub_->afs_STORE(&context, request, &reply);
             if (status.ok()) {
                 is_ok = true;
                 retries = 1;
@@ -462,7 +471,7 @@ class AfsClient {
                 return reply.error();
             }
             is_ok = false;
-        } while (retry_req(is_ok));
+        } while (retry_req(is_ok, status));
         return -reply.error();
     }
     

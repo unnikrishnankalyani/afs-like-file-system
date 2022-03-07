@@ -84,7 +84,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         getServerPath(request->path().c_str(), root_path, path);
         getServerTmpPath(request->path().c_str(), root_path, tmp_path);
 
-        printf("AFS PATH STORE: %s\n", path);
+        printf("AFS PATH STORE: %s\n", tmp_path);
 
         fd = open(tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
 
