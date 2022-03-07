@@ -54,7 +54,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         const CreateReq* request,
         CreateRes* reply
     ) override { //returns a status by default
-        // std::cout << "server create" <<std::endl;
+        std::cout << "server create" <<std::endl;
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
         int fd = open(path, O_CREAT, S_IRWXU | S_IRWXG); // fixing flags and modes for create. changed last 1
@@ -77,6 +77,7 @@ class AfsServiceImplementation final : public AFS:: Service{
       Status afs_STORE(ServerContext* context, const StoreReq* request,
                StoreRes* reply) override {
 
+         std::cout << "server store" <<std::endl;
         int fd;
 
         char path[MAX_PATH_LENGTH];
@@ -108,6 +109,9 @@ class AfsServiceImplementation final : public AFS:: Service{
 
     Status afs_GETATTR(ServerContext* context, const GetattrReq* request, 
 					 GetattrRes* reply) override {
+
+
+         std::cout << "server getattr" <<std::endl;
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
         // printf("AFS server PATH, GETATTR: %s\n", path);
@@ -145,6 +149,7 @@ class AfsServiceImplementation final : public AFS:: Service{
     Status afs_UNLINK(ServerContext* context, const UnlinkReq* request, 
 					 UnlinkRes* reply) override {
         char path[MAX_PATH_LENGTH];
+         std::cout << "server remove" <<std::endl;
         getServerPath(request->path().c_str(), root_path, path);
         // printf("AFS server PATH, unlink: %s\n", path);
 
@@ -161,7 +166,9 @@ class AfsServiceImplementation final : public AFS:: Service{
     Status afs_CHMOD(ServerContext* context, const ChmodReq* request, 
 					 ChmodRes* reply) override {
         char path[MAX_PATH_LENGTH];
+         std::cout << "server chmod" <<std::endl;
         getServerPath(request->path().c_str(), root_path, path);
+        
         // printf("AFS server PATH, Chmod: %s\n", path);
 
         int res = chmod(path, request->mode());
@@ -178,6 +185,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 					 MkdirRes* reply) override {
 
         try{
+             std::cout << "server mkdir" <<std::endl;
             char path[MAX_PATH_LENGTH];
             getServerPath(request->path().c_str(), root_path, path);
             // printf("AFS server PATH, mkdir: %s\n", path);
@@ -204,6 +212,7 @@ class AfsServiceImplementation final : public AFS:: Service{
     Status afs_RMDIR(ServerContext* context, const RmdirReq* request, 
 					 RmdirRes* reply) override {
         char path[MAX_PATH_LENGTH];
+         std::cout << "server rmdir" <<std::endl;
         getServerPath(request->path().c_str(), root_path, path);
         // printf("AFS server PATH, rmdir: %s\n", path);
 
@@ -222,7 +231,7 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         int fd;
         struct stat info;
-
+         std::cout << "server fetch" <<std::endl;
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
 
@@ -262,6 +271,7 @@ class AfsServiceImplementation final : public AFS:: Service{
                  ServerWriter<LsRes>* writer) override {
 
       char path[MAX_PATH_LENGTH];
+       std::cout << "server readdir" <<std::endl;
       getServerPath(request->path().c_str(), root_path, path);
     //   printf("AFS server PATH, LS: %s\n", path);
       DIR *dp;
