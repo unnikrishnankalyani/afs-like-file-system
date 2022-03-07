@@ -139,7 +139,7 @@ static void read_from_database(char * cache_path){
         char *tempstr = strdup(line);
         const char *k  = strsep(&tempstr, ",");
         char *v = strsep(&tempstr, ",");
-        long value = atol(v)
+        long value = atol(v);
         if(value == -5678)
         {
             struct stat info;
@@ -160,11 +160,6 @@ static void read_from_database(char * cache_path){
     fclose(fptr);
   }
   return;
-}
-
-static void call_afs_store()
-{
-    options.afsclient->afs_RELEASE(path, cache_path);
 }
 
 static int client_rmdir(const char *path)
