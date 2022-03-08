@@ -15,6 +15,7 @@ To test :
       make  
       
   on client :    
-    ./client [server ip address, default - localhost]   
+    ./client [fuse mount path] [cache path]  
 	on server :   
-	./server
+	./server [server fs path]
+
