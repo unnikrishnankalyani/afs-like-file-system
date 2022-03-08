@@ -51,6 +51,29 @@ Deletes the specified directory (which must be empty).
 &emsp; Fetch - 
 Returns the data of the specified file or directory and the modified time.   
 
+AfsClient.h
+Contains implementations of all client side functions
+
+client.cc
+Defines fuse operations supported by the client
+
+server.cc
+Defines the server interface
+
+commonheaders.h
+1. Contains implementation of the persistent hashmap we use to store modified time and modified flags
+
+    * Hashmap:
+        * Key: filename
+        * Value: serverfile.getattr.mtime OR “modified” flag
+
+    * Modified times returned by the gRPC calls (Fetch, Store, Create) are stored in the hashmap.
+    * File modifications - 
+        * If the file is modified, the persistent hashmap stores a “modified” flag (negative arbitrary value) for the file
+        * This is updated by the serverfile.getattr.mtime when flushed to the server on close
+
+2. Contains other helper functions
+
 
 
 
