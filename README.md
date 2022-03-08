@@ -18,8 +18,10 @@ To test :
    &emsp;  ./client [fuse mount path] [cache path]  
 	on server :   
 	&emsp; ./server [server fs path]
+ 
 
-  The following POSIX APIs are supported:  
+client.cc
+Defines fuse operations supported by the client.   The following POSIX APIs are supported:  
    &emsp; open()  
   &emsp;  creat()  
   &emsp;  mkdir()  
@@ -31,8 +33,13 @@ To test :
   &emsp; rmdir()   
   &emsp; write()   
   &emsp; pwrite()   
-  &emsp; fsync()    
+  &emsp; fsync()   
 
+AfsClient.h
+Contains implementations of all client side functions.
+
+server.cc
+Defines the server interface
 The server interface consists of the following functions:     
 &emsp;Create - 
 Creates a new file if the file doesn’t exist and sends a reply with modified time.   
@@ -50,15 +57,6 @@ Creates a new directory if it doesn’t exist.
 Deletes the specified directory (which must be empty).   
 &emsp; Fetch - 
 Returns the data of the specified file or directory and the modified time.   
-
-AfsClient.h
-Contains implementations of all client side functions
-
-client.cc
-Defines fuse operations supported by the client
-
-server.cc
-Defines the server interface
 
 commonheaders.h
 1. Contains implementation of the persistent hashmap we use to store modified time and modified flags
