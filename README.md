@@ -1,7 +1,7 @@
 # wi-AFS
-AFS-like Client/Server File System
+## AFS-like Client/Server File System
 
-To test :   
+### To test :   
  &emsp;  Run (after setting $MY_INSTALL_DIR (to the directory where gRPC is installed) and $PATH appropriately):    
      &emsp; &emsp;  export MY_INSTALL_DIR=$HOME/.local  
      &emsp; &emsp;  export PATH=/opt/homebrew/bin    
@@ -19,8 +19,8 @@ To test :
 	on server :   
 	&emsp; ./server [server fs path]
  
-
-client.cc
+## Code: 
+### client.cc
 Defines fuse operations supported by the client.   The following POSIX APIs are supported:  
    &emsp; open()  
   &emsp;  creat()  
@@ -35,10 +35,10 @@ Defines fuse operations supported by the client.   The following POSIX APIs are 
   &emsp; pwrite()   
   &emsp; fsync()   
 
-AfsClient.h
+### AfsClient.h
 Contains implementations of all client side functions.
 
-server.cc
+### server.cc
 Defines the server interface
 The server interface consists of the following functions:     
 &emsp;Create - 
@@ -58,7 +58,7 @@ Deletes the specified directory (which must be empty).
 &emsp; Fetch - 
 Returns the data of the specified file or directory and the modified time.   
 
-commonheaders.h
+### commonheaders.h
 1. Contains implementation of the persistent hashmap we use to store modified time and modified flags
 
     * Hashmap:
