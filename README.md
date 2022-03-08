@@ -2,17 +2,17 @@
 AFS-like Client/Server File System
 
 To test :   
- &emsp;  Run (after setting $MY_INSTALL_DIR (to the directory where gRPC is installed) and $PATH appropriately):  
-     &emsp; &emsp;  export MY_INSTALL_DIR=$HOME/.local
-     &emsp; &emsp;  export PATH=/opt/homebrew/bin  
-      &emsp; &emsp; PATH=/bin:/usr/bin:/usr/local/bin:${PATH}                     
-      &emsp; &emsp; export PATH     
+ &emsp;  Run (after setting $MY_INSTALL_DIR (to the directory where gRPC is installed) and $PATH appropriately):    
+     &emsp; &emsp;  export MY_INSTALL_DIR=$HOME/.local  
+     &emsp; &emsp;  export PATH=/opt/homebrew/bin    
+      &emsp; &emsp; PATH=/bin:/usr/bin:/usr/local/bin:${PATH}                       
+      &emsp; &emsp; export PATH       
             
-      &emsp; &emsp; mkdir -p cmake/build  
-      &emsp; &emsp; cd cmake/build  
-      &emsp; &emsp; cmake -DCMAKE_PREFIX_PATH=$MY_INSTALL_DIR ../..  
-     &emsp; &emsp;  make afs.grpc.pb.o  
-      &emsp; &emsp; make  
+      mkdir -p cmake/build  
+      cd cmake/build  
+      cmake -DCMAKE_PREFIX_PATH=$MY_INSTALL_DIR ../..  
+      make afs.grpc.pb.o  
+      make  
       
   on client :    
    &emsp;  ./client [fuse mount path] [cache path]  
