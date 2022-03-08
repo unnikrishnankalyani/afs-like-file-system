@@ -19,3 +19,20 @@ To test :
 	on server :   
 	./server [server fs path]
 
+  The following POSIX APIs are supported:  
+   open()
+  creat()
+  mkdir()
+  read()
+  pread()
+  stat()
+  close() 
+  unlink() 
+  rmdir() 
+  write() 
+  pwrite() 
+  fsync()
+
+
+
+
