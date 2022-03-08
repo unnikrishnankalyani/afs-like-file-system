@@ -34,7 +34,7 @@ To test :
   fsync()    
 
 The server interface consists of the following functions:     
-Create - 
+&ensp;Create - 
 Creates a new file if the file doesn’t exist and sends a reply with modified time.   
 Store - 
 Stores the data of the specified file and sends a reply with modified time.   
