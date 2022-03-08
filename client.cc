@@ -27,12 +27,12 @@ static const struct fuse_opt option_spec[] = {
 
 static int client_create(const char* path, mode_t mode, struct fuse_file_info *fi)
 {
-    std::cout <<"calling client create" <<std::endl;
+    // std::cout <<"calling client create" <<std::endl;
     return options.afsclient->afs_CREATE(path, cache_path, fi);
 }
 static int client_mknod(const char* path, mode_t mode, dev_t dev)
 {
-    std::cout <<"dummy mknod" <<std::endl;
+    // std::cout <<"dummy mknod" <<std::endl;
     return 0;
 }
 static int client_getattr(const char *path, struct stat *stats,
@@ -65,7 +65,7 @@ static int client_read(const char *path, char *buffer, size_t size, off_t offset
 static int client_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 			 off_t offset, struct fuse_file_info *fi, enum fuse_readdir_flags flags)
 {
-    std::cout <<"readdir " <<std::endl;
+    // std::cout <<"readdir " <<std::endl;
     return options.afsclient->afs_LS(path, buf, filler);
 }
 
@@ -123,7 +123,6 @@ static int client_mkdir(const char *path, mode_t mode)
     {
         printf("retrying for mkdir!\n");
     }
-    
 }
 
 static int client_rmdir(const char *path)
@@ -143,16 +142,13 @@ struct client_fuse_operations:fuse_operations
         getattr    = client_getattr;
         //uncomment the below as and when the corresponding implementation is done.
         release    = client_release;
-        // mkdir      = client_mkdir;
         mknod      = client_mknod;
         truncate   = client_truncate;
         chown      = client_chown;
         utimens    = client_utimens;
         chmod      = client_chmod;
         fsync      = client_fsync;
-        // getxattr   = client_getxattr;
         unlink     = client_unlink;
-        // flush      = client_flush;
         mkdir      = client_mkdir;
         rmdir      = client_rmdir;
     }
@@ -167,11 +163,11 @@ int main(int argc, char* argv[]){
 
     //cache path and actual path
     strncpy(cache_path, realpath(argv[argc-1], NULL), MAX_PATH_LENGTH);
-    printf("argv[argc-1] : %s\n", argv[argc-1]);
+    // printf("argv[argc-1] : %s\n", argv[argc-1]);
     // strncat(cache_path, "/", MAX_PATH_LENGTH);
     argv[argc-1] = NULL;
     argc--;
-    printf("File System Cache Path on Client: %s\n", cache_path);
+    // printf("File System Cache Path on Client: %s\n", cache_path);
     //initialize the hash table to store modified time
     char client_path[MAX_PATH_LENGTH];
     char * path = "/database.txt";

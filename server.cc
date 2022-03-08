@@ -77,14 +77,13 @@ class AfsServiceImplementation final : public AFS:: Service{
       Status afs_STORE(ServerContext* context, const StoreReq* request,
                StoreRes* reply) override {
 
+         std::cout << "server store" <<std::endl;
         int fd;
 
         char path[MAX_PATH_LENGTH];
         char tmp_path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
         getServerTmpPath(request->path().c_str(), root_path, tmp_path);
-
-        printf("AFS PATH STORE: %s\n", tmp_path);
 
         fd = open(tmp_path, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
 
@@ -94,8 +93,8 @@ class AfsServiceImplementation final : public AFS:: Service{
             return Status::OK;
         }
 
-        printf("Received String: %s\n", (request->buf()).c_str());
-        printf("Size: %d\n", request->size());
+        // printf("Received String: %s\n", (request->buf()).c_str());
+        // printf("Size: %d\n", request->size());
         write(fd, (request->buf()).data(), request->size());
         struct stat stats;
         int res = lstat(path, &stats);
@@ -113,13 +112,16 @@ class AfsServiceImplementation final : public AFS:: Service{
 
     Status afs_GETATTR(ServerContext* context, const GetattrReq* request, 
 					 GetattrRes* reply) override {
+
+
+         std::cout << "server getattr" <<std::endl;
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
-        printf("AFS server PATH, GETATTR: %s\n", path);
+        // printf("AFS server PATH, GETATTR: %s\n", path);
 
         struct stat stats;
 		int res = lstat(path, &stats);
-        printf("res after getattr :  %d\n", res);
+        // printf("res after getattr :  %d\n", res);
         if(res == -1){
 		    perror(strerror(errno));
 		    reply->set_err(errno);
@@ -150,8 +152,9 @@ class AfsServiceImplementation final : public AFS:: Service{
     Status afs_UNLINK(ServerContext* context, const UnlinkReq* request, 
 					 UnlinkRes* reply) override {
         char path[MAX_PATH_LENGTH];
+         std::cout << "server remove" <<std::endl;
         getServerPath(request->path().c_str(), root_path, path);
-        printf("AFS server PATH, unlink: %s\n", path);
+        // printf("AFS server PATH, unlink: %s\n", path);
 
         int res = unlink(path);
         if(res == -1)
@@ -166,8 +169,10 @@ class AfsServiceImplementation final : public AFS:: Service{
     Status afs_CHMOD(ServerContext* context, const ChmodReq* request, 
 					 ChmodRes* reply) override {
         char path[MAX_PATH_LENGTH];
+         std::cout << "server chmod" <<std::endl;
         getServerPath(request->path().c_str(), root_path, path);
-        printf("AFS server PATH, Chmod: %s\n", path);
+        
+        // printf("AFS server PATH, Chmod: %s\n", path);
 
         int res = chmod(path, request->mode());
         if(res == -1)
@@ -183,12 +188,13 @@ class AfsServiceImplementation final : public AFS:: Service{
 					 MkdirRes* reply) override {
 
         try{
+             std::cout << "server mkdir" <<std::endl;
             char path[MAX_PATH_LENGTH];
             getServerPath(request->path().c_str(), root_path, path);
-            printf("AFS server PATH, mkdir: %s\n", path);
+            // printf("AFS server PATH, mkdir: %s\n", path);
 
             int res = mkdir(path, request->mode());
-            printf("res after mkdir : %d\n", res);
+            // printf("res after mkdir : %d\n", res);
             if(res == -1)
             { 
                 printf("error in server while creaing folder : %d\n", errno);
@@ -209,8 +215,9 @@ class AfsServiceImplementation final : public AFS:: Service{
     Status afs_RMDIR(ServerContext* context, const RmdirReq* request, 
 					 RmdirRes* reply) override {
         char path[MAX_PATH_LENGTH];
+         std::cout << "server rmdir" <<std::endl;
         getServerPath(request->path().c_str(), root_path, path);
-        printf("AFS server PATH, rmdir: %s\n", path);
+        // printf("AFS server PATH, rmdir: %s\n", path);
 
         int res = rmdir(path);
         if(res == -1)
@@ -227,11 +234,11 @@ class AfsServiceImplementation final : public AFS:: Service{
 
         int fd;
         struct stat info;
-
+         std::cout << "server fetch" <<std::endl;
         char path[MAX_PATH_LENGTH];
         getServerPath(request->path().c_str(), root_path, path);
 
-        printf("AFS server PATH FETCH: %s\n", path);
+        // printf("AFS server PATH FETCH: %s\n", path);
 
         fd = open(path, O_RDWR);
 
@@ -250,7 +257,7 @@ class AfsServiceImplementation final : public AFS:: Service{
         int res = fstat(fd, &stats);
         close(fd);
 
-        printf("Read string: %s\n", buf);
+        // printf("Read string: %s\n", buf);
 
         reply->set_error(0);
         reply->set_buf(std::string(buf,info.st_size));
@@ -267,8 +274,9 @@ class AfsServiceImplementation final : public AFS:: Service{
                  ServerWriter<LsRes>* writer) override {
 
       char path[MAX_PATH_LENGTH];
+       std::cout << "server readdir" <<std::endl;
       getServerPath(request->path().c_str(), root_path, path);
-      printf("AFS server PATH, LS: %s\n", path);
+    //   printf("AFS server PATH, LS: %s\n", path);
       DIR *dp;
       struct dirent *de;
       LsRes reply;
@@ -302,16 +310,11 @@ void RunAfsServer(std::string ipadd) {
     //create port on localhost 5000
     std::string address("10.10.1.1:50051");
     AfsServiceImplementation service;
-    std::cout << "1" << std::endl;
     ServerBuilder afsServer; //server name
-    std::cout << "2" << std::endl;
     afsServer.AddListeningPort(address, grpc::InsecureServerCredentials());
-    std::cout << "3" << std::endl;
     afsServer.RegisterService(&service);
-    std::cout << "4" << std::endl;
     std::unique_ptr<Server> server(afsServer.BuildAndStart());
     std::cout << "Server listening on port: " << address << std::endl;
-
     server->Wait();
 }
 
@@ -320,7 +323,7 @@ int main(int argc, char** argv) {
     std::string ipadd = "10.10.1.1";
 
     strncpy(root_path, argv[1], MAX_PATH_LENGTH);
-    std::cout << "afs path : " << root_path << std::endl;
+    // std::cout << "afs path : " << root_path << std::endl;
     RunAfsServer(ipadd);
     
     return 0;
