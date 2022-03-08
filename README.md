@@ -33,23 +33,23 @@ To test :
   pwrite()   
   fsync()    
 
-The server interface consists of the following functions:   
+The server interface consists of the following functions:     
 Create - 
-Creates a new file if the file doesn’t exist and sends a reply with modified time. 
+Creates a new file if the file doesn’t exist and sends a reply with modified time.   
 Store - 
-Stores the data of the specified file and sends a reply with modified time. 
+Stores the data of the specified file and sends a reply with modified time.   
 GetAttr - 
-Get the attributes of the file. 
+Get the attributes of the file.   
 Remove - 
-Deletes specified file. 
+Deletes specified file.   
 Release - 
-Locally cached data is written onto the server if modified. 
+Locally cached data is written onto the server if modified.   
 Mkdir - 
-Creates a new directory if it doesn’t exist. 
+Creates a new directory if it doesn’t exist.   
 Rmdir - 
-Deletes the specified directory (which must be empty). 
+Deletes the specified directory (which must be empty).   
 Fetch - 
-Returns the data of the specified file or directory and the modified time. 
+Returns the data of the specified file or directory and the modified time.   
 
 
 
