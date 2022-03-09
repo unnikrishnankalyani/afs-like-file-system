@@ -18,6 +18,11 @@
    &emsp;  ./client [fuse mount path] [cache path]  
 	on server :   
 	&emsp; ./server [server fs path]
+   #### Test performance: 
+   &emsp; Go to the AFS_performance folder
+   &emsp; - read_performance: test read performance
+   &emsp; - write_performance: test write performance
+   &emsp; - protocol_perf-part1 & part2: test consistency performance, run protocol_perf-part1 in client 1, then run protocol_perf-part2 in client2, and run protocol_perf-part1 in client 1 again.
  
 ## Code: 
 ### client.cc

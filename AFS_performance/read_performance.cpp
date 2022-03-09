@@ -21,7 +21,6 @@ int main(int argc, char* argv[]) {
     lstat(path, &info);
 
     printf("Last Mod: %ld\n", info.st_mtime);
-    creat(path, O_RDWR | O_APPEND |O_CREAT);
     for(int i = 0; i < open_times; i++) {
         clock_gettime( CLOCK_REALTIME, &start);
         fd = open(path, O_RDWR | O_APPEND | O_CREAT);
