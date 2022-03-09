@@ -19,10 +19,10 @@
 	on server :   
 	&emsp; ./server [server fs path]
    #### Test performance: 
-   &emsp; Go to the AFS_performance folder
-    - read_performance: test read performance
-   - write_performance: test write performance
-   - protocol_perf-part1 & part2: test consistency performance, run protocol_perf-part1 in client 1, then run protocol_perf-part2 in client2, and run protocol_perf-part1 in client 1 again.
+   &emsp; Go to the AFS_performance folder &emsp;
+   *  read_performance: test read performance
+   *  write_performance: test write performance
+   *  protocol_perf-part1 & part2: test consistency performance, run protocol_perf-part1 in client 1, then run protocol_perf-part2 in client2, and run protocol_perf-part1 in client 1 again.
  
 ## Code: 
 ### client.cc
