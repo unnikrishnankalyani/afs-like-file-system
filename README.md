@@ -23,7 +23,7 @@
    *  read_performance: test read performance
    *  write_performance: test write performance
    *  protocol_perf-part1 & part2: test consistency performance, run protocol_perf-part1 in client 1, then run protocol_perf-part2 in client2, and run protocol_perf-part1 in client 1 again.
-   * Scalable read/write performance: 50 AFS clients run in the same machine (with different temporary caches and persisten storages) and communicate with AFS server (in another machine). All clients read/write the same file (And the file does not exist in persistent storage). Go to AFS_scale folder, and check the README to run scalability test.
+   * Scalable read/write performance: 50 AFS clients run in the same machine (with different temporary caches and persistent storage) and communicate with the AFS server (in another machine). All clients read/write the same file (And the file does not exist in persistent storage). Go to AFS_scale folder, and check the README to run scalability test.
 
 ## Code:
 ### client.cc

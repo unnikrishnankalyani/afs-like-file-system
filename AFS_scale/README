@@ -1,5 +1,5 @@
 The scalability tests are generally 'hardcoded'.
-In this test, 50 AFS clients run in the same machine (with different temporary caches and persisten storages) and communicate with AFS server (in another machine).
+In this test, 50 AFS clients run in the same machine (with different temporary caches and persisten storage) and communicate with AFS server (in another machine).
 temporary caches: ../cmake/build/scale0(0-49)/fuse/
 persistent storages: ~/storage0(0-49)
 
